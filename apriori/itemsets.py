@@ -95,24 +95,6 @@ def apriori_gen(itemsets):
     """
     possible_extensions = join_step(itemsets)
     yield from prune_step(itemsets, possible_extensions)
-    
-    
-def itemsets_from_transactions_naive(transactions, min_support):
-    """
-    Naive algorithm for testing.
-    """
-    unique_items = set(k for t in transactions for k in t)
-
-    L = collections.defaultdict(list)
-    for k in range(1, len(unique_items) + 1):
-        for combination in itertools.combinations(unique_items, k):
-            counts = 0
-            for transaction in transactions:
-                if set.issubset(set(combination), set(transaction)):
-                    counts += 1     
-            if counts >= min_support:
-                L[k].append(tuple(sorted(list(combination)))) 
-    return L
                 
 
 def itemsets_from_transactions(transactions, min_support):
@@ -125,8 +107,7 @@ def itemsets_from_transactions(transactions, min_support):
     L = [(key,) for (key, value) in L.items() if value >= min_support]
     #print(L)
     L = {1: sorted(L)}
-    import time
-    
+
     k = 2
     while L[k - 1]:
         #print(f'k = {k}')
