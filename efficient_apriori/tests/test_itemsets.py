@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jun 10 20:03:20 2018
-
-@author: tommy
+Tests for algorithms related to association rules.
 """
+
 import os
 import pytest
 import collections
 import itertools
 import random
-import collections
 
 from efficient_apriori.itemsets import itemsets_from_transactions
+
 
 def generate_transactions(num_transactions, unique_items, items_row=(1, 100)):
     """
@@ -57,7 +56,6 @@ def itemsets_from_transactions_naive(transactions, min_support):
                 except KeyError:
                     L[k] = dict()
                     L[k][tuple(sorted(list(combination)))] = counts
-                #L[k].append(tuple(sorted(list(combination))))
                 
         try:
             L[k] = {k:v for (k, v) in sorted(L[k].items())}
@@ -132,4 +130,4 @@ def test_itemsets_from_a_file():
     
 
 if __name__ == '__main__':
-    pytest.main(args=[__file__, '--doctest-modules', '-v'])
+    pytest.main(args=['.', '--doctest-modules', '-v'])

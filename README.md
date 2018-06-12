@@ -23,8 +23,26 @@ itemsets, rules = apriori(transactions, min_confidence=1)
 print(rules)  # [{a} -> {b}]
 ```
 
-## What is the apriori algorithm?
+## Installation
 
-## Sources
+Here's how to install from GitHub.
 
--
+```bash
+git clone https://github.com/tommyod/Efficient-Apriori.git
+cd Efficient-Apriori
+pip install .
+```
+
+## Contributing
+
+Pull requests are very welcome.
+
+## More examples
+
+```python
+# Example showing confidence, support, itemsets and rules
+```
+
+```python
+# Example showing how to work with large files
+```

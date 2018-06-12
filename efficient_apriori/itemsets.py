@@ -221,7 +221,6 @@ def itemsets_from_transactions(transactions, min_support):
 if __name__ == '__main__':
     import pytest
     pytest.main(args=['.', '--doctest-modules', '-v'])
-    #pytest.main(args=['tests', '--doctest-modules', '-v'])
 
 def test_speed():
     import random
@@ -242,7 +241,7 @@ def test_speed():
         
     trans = generate_transactions(500, 25, items_row=(1, 10))
     st = time.perf_counter()
-    itemsets_from_transactions(trans, min_support=2/500)
+    itemsets_from_transactions(trans, min_support=1/500)
     print(f'Test ran in {round(time.perf_counter() - st,4)} s.')
     
 if __name__ == '__main__':

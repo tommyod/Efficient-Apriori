@@ -56,6 +56,8 @@ def generate_rules_simple(itemsets, min_confidence):
         if size < 2:
             continue
         
+        # TODO : Verify if this function MUST return duplicates,
+        # or if the implementation is slightly wrong
         yielded = set()
         for itemset in itemsets[size].keys():
             for result in _genrules(itemset, itemset, itemsets, min_conf):
@@ -70,20 +72,14 @@ def _genrules(l_k, a_m, itemsets, min_conf):
     """
     The naive algorithm from the original paper.
     """
-    #print(f'genrules(l_k={l_k}, a_m={a_m}, itemsets, min_conf)')
-    
     def support(itemset):
         return itemsets[len(itemset)][itemset]
     
-    #print(list(itertools.combinations(a_m, len(a_m) - 1)))
     for a_m in itertools.combinations(a_m, len(a_m) - 1):
-        #print(l_k, a_m)
         conf = support(l_k) / support(a_m)
         if conf >= min_conf:
             rhs = set(l_k).difference(set(a_m))
             rhs = tuple(sorted(list(rhs)))
-            #print(' ', Rule(a_m, rhs, support(l_k), support(a_m)))
-            #print('   ', f'genrules(l_k={l_k}, a_m={a_m})')
             yield Rule(a_m, rhs, support(l_k), support(a_m))
             
             if (len(a_m)) > 1:
@@ -93,29 +89,9 @@ def ap_genrules():
     """
     The faster algorithm from the original paper.
     """
-    pass
+    pass # TODO
 
 
 if __name__ == '__main__':
-    
-    transactions = ['cbd',
-                    'abc',
-                    'abd',
-                    'cba',
-                    'abf',
-                    'acb',
-                    'cbf',
-                    'cfe',
-                    'afe']
-    
-    large_itemsets = itemsets_from_transactions(transactions, min_support=1/3)
-    rules = generate_rules_naively(large_itemsets, 0.1)
-    for rule in rules:
-        print(rule)
-        
-    print()
-    rules = list(generate_rules_simple(large_itemsets, 0.1))
-    rules.sort(key=lambda rule: rule.confidence)
-    print()
-    for rule in rules:
-        print(rule.pprint())
+    import pytest
+    pytest.main(args=['.', '--doctest-modules', '-v'])

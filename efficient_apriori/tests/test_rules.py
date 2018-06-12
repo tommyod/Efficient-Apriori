@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jun 10 20:03:20 2018
-
-@author: tommy
+Tests for algorithms related to association rules.
 """
-import os
+
 import pytest
 import collections
 import itertools
 import random
-import collections
 
 from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import Rule, generate_rules_simple
@@ -19,9 +16,7 @@ from efficient_apriori.tests.test_itemsets import generate_transactions
 def generate_rules_naively(itemsets, min_confidence):
     """
     Generate association rules naively, for testing purposes.
-
     """
-    
     def proper_subsets(itemset:set):
         """
         Yield every proper subset of a set.
