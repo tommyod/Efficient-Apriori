@@ -33,6 +33,7 @@ def itemsets_from_transactions_naive(transactions, min_support):
 
     # Get the unique items from every transaction
     unique_items = set(k for t in transactions for k in t)
+    num_transactions = len(transactions)
 
     # Create an output dictionary
     L = dict()
@@ -50,7 +51,7 @@ def itemsets_from_transactions_naive(transactions, min_support):
                     counts += 1  
                     
             # If the count exceeds the minimum support, add it
-            if counts >= min_support:
+            if (counts / num_transactions) >= min_support:
                 try:
                     L[k][tuple(sorted(list(combination)))] = counts
                 except KeyError:
@@ -78,7 +79,7 @@ def test_itemsets_from_transactions_regression():
 input_data = [(list(generate_transactions(num_transactions=random.randint(5, 25), 
                                     unique_items=random.randint(1, 8), 
                                     items_row=(1, random.randint(2, 8)))),
-                                    random.randint(1, 4)) 
+                                    random.randint(1, 4)/10) 
                                     for i in range(50)]
 @pytest.mark.parametrize("transactions, min_support", input_data)
 def test_itemsets_from_transactions_stochastic(transactions, min_support):
@@ -103,7 +104,7 @@ def test_itemsets_from_a_generator_callable():
         for i in range(4):
             yield [j + i for j in range(5)]
 
-    itemsets = itemsets_from_transactions(generator, min_support=3)
+    itemsets = itemsets_from_transactions(generator, min_support=3/4)
     assert itemsets[3] == {(2, 3, 4): 3, (3, 4, 5): 3}
 
     
@@ -125,7 +126,7 @@ def test_itemsets_from_a_file():
     
     base, filename = os.path.split(__file__)
     gen_obj = file_generator(os.path.join(base, 'transactions.txt'))
-    result = itemsets_from_transactions(gen_obj, min_support=4)
+    result = itemsets_from_transactions(gen_obj, min_support=4/4)
     assert result[2] == {('A', 'C'): 4}
 
     

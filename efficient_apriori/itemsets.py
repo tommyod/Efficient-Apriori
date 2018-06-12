@@ -114,7 +114,7 @@ def itemsets_from_transactions(transactions, min_support):
     --------
     >>> # This is an example from the 1994 paper by Agrawal et al. 
     >>> transactions = [(1, 3, 4), (2, 3, 5), (1, 2, 3, 5), (2, 5)]
-    >>> itemsets = itemsets_from_transactions(transactions, min_support=2)
+    >>> itemsets = itemsets_from_transactions(transactions, min_support=2/5)
     >>> itemsets[1]
     {(1,): 2, (2,): 3, (3,): 3, (5,): 3}
     >>> itemsets[2]
@@ -139,7 +139,8 @@ def itemsets_from_transactions(transactions, min_support):
                 iterable.'
         raise TypeError(msg)
         
-    if not (isinstance(min_support, numbers.Integral) and (min_support >= 0)):
+    if not (isinstance(min_support, numbers.Number) 
+            and (0 <= min_support <= 1)):
         msg = f'`min_support` must be an integer >= 0.'
         raise ValueError('')
         
@@ -147,9 +148,20 @@ def itemsets_from_transactions(transactions, min_support):
         
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------
-    large_itemsets = collections.Counter(i for t in transactions() for i in t)
-    large_itemsets = [(i, c) for (i, c) in large_itemsets.items() 
-                      if c >= min_support]
+    counts = collections.defaultdict(int)
+    num_transactions = 0
+    for transaction in transactions():
+        num_transactions += 1
+        for item in transaction:
+            counts[item] += 1
+
+    large_itemsets = [(i, c) for (i, c) in counts.items() if 
+                      (c / num_transactions) >= min_support]
+    
+    
+    #large_itemsets = collections.Counter(i for t in transactions() for i in t)
+    #large_itemsets = [(i, c) for (i, c) in large_itemsets.items() 
+    #                  if c >= min_support]
     
     #print(large_itemsets)
     # If large itemsets were found, convert to dictionary
@@ -197,7 +209,7 @@ def itemsets_from_transactions(transactions, min_support):
             
         
         C_k = [(i, c) for (i, c) in candidate_itemset_counts.items() 
-               if c >= min_support]
+               if (c / num_transactions) >= min_support]
         
         # If no candidate itemsets were found, break out of the loop
         if not C_k:
@@ -246,7 +258,7 @@ def test_speed():
         
     trans = generate_transactions(500, 25, items_row=(1, 10))
     st = time.perf_counter()
-    itemsets_from_transactions(trans, min_support=2)
+    itemsets_from_transactions(trans, min_support=2/500)
     print(f'Test ran in {round(time.perf_counter() - st,4)} s.')
     
 if __name__ == '__main__':
