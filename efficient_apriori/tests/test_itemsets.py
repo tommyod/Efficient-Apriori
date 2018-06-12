@@ -80,7 +80,7 @@ input_data = [(list(generate_transactions(num_transactions=random.randint(5, 25)
                                     unique_items=random.randint(1, 8), 
                                     items_row=(1, random.randint(2, 8)))),
                                     random.randint(1, 4)/10) 
-                                    for i in range(50)]
+                                    for i in range(10)]
 @pytest.mark.parametrize("transactions, min_support", input_data)
 def test_itemsets_from_transactions_stochastic(transactions, min_support):
     """
