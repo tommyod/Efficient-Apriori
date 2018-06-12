@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jun 10 15:51:09 2018
-
-@author: tommy
+Implementations of algorithms related to itemsets.
 """
 
 import itertools
@@ -22,8 +20,6 @@ def join_step(itemsets):
     >>> list(join_step(itemsets))
     [(1, 2, 3, 4), (1, 3, 4, 5)]
     """
-    
-
     # Iterate over every itemset in the itemsets
     i = 0
     while i < len(itemsets):
@@ -220,18 +216,6 @@ def itemsets_from_transactions(transactions, min_support):
         k += 1
         
     return large_itemsets
-        
-
-
-def apriori_classic(transactions, min_support, min_confidence):
-    """
-    The classic apriori algotihm.
-    Assumes sorted transactions, and sorted items in the transactions.
-    """
-    pass
-
-def sort_transactions(transactions):
-    pass
 
 
 if __name__ == '__main__':
