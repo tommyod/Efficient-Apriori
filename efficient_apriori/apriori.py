@@ -22,8 +22,7 @@ def apriori(transactions:list, min_support:float=0.5, min_confidence:float=0.5):
     rules = list(generate_rules_simple(itemsets, min_confidence))
     return itemsets, rules
 
-        
-        
+          
 if __name__ == '__main__':
     import pytest
     pytest.main(args=['.', '--doctest-modules', '-v'])
