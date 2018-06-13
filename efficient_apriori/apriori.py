@@ -18,8 +18,8 @@ def apriori(transactions:list, min_support:float=0.5, min_confidence:float=0.5):
     >>> rules
     [{a} -> {b}]
     """
-    itemsets = itemsets_from_transactions(transactions, min_support)
-    rules = list(generate_rules_simple(itemsets, min_confidence))
+    itemsets, num_transactions = itemsets_from_transactions(transactions, min_support)
+    rules = list(generate_rules_simple(itemsets, min_confidence, num_transactions))
     return itemsets, rules
 
           

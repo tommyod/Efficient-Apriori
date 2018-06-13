@@ -46,3 +46,11 @@ Pull requests are very welcome.
 ```python
 # Example showing how to work with large files
 ```
+
+## Todo
+
+- [ ] Check if the rule algo must return duplicates
+- [ ] Implement faster rule algo
+- [ ] Add type hints to every function
+- [ ] Add tests against R package
+- [ ] Consider aprioriTID implementation

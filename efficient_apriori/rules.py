@@ -11,7 +11,8 @@ class Rule(object):
     """
     A class for a rule.
     """
-    def __init__(self, lhs, rhs, count_full=0, count_lhs=0, count_rhs=0):
+    def __init__(self, lhs, rhs, count_full=0, count_lhs=0, count_rhs=0, 
+                 num_transactions=0):
         """
         Initalize a new rule.
         """
@@ -20,10 +21,15 @@ class Rule(object):
         self.count_full = count_full
         self.count_lhs = count_lhs
         self.count_rhs = count_rhs
+        self.num_transactions = num_transactions
         
     @property
     def confidence(self):
         return self.count_full / self.count_lhs
+    
+    @property
+    def support(self):
+        return self.count_full / self.num_transactions
         
     def __repr__(self):
         lhs_formatted = '{' + ', '.join(k for k in self.lhs) + '}'
@@ -38,6 +44,7 @@ class Rule(object):
         repr_str = '{} -> {} [{}]'.format(lhs_formatted, 
                     rhs_formatted, conf)
         return repr_str
+    
     def __eq__(self, other):
         return (self.lhs == other.lhs) and (self.rhs == other.rhs)
     
@@ -45,7 +52,7 @@ class Rule(object):
         return hash(self.lhs + self.rhs)
     
 
-def generate_rules_simple(itemsets, min_confidence):
+def generate_rules_simple(itemsets, min_confidence, num_transactions):
     """
     The naive algorithm from the original paper.
     """
@@ -60,7 +67,7 @@ def generate_rules_simple(itemsets, min_confidence):
         # or if the implementation is slightly wrong
         yielded = set()
         for itemset in itemsets[size].keys():
-            for result in _genrules(itemset, itemset, itemsets, min_conf):
+            for result in _genrules(itemset, itemset, itemsets, min_conf, num_transactions):
                 if result in yielded:
                     continue
                 else:
@@ -68,7 +75,7 @@ def generate_rules_simple(itemsets, min_confidence):
                     yield result
                     
 
-def _genrules(l_k, a_m, itemsets, min_conf):
+def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
     """
     The naive algorithm from the original paper.
     """
@@ -80,10 +87,10 @@ def _genrules(l_k, a_m, itemsets, min_conf):
         if conf >= min_conf:
             rhs = set(l_k).difference(set(a_m))
             rhs = tuple(sorted(list(rhs)))
-            yield Rule(a_m, rhs, support(l_k), support(a_m))
+            yield Rule(a_m, rhs, support(l_k), support(a_m), support(rhs), num_transactions)
             
-            if (len(a_m)) > 1:
-                yield from _genrules(l_k, a_m, itemsets, min_conf)
+            if len(a_m) > 1:
+                yield from _genrules(l_k, a_m, itemsets, min_conf, num_transactions)
     
 def ap_genrules():
     """
