@@ -110,7 +110,7 @@ def itemsets_from_transactions(transactions, min_support):
     --------
     >>> # This is an example from the 1994 paper by Agrawal et al. 
     >>> transactions = [(1, 3, 4), (2, 3, 5), (1, 2, 3, 5), (2, 5)]
-    >>> itemsets = itemsets_from_transactions(transactions, min_support=2/5)
+    >>> itemsets, _ = itemsets_from_transactions(transactions, min_support=2/5)
     >>> itemsets[1]
     {(1,): 2, (2,): 3, (3,): 3, (5,): 3}
     >>> itemsets[2]
@@ -165,7 +165,7 @@ def itemsets_from_transactions(transactions, min_support):
         large_itemsets = {1: {(i, ):c for (i, c) in sorted(large_itemsets)}}
         
     # No large itemsets were found, return immediately
-    else: return {}
+    else: return {}, num_transactions
 
     # STEP 2 - Build up the size of the itemsets
     # ------------------------------------------
@@ -215,7 +215,7 @@ def itemsets_from_transactions(transactions, min_support):
         large_itemsets[k] = {i:c for (i, c) in sorted(C_k)}
         k += 1
         
-    return large_itemsets
+    return large_itemsets, num_transactions
 
 
 if __name__ == '__main__':

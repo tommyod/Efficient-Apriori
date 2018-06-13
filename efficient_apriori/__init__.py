@@ -7,3 +7,6 @@ Created on Mon Jun 11 18:32:24 2018
 """
 
 __version__ = '0.1'
+
+
+from efficient_apriori import apriori
