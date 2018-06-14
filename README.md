@@ -1,4 +1,5 @@
-# Efficient-Apriori
+# Efficient-Apriori [![Build Status](https://travis-ci.com/tommyod/Efficient-Apriori.svg?branch=master)](https://travis-ci.com/tommyod/Efficient-Apriori)
+
 An efficient Python implementation of the Apriori algorithm.
 
 The apriori algorithm finds hidden structures in data.
@@ -52,5 +53,5 @@ Pull requests are very welcome.
 - [ ] Check if the rule algo must return duplicates
 - [ ] Implement faster rule algo
 - [ ] Add type hints to every function
-- [ ] Add tests against R package
+- [X] Add tests against R package
 - [ ] Consider aprioriTID implementation
