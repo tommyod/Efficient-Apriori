@@ -30,8 +30,10 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version=VERSION,
 
-    description=' An efficient Python implementation of the Apriori algorithm.',
-    long_description=' An efficient Python implementation of the Apriori algorithm.',  
+    description=' An efficient Python implementation of the Apriori \
+    algorithm.',
+    long_description=' An efficient Python implementation of the Apriori \
+    algorithm.',  
     # read('README.rst'),
     # The project's main homepage.
     url='https://github.com/tommyod/Efficient-Apriori',

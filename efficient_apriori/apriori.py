@@ -7,7 +7,9 @@ High-level implementations of the apriori algorithm.
 from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import generate_rules_simple
 
-def apriori(transactions:list, min_support:float=0.5, min_confidence:float=0.5):
+
+def apriori(transactions: list, min_support: float=0.5, 
+            min_confidence: float=0.5):
     """
     The classic apriori algorithm.
     
@@ -18,8 +20,10 @@ def apriori(transactions:list, min_support:float=0.5, min_confidence:float=0.5):
     >>> rules
     [{a} -> {b}]
     """
-    itemsets, num_transactions = itemsets_from_transactions(transactions, min_support)
-    rules = list(generate_rules_simple(itemsets, min_confidence, num_transactions))
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 
+                                                            min_support)
+    rules = list(generate_rules_simple(itemsets, min_confidence, 
+                                       num_transactions))
     return itemsets, rules
 
           
