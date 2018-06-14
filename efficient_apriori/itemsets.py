@@ -8,6 +8,7 @@ import itertools
 import collections
 import numbers
 
+
 def join_step(itemsets):
     """
     Join k length itemsets into k + 1 length itemsets.
@@ -28,7 +29,6 @@ def join_step(itemsets):
         skip = 1
         
         # Get all but the last item in the itemset, and the last one
-        #print(itemsets)
         *itemset_first, itemset_last = itemsets[i]
         
         # To obtain every tail item, go through the next itemsets
@@ -58,6 +58,7 @@ def join_step(itemsets):
             yield itemset_first + (a,) + (b,)            
         i += skip
 
+
 def prune_step(itemsets, possible_itemsets):
     """
     Prune possible itemsets whose subsets are not in the itemsets.
@@ -79,7 +80,7 @@ def prune_step(itemsets, possible_itemsets):
         
         # Remove 1 from the combination, same as k-1 combinations
         for i in range(len(possible_itemset)):
-            removed = possible_itemset[:i] + possible_itemset[i+1:]
+            removed = possible_itemset[:i] + possible_itemset[i + 1:]
             
             # If the k + 1 itemset with one removed is not in
             # the length k itemsets, break -> it's not a candidate
@@ -124,6 +125,7 @@ def itemsets_from_transactions(transactions, min_support):
     # If the transactions are iterable, convert it to sets for faster lookups
     if isinstance(transactions, collections.Iterable):
         transaction_sets = [set(t) for t in transactions if len(t) > 0]
+        
         def transactions():
             return transaction_sets
         
@@ -135,8 +137,8 @@ def itemsets_from_transactions(transactions, min_support):
                 iterable.'
         raise TypeError(msg)
         
-    if not (isinstance(min_support, numbers.Number) 
-            and (0 <= min_support <= 1)):
+    if not (isinstance(min_support, numbers.Number) and 
+            (0 <= min_support <= 1)):
         msg = f'`min_support` must be an integer >= 0.'
         raise ValueError('')
         
@@ -153,19 +155,14 @@ def itemsets_from_transactions(transactions, min_support):
 
     large_itemsets = [(i, c) for (i, c) in counts.items() if 
                       (c / num_transactions) >= min_support]
-    
-    
-    #large_itemsets = collections.Counter(i for t in transactions() for i in t)
-    #large_itemsets = [(i, c) for (i, c) in large_itemsets.items() 
-    #                  if c >= min_support]
-    
-    #print(large_itemsets)
+
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
-        large_itemsets = {1: {(i, ):c for (i, c) in sorted(large_itemsets)}}
+        large_itemsets = {1: {(i,): c for (i, c) in sorted(large_itemsets)}}
         
     # No large itemsets were found, return immediately
-    else: return {}, num_transactions
+    else: 
+        return {}, num_transactions
 
     # STEP 2 - Build up the size of the itemsets
     # ------------------------------------------
@@ -176,8 +173,6 @@ def itemsets_from_transactions(transactions, min_support):
         
         # Generate candidate itemsets of length k from length k - 1 itemsets
         itemsets_list = list(large_itemsets[k - 1].keys())
-        #print('->', large_itemsets[k - 1])
-        #print('-->', itemsets_list)
     
         possible_extensions = join_step(itemsets_list)
         C_k = list(prune_step(itemsets_list, possible_extensions))
@@ -203,7 +198,6 @@ def itemsets_from_transactions(transactions, min_support):
             if not found_any:
                 use_transaction[row] = False
             
-        
         C_k = [(i, c) for (i, c) in candidate_itemset_counts.items() 
                if (c / num_transactions) >= min_support]
         
@@ -212,7 +206,7 @@ def itemsets_from_transactions(transactions, min_support):
             break
         
         # Candidate itemsets were found, add them and progress the while-loop
-        large_itemsets[k] = {i:c for (i, c) in sorted(C_k)}
+        large_itemsets[k] = {i: c for (i, c) in sorted(C_k)}
         k += 1
         
     return large_itemsets, num_transactions
@@ -222,12 +216,14 @@ if __name__ == '__main__':
     import pytest
     pytest.main(args=['.', '--doctest-modules', '-v'])
 
+
 def test_speed():
     import random
     import time
     random.seed(123)
     
-    def generate_transactions(num_transactions, unique_items, items_row=(1, 100)):
+    def generate_transactions(num_transactions, unique_items, 
+                              items_row=(1, 100)):
         """
         Generate synthetic transactions.
         """
@@ -238,18 +234,11 @@ def test_speed():
             items_this_row = random.randint(*items_row)
             yield random.sample(items, k=min(unique_items, items_this_row))
           
-        
     trans = generate_transactions(500, 25, items_row=(1, 10))
     st = time.perf_counter()
-    itemsets_from_transactions(trans, min_support=1/500)
+    itemsets_from_transactions(trans, min_support=1 / 500)
     print(f'Test ran in {round(time.perf_counter() - st,4)} s.')
+    
     
 if __name__ == '__main__':
     test_speed()
-    
-    
-
-        
-    
-    
-    

@@ -5,7 +5,7 @@ Implementations of algorithms related to association rules.
 """
 
 import itertools
-from efficient_apriori.itemsets import itemsets_from_transactions
+
 
 class Rule(object):
     """
@@ -16,8 +16,8 @@ class Rule(object):
         """
         Initalize a new rule.
         """
-        self.lhs = lhs # antecedent
-        self.rhs = rhs # consequent
+        self.lhs = lhs  # antecedent
+        self.rhs = rhs  # consequent
         self.count_full = count_full
         self.count_lhs = count_lhs
         self.count_rhs = count_rhs
@@ -42,7 +42,7 @@ class Rule(object):
         rhs_formatted = '{' + ', '.join(k for k in self.rhs) + '}'
         conf = f'confidence: {self.confidence:.3f}'
         repr_str = '{} -> {} [{}]'.format(lhs_formatted, 
-                    rhs_formatted, conf)
+                                          rhs_formatted, conf)
         return repr_str
     
     def __eq__(self, other):
@@ -67,7 +67,8 @@ def generate_rules_simple(itemsets, min_confidence, num_transactions):
         # or if the implementation is slightly wrong
         yielded = set()
         for itemset in itemsets[size].keys():
-            for result in _genrules(itemset, itemset, itemsets, min_conf, num_transactions):
+            for result in _genrules(itemset, itemset, itemsets, min_conf, 
+                                    num_transactions):
                 if result in yielded:
                     continue
                 else:
@@ -87,16 +88,19 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
         if conf >= min_conf:
             rhs = set(l_k).difference(set(a_m))
             rhs = tuple(sorted(list(rhs)))
-            yield Rule(a_m, rhs, support(l_k), support(a_m), support(rhs), num_transactions)
+            yield Rule(a_m, rhs, support(l_k), support(a_m), support(rhs), 
+                       num_transactions)
             
             if len(a_m) > 1:
-                yield from _genrules(l_k, a_m, itemsets, min_conf, num_transactions)
-    
+                yield from _genrules(l_k, a_m, itemsets, min_conf, 
+                                     num_transactions)
+
+ 
 def ap_genrules():
     """
     The faster algorithm from the original paper.
     """
-    pass # TODO
+    pass  # TODO
 
 
 if __name__ == '__main__':

@@ -6,7 +6,6 @@ Tests for algorithms related to association rules.
 
 import os
 import pytest
-import collections
 import itertools
 import random
 
@@ -58,7 +57,7 @@ def itemsets_from_transactions_naive(transactions, min_support):
                     L[k][tuple(sorted(list(combination)))] = counts
                 
         try:
-            L[k] = {k:v for (k, v) in sorted(L[k].items())}
+            L[k] = {k: v for (k, v) in sorted(L[k].items())}
             if L[k] == {}:
                 del L[k]
                 return L, num_transactions
@@ -74,18 +73,21 @@ def test_itemsets_from_transactions_regression():
     assert True
 
 
-input_data = [(list(generate_transactions(num_transactions=random.randint(5, 25), 
-                                    unique_items=random.randint(1, 8), 
-                                    items_row=(1, random.randint(2, 8)))),
-                                    random.randint(1, 4)/10) 
-                                    for i in range(10)]
+input_data = [(list(generate_transactions(random.randint(5, 25),
+                                          random.randint(1, 8),
+                                          (1, random.randint(2, 8)))),
+               random.randint(1, 4) / 10) 
+              for i in range(10)]
+    
+    
 @pytest.mark.parametrize("transactions, min_support", input_data)
 def test_itemsets_from_transactions_stochastic(transactions, min_support):
     """
     Test 50 random inputs.
     """
     result, _ = itemsets_from_transactions(list(transactions), min_support)
-    naive_result, _ = itemsets_from_transactions_naive(list(transactions), min_support)
+    naive_result, _ = itemsets_from_transactions_naive(list(transactions), 
+                                                       min_support)
     
     for key in set.union(set(result.keys()), set(naive_result.keys())):
         assert result[key] == naive_result[key]
@@ -102,7 +104,7 @@ def test_itemsets_from_a_generator_callable():
         for i in range(4):
             yield [j + i for j in range(5)]
 
-    itemsets, _ = itemsets_from_transactions(generator, min_support=3/4)
+    itemsets, _ = itemsets_from_transactions(generator, min_support=3 / 4)
     assert itemsets[3] == {(2, 3, 4): 3, (3, 4, 5): 3}
 
     
@@ -124,10 +126,9 @@ def test_itemsets_from_a_file():
     
     base, filename = os.path.split(__file__)
     gen_obj = file_generator(os.path.join(base, 'transactions.txt'))
-    result, _ = itemsets_from_transactions(gen_obj, min_support=4/4)
+    result, _ = itemsets_from_transactions(gen_obj, min_support=4 / 4)
     assert result[2] == {('A', 'C'): 4}
 
     
-
 if __name__ == '__main__':
     pytest.main(args=['.', '--doctest-modules', '-v'])
