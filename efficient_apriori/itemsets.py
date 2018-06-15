@@ -115,9 +115,9 @@ def prune_step(itemsets: typing.List[tuple],
             
             # If every k combination exists in the set of itemsets,
             # yield the possible itemset. If it does not exist, then it's
-            # support cannot be large enough, since supp(A) >= supp(AB) for all B,
-            # and if supp(S) is large enough, then supp(s) must be large enough
-            # for every s which is a subset of S.
+            # support cannot be large enough, since supp(A) >= supp(AB) for 
+            # all B, and if supp(S) is large enough, then supp(s) must be large
+            # enough for every s which is a subset of S.
             # This is the downward-closure property of the support function.
             if removed not in itemsets:
                 break
@@ -204,8 +204,6 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         msg = f'`transactions` must be an iterable or a callable returning an \
                 iterable.'
         raise TypeError(msg)
-        
-        
         
     if not (isinstance(min_support, numbers.Number) and 
             (0 <= min_support <= 1)):
