@@ -9,7 +9,7 @@ import itertools
 import random
 
 from efficient_apriori.itemsets import itemsets_from_transactions
-from efficient_apriori.rules import Rule, generate_rules_simple
+from efficient_apriori.rules import Rule, generate_rules_simple, generate_rules_apriori
 from efficient_apriori.tests.test_itemsets import generate_transactions
 
 
@@ -69,6 +69,43 @@ def test_generate_rules_simple_vs_naive(transactions):
     rules_naive = generate_rules_naively(itemsets, min_conf, num_transactions)
     rules_simple = generate_rules_simple(itemsets, min_conf, num_transactions)
     assert set(rules_naive) == set(rules_simple)
+    
+    
+@pytest.mark.parametrize("transactions", input_data)
+def test_generate_rules_simple_vs_apriori(transactions):
+    """
+    Test the naive rule finder vs. the simple one from the paper.
+    """
+    
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.5)
+    
+    min_conf = 0.5
+    rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)
+    rules_simple = generate_rules_simple(itemsets, min_conf, num_transactions)
+    assert set(rules_apri) == set(rules_simple)
+    
+    
+@pytest.mark.parametrize("transactions", input_data)
+def test_generate_rules_naive_vs_apriori(transactions):
+    """
+    Test the naive rule finder vs. the simple one from the paper.
+    """
+    
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.5)
+    
+    min_conf = 0.5
+    rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)
+    rules_naive = generate_rules_naively(itemsets, min_conf, num_transactions)
+    rules_apri = list(rules_apri)
+    rules_naive = list(rules_naive)
+    
+    # Test equal length, since no duplicates should be returned by apriori
+    assert len(rules_apri) == len(rules_naive)
+    
+    # Test equal results
+    assert set(rules_apri) == set(rules_naive)
+    
+    
 
 
 if __name__ == '__main__':
