@@ -52,7 +52,7 @@ def generate_rules_naively(itemsets, min_confidence, num_transactions):
 
 input_data = [list(generate_transactions(num_transactions=random.randint(15, 
                                                                          25), 
-                                         unique_items=random.randint(1, 8), 
+                                         unique_items=random.randint(1, 6), 
                                          items_row=(1, random.randint(2, 6)))) 
               for i in range(10)]
                 
@@ -139,10 +139,6 @@ def speeds():
     rules_naive = list(rules_naive)
     print(f'Naive apriori ran in {round(time.perf_counter() - st, 40)} s')
 
-if __name__ == '__main__':
-    pytest.main(args=['.', '--doctest-modules', '-v'])
-    
-    
 
 if __name__ == '__main__':
-    speeds()
+    pytest.main(args=['.', '--doctest-modules', '-v'])
