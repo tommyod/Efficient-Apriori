@@ -222,64 +222,95 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
 def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float, 
                            num_transactions: int):
     """
-    The faster algorithm from the original 1994 paper by Agrawal et al.
+    Bottom up algorithm for generating association rules from itemsets, very
+    similar to the fast algorithm proposed in the original 1994 paper by 
+    Agrawal et al.
+    
+    Parameters
+    ----------
+    l_k : tuple
+        The itemset containing
+        
+    Examples
+    --------
+    >>> itemsets = {1: {('a',): 3, ('b',): 2, ('c',): 1}, 
+    ...             2: {('a', 'b'): 2, ('a', 'c'): 1}}
+    >>> list(generate_rules_apriori(itemsets, 1, 3))
+    [{b} -> {a}, {c} -> {a}]
     """
     
     def count(itemset):
+        """
+        Helper function to retrieve the count of the itemset in the dataset.
+        """
         return itemsets[len(itemset)][itemset]
 
-    min_conf = min_confidence
+    # For every itemset of a perscribed size
     for size in itemsets.keys():
         
         # Do not consider itemsets of size 1
         if size < 2:
             continue
         
+        # For every itemset of this size
         for itemset in itemsets[size].keys():
-            H_1 = list(itertools.combinations(itemset, 1))
             
+            
+            # Special case to capture rules such as {1_item} -> {others}
             for removed in itertools.combinations(itemset, 1):
+                
+                # Compute the right hand side
                 rhs = set(itemset).difference(set(removed))
                 rhs = tuple(sorted(list(rhs)))
+                
+                # If the confidence is high enough, yield the rule
                 conf = count(itemset) / count(removed)
-                if conf >= min_conf:
+                if conf >= min_confidence:
                     yield Rule(removed, rhs, count(itemset), 
                                count(removed), count(rhs), 
                                num_transactions)
-                
-            yield from _ap_genrules(itemset, H_1, itemsets, min_conf, 
-                                num_transactions)
+                    
+            # Generate combinations to start off of. These 1-combinations will
+            # be merged to 2-combinations in the function `_ap_genrules`
+            H_1 = list(itertools.combinations(itemset, 1))
+            yield from _ap_genrules(itemset, H_1, itemsets, min_confidence, 
+                                    num_transactions)
     
 def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
     """
-    The faster algorithm from the original paper.
+    Recursive algorithm to build up rules from a bottom-up approach.
     """
-    #print(f'_ap_genrules(itemset={itemset}, H_1={H_1})')
-    
-    def support(itemset):
+    def count(itemset):
+        """
+        Helper function to retrieve the count of the itemset in the dataset.
+        """
         return itemsets[len(itemset)][itemset]
 
+    # If H_1 is so large that calling `apriori_gen` will produce right-hand
+    # sides as large as `itemset`, there will be no right hand side
+    # This cannot happen, so abort if it will
+    if len(itemset) <= (len(H_1[0]) + 1):
+        return
     
-    #print(f' Comparing {len(itemset)} > {len(H_1[0]) + 1}')
-    if len(itemset) > (len(H_1[0]) + 1):
+    # Generate left-hand itemsets of length k + 1 if H is of length k
+    H_m = list(apriori_gen(H_1))
+    
+    H_m_copy = H_m.copy()
+    for h_m in H_m:
+        # Compute the right ahdn side of the rule
+        rhs = tuple(sorted(list(set(itemset).difference(set(h_m)))))
 
-        H_m = list(apriori_gen(H_1))
-        #print(f'  {H_m}')
-        H_m_copy = H_m.copy()
-        for h_m in H_m:
-            rhs = set(itemset).difference(set(h_m))
-            rhs = tuple(sorted(list(rhs)))
-
-            conf = support(itemset) / support(h_m)
-            
-            if conf >= min_conf:
-                yield Rule(h_m, rhs, support(itemset), support(h_m), 
-                           support(rhs), num_transactions)
-            else:
-                #print(f' Removed: {h_m}')
-                H_m_copy.remove(h_m)
-            
-        yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, num_transactions)
+        conf = count(itemset) / count(h_m)
+        
+        # TODO: Should this rule be the other way around?
+        if conf >= min_conf:
+            yield Rule(h_m, rhs, count(itemset), count(h_m), 
+                       count(rhs), num_transactions)
+        else:
+            #print(f' Removed: {h_m}')
+            H_m_copy.remove(h_m)
+        
+    yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, num_transactions)
 
 
 if __name__ == '__main__':
