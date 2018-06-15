@@ -255,7 +255,6 @@ def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float,
         # For every itemset of this size
         for itemset in itemsets[size].keys():
             
-            
             # Special case to capture rules such as {1_item} -> {others}
             for removed in itertools.combinations(itemset, 1):
                 
@@ -275,6 +274,7 @@ def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float,
             H_1 = list(itertools.combinations(itemset, 1))
             yield from _ap_genrules(itemset, H_1, itemsets, min_confidence, 
                                     num_transactions)
+    
     
 def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
     """
@@ -307,56 +307,12 @@ def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
             yield Rule(h_m, rhs, count(itemset), count(h_m), 
                        count(rhs), num_transactions)
         else:
-            #print(f' Removed: {h_m}')
             H_m_copy.remove(h_m)
         
-    yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, num_transactions)
+    yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, 
+                            num_transactions)
 
 
 if __name__ == '__main__':
     import pytest
     pytest.main(args=['.', '--doctest-modules', '-v'])
-
-    from efficient_apriori.itemsets import itemsets_from_transactions
-    transactions = [('a', 'b', 'c'), ('a', 'b', 'c'), ('a', 'b', 'd')]
-    itemsets, num_transactions = itemsets_from_transactions(transactions, min_support=1/2)
-    
-    print(itemsets)
-    
-    for rule in generate_rules_simple(itemsets, 0.1, num_transactions):
-        print(rule, rule.confidence, rule.support)
-        
-    print('---------')
-    
-    for rule in generate_rules_apriori(itemsets, 0.1, num_transactions):
-        print(rule, rule.confidence, rule.support)
-        
-        
-    assert set(generate_rules_simple(itemsets, 0.1, num_transactions)) == set(generate_rules_apriori(itemsets, 0.1, num_transactions))
-    
-    
-    
-    transactions = [('a', 'b', 'c'), ('a', 'b', 'c'), ('a', 'b', 'd'), ('d', 'a', 'f'), ('b', 'c', 'd')]
-    itemsets, num_transactions = itemsets_from_transactions(transactions, min_support=1/20)
-    
-    print(itemsets)
-    
-    for rule in generate_rules_simple(itemsets, 0.1, num_transactions):
-        print(rule, rule.confidence, rule.support)
-        
-    print('---------')
-    
-    for rule in generate_rules_apriori(itemsets, 0.1, num_transactions):
-        print(rule, rule.confidence, rule.support)
-        
-        
-    assert set(generate_rules_simple(itemsets, 0.1, num_transactions)) == set(generate_rules_apriori(itemsets, 0.1, num_transactions))
-    
-    
-    
-if __name__ == '__main__':
-    import pytest
-    pytest.main(args=['.', '--doctest-modules', '-v'])
-    
-    
-    

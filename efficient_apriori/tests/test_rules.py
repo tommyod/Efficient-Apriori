@@ -9,7 +9,8 @@ import itertools
 import random
 
 from efficient_apriori.itemsets import itemsets_from_transactions
-from efficient_apriori.rules import Rule, generate_rules_simple, generate_rules_apriori
+from efficient_apriori.rules import (Rule, generate_rules_simple, 
+                                     generate_rules_apriori)
 from efficient_apriori.tests.test_itemsets import generate_transactions
 
 
@@ -106,7 +107,6 @@ def test_generate_rules_naive_vs_apriori(transactions):
     assert set(rules_apri) == set(rules_naive)
     
     
-
 def speeds():
     """
     Test the naive rule finder vs. the simple one from the paper.
