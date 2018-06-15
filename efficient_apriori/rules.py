@@ -4,6 +4,7 @@
 Implementations of algorithms related to association rules.
 """
 
+import typing
 import itertools
 from efficient_apriori.itemsets import apriori_gen
 
@@ -104,7 +105,6 @@ class Rule(object):
         """
         Representation of a rule.
         """
-        # Function to format an iterable as pretty set notation
         return '{} -> {}'.format(type(self).pf(self.lhs), 
                                  type(self).pf(self.rhs))
     
@@ -132,9 +132,10 @@ class Rule(object):
         return hash(self.lhs + self.rhs)
     
 
-def generate_rules_simple(itemsets, min_confidence, num_transactions):
+def generate_rules_simple(itemsets: typing.List[tuple], min_confidence: float, 
+                          num_transactions: int):
     """
-    Simple top-down algorithm for generating association rules.
+    Simple top-down algorithm for generating association rules. Very slow.
     
     This algorithm is presented in section 3 in the original 1994 paper by
     Agrawal. It works by building the rules top-down, calling the function
@@ -152,13 +153,15 @@ def generate_rules_simple(itemsets, min_confidence, num_transactions):
         # TODO : Verify if this function MUST return duplicates,
         # or if the implementation is slightly wrong
         yielded = set()
+        yielded_add = yielded.add
         for itemset in itemsets[size].keys():
+            
             for result in _genrules(itemset, itemset, itemsets, min_conf, 
                                     num_transactions):
                 if result in yielded:
                     continue
                 else:
-                    yielded.add(result)
+                    yielded_add(result)
                     yield result
                     
 
@@ -182,7 +185,8 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions, recurse=True):
                                      num_transactions, recurse=True)
 
  
-def generate_rules_apriori(itemsets, min_confidence, num_transactions):
+def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float, 
+                          num_transactions: int):
     """
     The faster algorithm from the original paper.
     """
