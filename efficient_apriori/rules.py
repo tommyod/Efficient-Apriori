@@ -140,6 +140,7 @@ def generate_rules_simple(itemsets, min_confidence, num_transactions):
     Agrawal. It works by building the rules top-down, calling the function
     `_genrules` to do most of the legwork.
     
+    
     """
     min_conf = min_confidence
     for size in itemsets.keys():
@@ -217,7 +218,7 @@ def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
     """
     The faster algorithm from the original paper.
     """
-    print(f'_ap_genrules(itemset={itemset}, H_1={H_1})')
+    #print(f'_ap_genrules(itemset={itemset}, H_1={H_1})')
     
     def support(itemset):
         return itemsets[len(itemset)][itemset]
@@ -227,7 +228,7 @@ def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
     if len(itemset) > (len(H_1[0]) + 1):
 
         H_m = list(apriori_gen(H_1))
-        print(f'  {H_m}')
+        #print(f'  {H_m}')
         H_m_copy = H_m.copy()
         for h_m in H_m:
             rhs = set(itemset).difference(set(h_m))
