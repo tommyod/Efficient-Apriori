@@ -17,10 +17,6 @@ class Rule(object):
     # Number of decimals used for printing
     _decimals = 3
     
-    # Pretty formatting
-    pf = lambda s: '{' + ', '.join(str(k) for k in s) + '}'
-    
-    
     def __init__(self, lhs: tuple, rhs: tuple, count_full: int=0, 
                  count_lhs: int=0, count_rhs: int=0, num_transactions: int=0):
         """
@@ -72,7 +68,7 @@ class Rule(object):
         """
         try:
             return self.count_full / self.count_lhs
-        except:
+        except (ZeroDivisionError, AttributeError) as error:
             return None
     
     @property
@@ -83,7 +79,7 @@ class Rule(object):
         """
         try:
             return self.count_full / self.num_transactions
-        except:
+        except (ZeroDivisionError, AttributeError) as error:
             return None
     
     @property
@@ -98,15 +94,22 @@ class Rule(object):
             prod_counts = self.count_lhs * self.count_rhs
             expected_support = (prod_counts) / self.num_transactions ** 2
             return observed_support / expected_support
-        except:
+        except (ZeroDivisionError, AttributeError) as error:
             return None
+        
+    @staticmethod
+    def _pf(s):
+        """
+        Pretty formatting of an iterable.
+        """
+        return '{' + ', '.join(str(k) for k in s) + '}'
         
     def __repr__(self):
         """
         Representation of a rule.
         """
-        return '{} -> {}'.format(type(self).pf(self.lhs), 
-                                 type(self).pf(self.rhs))
+        return '{} -> {}'.format(self._pf(self.lhs), 
+                                 self._pf(self.rhs))
     
     def __str__(self):
         """
@@ -115,8 +118,8 @@ class Rule(object):
         conf = f'conf: {self.confidence:.3f}'
         supp = f'supp: {self.support:.3f}'
         lift = f'lift: {self.lift:.3f}'
-        return '{} -> {} ({}, {}, {})'.format(type(self).pf(self.lhs), 
-                                              type(self).pf(self.rhs), 
+        return '{} -> {} ({}, {}, {})'.format(self._pf(self.lhs), 
+                                              self._pf(self.rhs), 
                                               conf, supp, lift)
     
     def __eq__(self, other):
@@ -135,29 +138,34 @@ class Rule(object):
 def generate_rules_simple(itemsets: typing.List[tuple], min_confidence: float, 
                           num_transactions: int):
     """
-    Simple top-down algorithm for generating association rules. Very slow.
+    DO NOT USE. This is a simple top-down algorithm for generating association 
+    rules. It is included here for testing purposes, and because it is
+    mentioned in the 1994 paper by Agrawal et al. It is slow because it does
+    not enumerate the search space efficiently: it produces duplicates, and it
+    does not prune the search space efficiently.
     
-    This algorithm is presented in section 3 in the original 1994 paper by
-    Agrawal. It works by building the rules top-down, calling the function
-    `_genrules` to do most of the legwork.
-    
-    
+    Simple algorithm for generating association rules from itemsets.
     """
-    min_conf = min_confidence
+    # Iterate over every size
     for size in itemsets.keys():
         
         # Do not consider itemsets of size 1
         if size < 2:
             continue
         
-        # TODO : Verify if this function MUST return duplicates,
-        # or if the implementation is slightly wrong
+        # This algorithm returns duplicates, so we keep track of items yielded
+        # in a set to avoid yielding duplicates
         yielded = set()
         yielded_add = yielded.add
+        
+        # Iterate over every itemset of the prescribed size
         for itemset in itemsets[size].keys():
             
-            for result in _genrules(itemset, itemset, itemsets, min_conf, 
+            # Generate rules
+            for result in _genrules(itemset, itemset, itemsets, min_confidence, 
                                     num_transactions):
+                
+                # If the rule has been yieded, keep going, else add and yield
                 if result in yielded:
                     continue
                 else:
@@ -165,33 +173,59 @@ def generate_rules_simple(itemsets: typing.List[tuple], min_confidence: float,
                     yield result
                     
 
-def _genrules(l_k, a_m, itemsets, min_conf, num_transactions, recurse=True):
+def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
     """
+    DO NOT USE. This is the gen-rules algorithm from the 1994 paper by Agrawal 
+    et al. It's a subroutine called by `generate_rules_simple`. However, the 
+    algorithm `generate_rules_simple` should not be used.
     The naive algorithm from the original paper.
+    
+    Parameters
+    ----------
+    l_k : tuple
+        The itemset containing all elements to be considered for a rule.
+    a_m : tuple
+        The itemset to take m-length combinations of, an move to the left of
+        l_k. The itemset a_m is a subset of l_k.
     """
-    def support(itemset):
+    def count(itemset):
+        """
+        Helper function to retrieve the count of the itemset in the dataset.
+        """
         return itemsets[len(itemset)][itemset]
     
+    # Iterate over every k - 1 combination of a_m to produce
+    # rules of the form a -> (l - a)
     for a_m in itertools.combinations(a_m, len(a_m) - 1):
-        conf = support(l_k) / support(a_m)
-        if conf >= min_conf:
-            rhs = set(l_k).difference(set(a_m))
-            rhs = tuple(sorted(list(rhs)))
-            yield Rule(a_m, rhs, support(l_k), support(a_m), support(rhs), 
-                       num_transactions)
-            
-            if len(a_m) > 1 and recurse:
-                yield from _genrules(l_k, a_m, itemsets, min_conf, 
-                                     num_transactions, recurse=True)
+        
+        # Compute the count of this rule, which is a_m -> (l_k - a_m)
+        confidence = count(l_k) / count(a_m)
+        
+        # Keep going if the confidence level is too low
+        if confidence < min_conf:
+            continue
+        
+        # Create the right hand set: rhs = (l_k - a_m) , and keep it sorted
+        rhs = set(l_k).difference(set(a_m))
+        rhs = tuple(sorted(list(rhs)))
+        
+        # Create new rule object and yield it
+        yield Rule(a_m, rhs, count(l_k), count(a_m), count(rhs), 
+                   num_transactions)
+        
+        # If the left hand side has one item only, do not recurse the function
+        if len(a_m) <= 1:
+            continue
+        yield from _genrules(l_k, a_m, itemsets, min_conf, num_transactions)
 
  
 def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float, 
-                          num_transactions: int):
+                           num_transactions: int):
     """
-    The faster algorithm from the original paper.
+    The faster algorithm from the original 1994 paper by Agrawal et al.
     """
     
-    def support(itemset):
+    def count(itemset):
         return itemsets[len(itemset)][itemset]
 
     min_conf = min_confidence
@@ -204,19 +238,17 @@ def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float,
         for itemset in itemsets[size].keys():
             H_1 = list(itertools.combinations(itemset, 1))
             
-            
             for removed in itertools.combinations(itemset, 1):
                 rhs = set(itemset).difference(set(removed))
                 rhs = tuple(sorted(list(rhs)))
-                conf = support(itemset) / support(removed)
+                conf = count(itemset) / count(removed)
                 if conf >= min_conf:
-                    yield Rule(removed, rhs, support(itemset), support(removed), 
-                           support(rhs), num_transactions)
+                    yield Rule(removed, rhs, count(itemset), 
+                               count(removed), count(rhs), 
+                               num_transactions)
                 
             yield from _ap_genrules(itemset, H_1, itemsets, min_conf, 
                                 num_transactions)
-    
-    
     
 def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
     """
@@ -237,9 +269,7 @@ def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
         for h_m in H_m:
             rhs = set(itemset).difference(set(h_m))
             rhs = tuple(sorted(list(rhs)))
-            
-            
-            
+
             conf = support(itemset) / support(h_m)
             
             if conf >= min_conf:
@@ -249,12 +279,7 @@ def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
                 #print(f' Removed: {h_m}')
                 H_m_copy.remove(h_m)
             
-            
         yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, num_transactions)
-            
-            
-    
-    
 
 
 if __name__ == '__main__':
