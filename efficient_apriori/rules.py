@@ -12,10 +12,49 @@ class Rule(object):
     """
     A class for a rule.
     """
-    def __init__(self, lhs, rhs, count_full=0, count_lhs=0, count_rhs=0, 
-                 num_transactions=0):
+    
+    # Number of decimals used for printing
+    _decimals = 3
+    
+    # Pretty formatting
+    pf = lambda s: '{' + ', '.join(str(k) for k in s) + '}'
+    
+    
+    def __init__(self, lhs: tuple, rhs: tuple, count_full: int=0, 
+                 count_lhs: int=0, count_rhs: int=0, num_transactions: int=0):
         """
-        Initalize a new rule.
+        Initialize a new rule. This call is a thin wrapper around some data.
+        
+        Parameters
+        ----------
+        lhs : tuple
+            The left hand side (antecedent) of the rule. Each item in the tuple
+            must be hashable, e.g. a string or an integer.
+        rhs : tuple
+            The right hand side (consequent) of the rule.
+        count_full : int
+            The count of the union of the lhs and rhs in the dataset.
+        count_lhs : int
+            The count of the lhs in the dataset.
+        count_rhs : int
+            The count of the rhs in the dataset.
+        num_transactions : int
+            The number of transactions in the dataset.
+        
+        Examples
+        --------
+        >>> r = Rule(('a', 'b'), ('c',), 50, 100, 150, 200)
+        >>> r.confidence  # Probability of 'c', given 'a' and 'b'
+        0.5
+        >>> r.support  # Probability of ('a', 'c', 'c') in the data
+        0.25
+        >>> # Ratio of observed over expected support if lhs, rhs = independent
+        >>> r.lift == 2 / 3
+        True
+        >>> print(r)
+        {a, b} -> {c} (conf: 0.500, supp: 0.250, lift: 0.667)
+        >>> r
+        {a, b} -> {c}
         """
         self.lhs = lhs  # antecedent
         self.rhs = rhs  # consequent
@@ -26,30 +65,70 @@ class Rule(object):
         
     @property
     def confidence(self):
-        return self.count_full / self.count_lhs
+        """
+        The confidence of a rule is the probability of the rhs given the lhs.
+        If X -> Y, then the confidence is P(Y|X).
+        """
+        try:
+            return self.count_full / self.count_lhs
+        except:
+            return None
     
     @property
     def support(self):
-        return self.count_full / self.num_transactions
+        """
+        The support of a rule is the frequency of which the lhs and rhs appear
+        together in the dataset. If X -> Y, then the support is P(Y and X).
+        """
+        try:
+            return self.count_full / self.num_transactions
+        except:
+            return None
+    
+    @property
+    def lift(self):
+        """
+        The lift of a rule is the ratio of the observed support to the expected 
+        support if the lhs and rhs were independent.If X -> Y, then the lift is
+        given by the fraction P(X and Y) / (P(X) * P(Y)).
+        """
+        try:
+            observed_support = self.count_full / self.num_transactions
+            prod_counts = self.count_lhs * self.count_rhs
+            expected_support = (prod_counts) / self.num_transactions ** 2
+            return observed_support / expected_support
+        except:
+            return None
         
     def __repr__(self):
-        lhs_formatted = '{' + ', '.join(str(k) for k in self.lhs) + '}'
-        rhs_formatted = '{' + ', '.join(str(k) for k in self.rhs) + '}'
-        repr_str = '{} -> {}'.format(lhs_formatted, rhs_formatted)
-        return repr_str
+        """
+        Representation of a rule.
+        """
+        # Function to format an iterable as pretty set notation
+        return '{} -> {}'.format(type(self).pf(self.lhs), 
+                                 type(self).pf(self.rhs))
     
-    def pprint(self):
-        lhs_formatted = '{' + ', '.join(str(k) for k in self.lhs) + '}'
-        rhs_formatted = '{' + ', '.join(str(k) for k in self.rhs) + '}'
-        conf = f'confidence: {self.confidence:.3f}'
-        repr_str = '{} -> {} [{}]'.format(lhs_formatted, 
-                                          rhs_formatted, conf)
-        return repr_str
+    def __str__(self):
+        """
+        Printing of a rule.
+        """
+        conf = f'conf: {self.confidence:.3f}'
+        supp = f'supp: {self.support:.3f}'
+        lift = f'lift: {self.lift:.3f}'
+        return '{} -> {} ({}, {}, {})'.format(type(self).pf(self.lhs), 
+                                              type(self).pf(self.rhs), 
+                                              conf, supp, lift)
     
     def __eq__(self, other):
+        """
+        Equality of two rules.
+        """
         return (self.lhs == other.lhs) and (self.rhs == other.rhs)
     
     def __hash__(self):
+        """
+        Hashing a rule for efficient set and dict representation.
+        """
         return hash(self.lhs + self.rhs)
     
 
@@ -174,9 +253,8 @@ def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
 
 
 if __name__ == '__main__':
-    #import pytest
-    #pytest.main(args=['.', '--doctest-modules', '-v'])
-    pass
+    import pytest
+    pytest.main(args=['.', '--doctest-modules', '-v'])
 
     from efficient_apriori.itemsets import itemsets_from_transactions
     transactions = [('a', 'b', 'c'), ('a', 'b', 'c'), ('a', 'b', 'd')]
@@ -215,7 +293,9 @@ if __name__ == '__main__':
     
     
     
-
+if __name__ == '__main__':
+    import pytest
+    pytest.main(args=['.', '--doctest-modules', '-v'])
     
     
     
