@@ -50,10 +50,10 @@ def generate_rules_naively(itemsets, min_confidence, num_transactions):
                 yield rule
 
 
-input_data = [list(generate_transactions(num_transactions=random.randint(5, 
+input_data = [list(generate_transactions(num_transactions=random.randint(15, 
                                                                          25), 
                                          unique_items=random.randint(1, 8), 
-                                         items_row=(1, random.randint(2, 8)))) 
+                                         items_row=(1, random.randint(2, 6)))) 
               for i in range(10)]
                 
                 
@@ -63,9 +63,9 @@ def test_generate_rules_simple_vs_naive(transactions):
     Test the naive rule finder vs. the simple one from the paper.
     """
     
-    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.5)
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.25)
     
-    min_conf = 0.5
+    min_conf = 0.1
     rules_naive = generate_rules_naively(itemsets, min_conf, num_transactions)
     rules_simple = generate_rules_simple(itemsets, min_conf, num_transactions)
     assert set(rules_naive) == set(rules_simple)
@@ -77,9 +77,9 @@ def test_generate_rules_simple_vs_apriori(transactions):
     Test the naive rule finder vs. the simple one from the paper.
     """
     
-    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.5)
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.1)
     
-    min_conf = 0.5
+    min_conf = 0.1
     rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)
     rules_simple = generate_rules_simple(itemsets, min_conf, num_transactions)
     assert set(rules_apri) == set(rules_simple)
@@ -93,7 +93,7 @@ def test_generate_rules_naive_vs_apriori(transactions):
     
     itemsets, num_transactions = itemsets_from_transactions(transactions, 0.5)
     
-    min_conf = 0.5
+    min_conf = 0.3
     rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)
     rules_naive = generate_rules_naively(itemsets, min_conf, num_transactions)
     rules_apri = list(rules_apri)
@@ -107,6 +107,42 @@ def test_generate_rules_naive_vs_apriori(transactions):
     
     
 
+def speeds():
+    """
+    Test the naive rule finder vs. the simple one from the paper.
+    """
+    import random
+    random.seed(123456)
+    transactions = generate_transactions(num_transactions=random.randint(250, 
+                                                                         500), 
+                                         unique_items=random.randint(8, 9), 
+                                         items_row=(10, 50))
+    
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.1)
+    import time
+    min_conf = 0.5
+    
+    print(itemsets)
+    
+    st = time.perf_counter()
+    rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)
+    rules_apri = list(rules_apri)
+    print(f'Fast apriori ran in {round(time.perf_counter() - st, 40)} s')
+    
+    st = time.perf_counter()
+    rules_simple = generate_rules_simple(itemsets, min_conf, num_transactions)
+    rules_simple = list(rules_simple)
+    print(f'Simple apriori ran in {round(time.perf_counter() - st, 40)} s')
+    
+    st = time.perf_counter()
+    rules_naive = generate_rules_naively(itemsets, min_conf, num_transactions)
+    rules_naive = list(rules_naive)
+    print(f'Naive apriori ran in {round(time.perf_counter() - st, 40)} s')
 
 if __name__ == '__main__':
     pytest.main(args=['.', '--doctest-modules', '-v'])
+    
+    
+
+if __name__ == '__main__':
+    speeds()
