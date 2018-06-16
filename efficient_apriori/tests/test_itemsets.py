@@ -12,10 +12,15 @@ import random
 from efficient_apriori.itemsets import itemsets_from_transactions
 
 
-def generate_transactions(num_transactions, unique_items, items_row=(1, 100)):
+def generate_transactions(num_transactions, unique_items, items_row=(1, 100),
+                          seed=None):
     """
     Generate synthetic transactions.
     """
+    if seed:
+        random.seed(seed)
+    else:
+        random.seed()
     
     items = list(range(unique_items))
     
