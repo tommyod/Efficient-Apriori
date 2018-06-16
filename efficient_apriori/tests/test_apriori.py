@@ -137,5 +137,26 @@ def test_against_R_implementation_3():
             assert abs(rule.confidence - 0.5000000) < 10e-6
 
 
+def test_minimal_input():
+    """
+    The with some minimal inputs, and make sure the correct errors are raised.
+    """
+    transactions = []
+    itemsets, rules = apriori(transactions, 0.2, 0.2)
+    assert itemsets == {} and rules == []
+    
+    with pytest.raises(ValueError):
+        itemsets, rules = apriori(transactions, -0.2, 0.2)
+        
+    with pytest.raises(ValueError):
+        itemsets, rules = apriori(transactions, 0.2, -0.2)
+        
+    with pytest.raises(ValueError):
+        itemsets, rules = apriori(transactions, 'asdf', 1)
+        
+    itemsets, rules = apriori([(1, 2), (1, 2), (1, 3)], 1, 1)
+    itemsets, rules = apriori([(1, 2), (1, 2), (1, 3)], 1.0, 1.0)
+    
+    
 if __name__ == '__main__':
     pytest.main(args=['.', '--doctest-modules', '-v']) 

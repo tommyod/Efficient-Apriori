@@ -207,8 +207,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         
     if not (isinstance(min_support, numbers.Number) and 
             (0 <= min_support <= 1)):
-        msg = f'`min_support` must be a float between 0 and 1.'
-        raise ValueError(msg)
+        raise ValueError(f'`min_support` must be a number between 0 and 1.')
         
     # Keep a dictionary stating whether to consider the row, this will allow
     # row-pruning later on if no information was retrieved earlier from it
