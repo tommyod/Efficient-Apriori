@@ -50,7 +50,7 @@ class Rule(object):
         >>> r.lift == 2 / 3
         True
         >>> print(r)
-        {a, b} -> {c} (conf: 0.500, supp: 0.250, lift: 0.667)
+        {a, b} -> {c} (conf: 0.500, supp: 0.250, lift: 0.667, conv: 0.500)
         >>> r
         {a, b} -> {c}
         """
@@ -98,6 +98,22 @@ class Rule(object):
         except (ZeroDivisionError, AttributeError) as error:
             return None
         
+    @property
+    def conviction(self):
+        """
+        The conviction of a rule X -> Y is the ratio P(not Y) / P(not Y | X).
+        It's the proportion of how often Y does not appear in the data to how
+        often Y does not appear in the data, given X. If the ratio is large, 
+        then the confidence is large and Y appears often.
+        """
+        try:
+            eps = 10e-10  # Avoid zero division
+            prob_not_rhs = 1 - self.count_rhs / self.num_transactions
+            prob_not_rhs_given_lhs = 1 - self.confidence
+            return prob_not_rhs / (prob_not_rhs_given_lhs + eps)
+        except (ZeroDivisionError, AttributeError) as error:
+            return None
+        
     @staticmethod
     def _pf(s):
         """
@@ -119,9 +135,10 @@ class Rule(object):
         conf = f'conf: {self.confidence:.3f}'
         supp = f'supp: {self.support:.3f}'
         lift = f'lift: {self.lift:.3f}'
-        return '{} -> {} ({}, {}, {})'.format(self._pf(self.lhs), 
-                                              self._pf(self.rhs), 
-                                              conf, supp, lift)
+        conv = f'conv: {self.conviction:.3f}'
+        return '{} -> {} ({}, {}, {}, {})'.format(self._pf(self.lhs), 
+                                                  self._pf(self.rhs), 
+                                                  conf, supp, lift, conv)
     
     def __eq__(self, other):
         """
