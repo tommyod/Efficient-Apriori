@@ -53,9 +53,9 @@ def generate_rules_naively(itemsets, min_confidence, num_transactions):
 
 input_data = [list(generate_transactions(num_transactions=random.randint(15, 
                                                                          25), 
-                                         unique_items=random.randint(1, 6), 
+                                         unique_items=random.randint(1, 10), 
                                          items_row=(1, random.randint(2, 6)))) 
-              for i in range(10)]
+              for i in range(25)]
                 
                 
 @pytest.mark.parametrize("transactions", input_data)
@@ -92,7 +92,7 @@ def test_generate_rules_naive_vs_apriori(transactions):
     Test the naive rule finder vs. the simple one from the paper.
     """
     
-    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.5)
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.15)
     
     min_conf = 0.3
     rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)

@@ -134,6 +134,12 @@ class Rule(object):
         """
         return hash(self.lhs + self.rhs)
     
+    def __len__(self):
+        """
+        The length of a rule, defined as the number of items in the rule.
+        """
+        return len(self.lhs + self.rhs)
+    
 
 def generate_rules_simple(itemsets: typing.List[tuple], min_confidence: float, 
                           num_transactions: int):
@@ -219,23 +225,34 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
         yield from _genrules(l_k, a_m, itemsets, min_conf, num_transactions)
 
  
-def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float, 
-                           num_transactions: int):
+def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]], 
+                           min_confidence: float, num_transactions: int):
     """
     Bottom up algorithm for generating association rules from itemsets, very
     similar to the fast algorithm proposed in the original 1994 paper by 
     Agrawal et al.
     
+    The algorithm is based on the observation that for {a, b} -> {c, d} to
+    hold, both {a, b, c} -> {d} and {a, b, d} -> {c} must hold, since in
+    general conf( {a, b, c} -> {d} ) >= conf( {a, b} -> {c, d} ).
+    In other words, if either of the two one-consequent rules do not hold, then
+    there is no need to ever consider the two-consequent rule.
+    
     Parameters
     ----------
-    l_k : tuple
-        The itemset containing
+    itemsets : dict of dicts
+        The first level of the dictionary is of the form (length, dict of item
+        sets). The second level is of the form (itemset, count_in_dataset)).
+    min_confidence :  float
+        The minimum confidence required for the rule to be yielded.
+    num_transactions : int
+        The number of transactions in the data set.
         
     Examples
     --------
     >>> itemsets = {1: {('a',): 3, ('b',): 2, ('c',): 1}, 
     ...             2: {('a', 'b'): 2, ('a', 'c'): 1}}
-    >>> list(generate_rules_apriori(itemsets, 1, 3))
+    >>> list(generate_rules_apriori(itemsets, 1.0, 3))
     [{b} -> {a}, {c} -> {a}]
     """
     
@@ -255,19 +272,18 @@ def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float,
         # For every itemset of this size
         for itemset in itemsets[size].keys():
             
-            # Special case to capture rules such as {1_item} -> {others}
+            # Special case to capture rules such as {others} -> {1 item}
             for removed in itertools.combinations(itemset, 1):
                 
-                # Compute the right hand side
-                rhs = set(itemset).difference(set(removed))
-                rhs = tuple(sorted(list(rhs)))
+                # Compute the left hand side
+                lhs = set(itemset).difference(set(removed))
+                lhs = tuple(sorted(list(lhs)))
                 
                 # If the confidence is high enough, yield the rule
-                conf = count(itemset) / count(removed)
+                conf = count(itemset) / count(lhs)
                 if conf >= min_confidence:
-                    yield Rule(removed, rhs, count(itemset), 
-                               count(removed), count(rhs), 
-                               num_transactions)
+                    yield Rule(lhs, removed, count(itemset), count(lhs), 
+                               count(removed), num_transactions)
                     
             # Generate combinations to start off of. These 1-combinations will
             # be merged to 2-combinations in the function `_ap_genrules`
@@ -276,7 +292,9 @@ def generate_rules_apriori(itemsets: typing.List[tuple], min_confidence: float,
                                     num_transactions)
     
     
-def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
+def _ap_genrules(itemset: tuple, H_1: typing.List[tuple], itemsets: 
+                 typing.Dict[int, typing.Dict[tuple, int]], min_conf: float, 
+                 num_transactions: int):
     """
     Recursive algorithm to build up rules from a bottom-up approach.
     """
@@ -291,26 +309,28 @@ def _ap_genrules(itemset, H_1, itemsets, min_conf, num_transactions):
     # This cannot happen, so abort if it will
     if len(itemset) <= (len(H_1[0]) + 1):
         return
-    
+
     # Generate left-hand itemsets of length k + 1 if H is of length k
     H_m = list(apriori_gen(H_1))
-    
     H_m_copy = H_m.copy()
+    
+    # For every possible right hand side
     for h_m in H_m:
-        # Compute the right ahdn side of the rule
-        rhs = tuple(sorted(list(set(itemset).difference(set(h_m)))))
+        # Compute the right hand side of the rule
+        lhs = tuple(sorted(list(set(itemset).difference(set(h_m)))))
 
-        conf = count(itemset) / count(h_m)
-        
-        # TODO: Should this rule be the other way around?
-        if conf >= min_conf:
-            yield Rule(h_m, rhs, count(itemset), count(h_m), 
-                       count(rhs), num_transactions)
+        # If the confidence is high enough, yield the rule, else remove from
+        # the upcoming recursive generator call
+        if (count(itemset) / count(lhs)) >= min_conf:
+            yield Rule(lhs, h_m, count(itemset), count(lhs), 
+                       count(h_m), num_transactions)
         else:
             H_m_copy.remove(h_m)
         
-    yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, 
-                            num_transactions)
+    # Unless the list of right-hand sides is empty, recurse the generator call
+    if H_m_copy:
+        yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, 
+                                num_transactions)
 
 
 if __name__ == '__main__':
