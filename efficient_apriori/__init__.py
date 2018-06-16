@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jun 11 18:32:24 2018
-
-@author: tommy
+Implementation of the Apriori algorithm.
 """
 
-__version__ = '0.1'
+__version__ = '0.2'
 
 from efficient_apriori import apriori

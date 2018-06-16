@@ -81,7 +81,6 @@ def test_generate_rules_apriori_large():
     assert set(rules_apri) == set(rules_naive)
     
 
-
 input_data = [list(generate_transactions(num_transactions=random.randint(15, 
                                                                          25), 
                                          unique_items=random.randint(1, 10), 
