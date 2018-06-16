@@ -5,6 +5,7 @@ Tests for algorithms related to association rules.
 """
 
 import pytest
+import os
 from efficient_apriori.apriori import apriori
 
 
@@ -28,11 +29,11 @@ def test_adult_dataset():
                     yield tuple(k.strip() for k in line.split(','))      
         return data_gen
 
-    filename = 'adult_data_cleaned.txt'
-    transactions = data_generator(filename)
+    base, filename = os.path.split(__file__)
+    transactions = data_generator(os.path.join(base, 'adult_data_cleaned.txt'))
     itemsets, rules = apriori(transactions, min_support=0.4, 
                               min_confidence=0.4)
-    
-    
+
+
 if __name__ == '__main__':
-    pytest.main(args=['.', '--doctest-modules', '-v']) 
+    pytest.main(args=['.', '--doctest-modules', '-v'])
