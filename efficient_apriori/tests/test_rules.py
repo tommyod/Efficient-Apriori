@@ -49,12 +49,43 @@ def generate_rules_naively(itemsets, min_confidence, num_transactions):
             # If the confidence of the rule is high enough, yield it
             if rule.confidence >= min_confidence:
                 yield rule
+                
+                
+def test_generate_rules_apriori_large():
+    """
+    Test with lots of data.
+    This test will fail if the second argument to `_ap_genrules` is not 
+    validated as non-empty before the recursive function call. We must have
+    if H_m_copy:
+        yield from _ap_genrules
+    for this test to pass.
+    """
+    
+    transactions = generate_transactions(num_transactions=100, 
+                                         unique_items=30, 
+                                         items_row=(1, 20),
+                                         seed=123)
+    
+    itemsets, num_transactions = itemsets_from_transactions(transactions, 0.1)
+    
+    min_conf = 0.3
+    rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)
+    rules_naive = generate_rules_naively(itemsets, min_conf, num_transactions)
+    rules_apri = list(rules_apri)
+    rules_naive = list(rules_naive)
+    
+    # Test equal length, since no duplicates should be returned by apriori
+    assert len(rules_apri) == len(rules_naive)
+    
+    # Test equal results
+    assert set(rules_apri) == set(rules_naive)
+    
 
 
 input_data = [list(generate_transactions(num_transactions=random.randint(15, 
                                                                          25), 
                                          unique_items=random.randint(1, 10), 
-                                         items_row=(1, random.randint(2, 6)))) 
+                                         items_row=(1, random.randint(2, 8)))) 
               for i in range(25)]
                 
                 

@@ -292,11 +292,27 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
                                     num_transactions)
     
     
-def _ap_genrules(itemset: tuple, H_1: typing.List[tuple], itemsets: 
+def _ap_genrules(itemset: tuple, H_m: typing.List[tuple], itemsets: 
                  typing.Dict[int, typing.Dict[tuple, int]], min_conf: float, 
                  num_transactions: int):
     """
-    Recursive algorithm to build up rules from a bottom-up approach.
+    Recursively build up rules by adding more items to the right hand side.
+    
+    This algorithm is called `ap-genrules` in the original paper. It is
+    called by the `generate_rules_apriori` generator above. See it's docs.
+    
+    Parameters
+    ----------
+    itemset : tuple
+        The itemset under consideration.
+    H_m : tuple
+        Subsets of the itemset of length m, to be considered for rhs of a rule.
+    itemsets : dict of dicts
+        All itemsets and counts for in the data set.
+    min_conf : float
+        The minimum confidence for a rule to be returned.
+    num_transactions : int
+        The number of transactions in the data set.
     """
     def count(itemset):
         """
@@ -307,11 +323,11 @@ def _ap_genrules(itemset: tuple, H_1: typing.List[tuple], itemsets:
     # If H_1 is so large that calling `apriori_gen` will produce right-hand
     # sides as large as `itemset`, there will be no right hand side
     # This cannot happen, so abort if it will
-    if len(itemset) <= (len(H_1[0]) + 1):
+    if len(itemset) <= (len(H_m[0]) + 1):
         return
 
     # Generate left-hand itemsets of length k + 1 if H is of length k
-    H_m = list(apriori_gen(H_1))
+    H_m = list(apriori_gen(H_m))
     H_m_copy = H_m.copy()
     
     # For every possible right hand side
