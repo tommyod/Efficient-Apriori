@@ -60,9 +60,9 @@ for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
   print(rule) # Prints the rule and its confidence, support, lift, ...
 ```
 
-### Working with large data itemsets
+### Working with large datasets
 
-If you have data that is too large to fit into memory, you may pass a function returning a generator.
+If you have data that is too large to fit into memory, you may pass a function returning a generator instead of a list.
 The `min_support` will most likely have to be a large value, or the algorithm will take very long before it terminates.
 If you have massive amounts of data, this Python implementation is likely not fast enough, and you should consult more specialized implementations.
 
