@@ -37,15 +37,15 @@ def test_against_R_implementation_1():
     
     for rule in rules:
         if rule == Rule(('a',), ('e',)):
-            assert abs(rule.support - 0.4285714) < 10e-6
+            assert abs(rule.support - 0.4285714) < 10e-7
             assert rule.confidence == 1
             
         if rule == Rule(('c', 'e'), ('a',)):
-            assert abs(rule.support - 0.2857143) < 10e-6
+            assert abs(rule.support - 0.2857143) < 10e-7
             assert rule.confidence == 1
             
         if rule == Rule(('e',), ('a',)):
-            assert abs(rule.support - 0.4285714) < 10e-6
+            assert abs(rule.support - 0.4285714) < 10e-7
             assert rule.confidence == 3 / 4
     
     
@@ -85,12 +85,12 @@ def test_against_R_implementation_2():
 
     for rule in rules:
         if rule == Rule(('a',), ('e',)):
-            assert abs(rule.support - 0.21875) < 10e-6
-            assert abs(rule.confidence - 0.5833333) < 10e-6
+            assert abs(rule.support - 0.21875) < 10e-7
+            assert abs(rule.confidence - 0.5833333) < 10e-7
             
         if rule == Rule(('e',), ('a',)):
-            assert abs(rule.support - 0.21875) < 10e-6
-            assert abs(rule.confidence - 0.5000000) < 10e-6
+            assert abs(rule.support - 0.21875) < 10e-7
+            assert abs(rule.confidence - 0.5000000) < 10e-7
             
             
 def test_against_R_implementation_3():
@@ -121,20 +121,20 @@ def test_against_R_implementation_3():
 
     for rule in rules:
         if rule == Rule(('b',), ('e',)):
-            assert abs(rule.support - 0.3750) < 10e-6
-            assert abs(rule.confidence - 0.8571429) < 10e-6
+            assert abs(rule.support - 0.3750) < 10e-7
+            assert abs(rule.confidence - 0.8571429) < 10e-7
             
         if rule == Rule(('i',), ('e',)):
-            assert abs(rule.support - 0.3125) < 10e-6
-            assert abs(rule.confidence - 0.8333333) < 10e-6
+            assert abs(rule.support - 0.3125) < 10e-7
+            assert abs(rule.confidence - 0.8333333) < 10e-7
             
         if rule == Rule(('j',), ('e',)):
-            assert abs(rule.support - 0.2500) < 10e-6
-            assert abs(rule.confidence - 0.8000000) < 10e-6
+            assert abs(rule.support - 0.2500) < 10e-7
+            assert abs(rule.confidence - 0.8000000) < 10e-7
             
         if rule == Rule(('e',), ('b',)):
-            assert abs(rule.support - 0.3750) < 10e-6
-            assert abs(rule.confidence - 0.5000000) < 10e-6
+            assert abs(rule.support - 0.3750) < 10e-7
+            assert abs(rule.confidence - 0.5000000) < 10e-7
 
 
 def test_minimal_input():

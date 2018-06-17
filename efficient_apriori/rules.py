@@ -144,13 +144,14 @@ class Rule(object):
         """
         Equality of two rules.
         """
-        return (self.lhs == other.lhs) and (self.rhs == other.rhs)
+        return ((set(self.lhs) == set(other.lhs)) and 
+                (set(self.rhs) == set(other.rhs)))
     
     def __hash__(self):
         """
         Hashing a rule for efficient set and dict representation.
         """
-        return hash(self.lhs + self.rhs)
+        return hash(frozenset(self.lhs + self.rhs))
     
     def __len__(self):
         """
