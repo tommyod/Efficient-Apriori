@@ -83,9 +83,9 @@ def test_generate_rules_apriori_large():
 
 input_data = [list(generate_transactions(num_transactions=random.randint(15, 
                                                                          25), 
-                                         unique_items=random.randint(1, 10), 
-                                         items_row=(1, random.randint(2, 8)))) 
-              for i in range(25)]
+                                         unique_items=random.randint(1, 8), 
+                                         items_row=(1, random.randint(2, 6)))) 
+              for i in range(10)]
                 
                 
 @pytest.mark.parametrize("transactions", input_data)
