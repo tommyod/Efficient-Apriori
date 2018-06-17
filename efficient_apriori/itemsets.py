@@ -237,6 +237,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     # ------------------------------------------
     
     # While there are itemsets of the previous size
+    issubset = set.issubset  # Micro-optimization
     k = 2
     while large_itemsets[k - 1]:
         
@@ -263,7 +264,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
                 
                 # This is where most of the time is spent in the algorithm
                 # If the candidate set is a subset, add count and mark the row
-                if set.issubset(candidate_set, transaction):
+                if issubset(candidate_set, transaction):
                     candidate_itemset_counts[candidate] += 1
                     found_any = True
                     
