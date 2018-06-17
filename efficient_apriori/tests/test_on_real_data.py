@@ -38,8 +38,12 @@ def test_adult_dataset():
                     yield tuple(k.strip() for k in line.split(','))      
         return data_gen
 
-    base, filename = os.path.split(__file__)
-    transactions = data_generator(os.path.join(base, 'adult_data_cleaned.txt'))
+    try:
+        base, _ = os.path.split(__file__)
+        filename = os.path.join(base, 'adult_data_cleaned.txt')
+    except NameError:
+        filename = 'adult_data_cleaned.txt'
+    transactions = data_generator(filename)
     itemsets, rules = apriori(transactions, min_support=0.2, 
                               min_confidence=0.2)
     
