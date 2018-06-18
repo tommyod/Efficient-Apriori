@@ -1,26 +1,20 @@
 language: python
-
 notifications:
   email: false
-
 python:
-  - "3.6"
-
+- '3.6'
 before_install:
-  - pip install pep8
-  - pip install flake8
-
+- pip install pep8
+- pip install flake8
 before_script:
-  - "flake8 --show-source --ignore=F811,W293,W391,W292,W291 --max-line-length=79 --exclude='__init__.py'"
-
+- flake8 --show-source --ignore=F811,W293,W391,W292,W291 --max-line-length=79 --exclude='__init__.py'
 script:
-  - pytest --doctest-modules -v
-  
+- pytest --doctest-modules -v
 deploy:
   provider: pypi
   user: tommyod
   password:
-    secure: QBWqi7xXIbDiTETu7+owv31B3AFPQ8FxK8rEkNFWvtQce4oWQQ70tEbh2uP9Pz+skxbLqW6w3I4/JofJgHPaSOmDn9YEj3kJF8odPbYNX231Qo5tNRmwtHr/GIBDk+a0Hk0oS1VjuJ48JBT2Uq3KI+4Kmxsyl1tJbho67SjIKTb3CtsGemz/O3ifEjYrQYxkl4BhpqgoIZUh/Nb2Vsyfa+d4PuxMq4XbbNYuHpb7B1DbHAAsqy8MkMQQJNpQU5xNTTlCeD0SLmhlWiMbtLdQ8bv+VrnWxYvESo00BxA4wRnlObwwx6eTAvVWQOfVCMAxCnw+Pa17h4pOLkJGNgaGJmHL38mLBb46M4s5Qw95mM2GOCCpo24b/nTFvvRHuJxGoWQAcoauz4NBcIlml+YzbDl9BwyMAnCcrO/JRlkYEOFQWnVrPttXHf9qCd0X9iRtFZ/RRbijFkoz505aWmHjoCNtaXopHGdHSNZPreHr8IF16yfCSutww0KszhwurXHdyh8JjKSFkkv8Kr+V826bNEgYC1AECMIAHfqws16ZgXczXRNhityXbNOEVp2S3jGZ/yA6zsSQehzlBOTSV6odlo58lhQqN5JMhW3AjosaJFtOt2tBEFqvb+KEins636PFXp+q2D6y5PjWRlQQsJuS9BNy+Xa63RSs1ZCUo1oVeRw=
+    secure: gXbWErBhCxOpHET7Tx+Ix8umgJVshAIFhykD/5f4Y8kdITVrfUSmyNt3YObAgsSfshHFhrvmxa+hetik6glBa5smZrXsaPRzlHFDWUBebdhOZRCfH4rAeaUXC/OOYX2WZv1uTgdSOjMiCmc3echYIbHMNQ/HH9jonPD0hqYmlzqbZYWAD7ECNTAv2csOP5tx8GHDPBZk4nV4koWneWy7W4bQgkL0V+Ge8J1nd9oUuABJah9xK740Pk5BgNZWgR+kNqqX5r1MbxuSVR35Il7CAXycNu6U1zbD/vT7DDOGzG/go6H1p3fOAxvUlgOW5VO0pRqQ+2Le2SWXAQMpXtA/xWx24WYez3zAl0/XKLHkFfsbn+iJpDDGFU7HUgHQYT/uhZE0jTcvT2rzDY8MFhInfe+1PxQz/RMgD+J1fQniYBgvzxVDaifF5RNQuxP3u0XoI3L8Shtd92m/PtGXPwNhdvVVegX/ATyn7LUr007Or5vpYPWTbe5SV7XPPRbYZvHJNxs8p5poaUh9MS+rGl1lUHmn3CLN2zs+sl5STHgJ3o9RwcDS9C1jZ/oL3etK0wNHy1q6YbpbirdGSwIPWKEKsgTdfYflfwD9yiJ7B+efWDX24794K1junB9Tg/GHEouYlD13LjbFi8dsvIubldSTG2kbtA8Y28X4o4TsI4jKEgA=
   on:
     tags: true
-  distributions: "sdist"
+  distributions: sdist
