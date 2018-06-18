@@ -1,26 +1,22 @@
 language: python
-
 notifications:
   email: false
-  
 python:
-  - '3.6'
-  
+- '3.6'
 before_install:
-  - pip install pep8
-  - pip install flake8
-  
+- pip install pep8
+- pip install flake8
 before_script:
-- "flake8 --show-source --ignore=F811,W293,W391,W292,W291 --max-line-length=79 --exclude='__init__.py'"
-
+- flake8 --show-source --ignore=F811,W293,W391,W292,W291 --max-line-length=79 --exclude='__init__.py'
 script:
-  - "pytest --doctest-modules -v"
-  
+- pytest --doctest-modules -v
 deploy:
   provider: pypi
   user: tommyod
   password:
-    secure: NF8rsc3SeM4A5SVD4mSSd4YgYHrjKgoJENrT0iMnFh8XS3xYSh2wiuMO7/GoPpl+HCG9ohh+vubinIZyYMZlo0VChhNEezeUiWx4oafINA+f/yzDhcjLiLSAcylnNSkcleEqPCskeoY/FpygGYFbaBKrPaHyUjBq9aJasKK6EhOoXv19y+36QgYWtjEvfBdRsjdA2lP0Sfyv1zYYMLuUSY4r/ao57EQs2zq3ftGvz6fHO6sKUFS1vO/MbfrG5hVGJ0GeTOb+O1lM5ostnLGWv4jFRTTVsDaxNmv0l8hUZQuSqRFPDkjOTnxORjoQjPsb8i6ctyIjXqVeehBKYkVHRcoqsbDoe6HwUCsst3Fu57xYmRCt303hx5PSK3TKZVR+8i0EvDrslv3xY4BcDpaILS61wWanL/Bd2WL1KMQOop1dJhyE6xGFc7pKk8cOGKSieJjVkkZqRFjXgOZd01HrBDbOWAoDk0YVQZbKlGps0O0WTAopcSA8oYPhCslhrqZSfBO8OVADsYqpa3R/NjUXGULx44EjuD447NK98wyR9J5o71fNlWnltrxrVCHqBNsAh4EUHVaufm8mPaTfk3QiAZtrfzQEK8GOljZOPlpUTd6DVw9tmFKO3k3K+EDi/gYMiSO7liUVzESdl2XeMLwJzeuabB0EHe94GW0/4ra7k5A=
+    secure: V+Tg+phQVhkA7/tes9/icNSEsF4OZBWJZjgUn6UxbE5ZTwbktOzTFanPQ8XyjYAx4kfGM3h+CS50+ShFb4p3LAv+DJrGj3RCFIdFpEC9L5u8Bdb9Iz/Wo6K+NbmXiDngLdkWYhtKQEKBa/Zkb0J0yEHogpyyQcDCP+O7Z8C+8OFqALfFOIxzRi5+B0xIz5FPXlDd32Ttz3hqVfFViLgu6WHDlKc112/BqIlcS3ErVtJJf1KuA7MdWQ6u7Whrv2WE3qZqakzj0p+hQD6LOj3mENj/bpL9SizOyH9j/7oV8gEQih1/qBIr7HY1eKKjKzmz+4Vq9ianqiEvgOo4MWzwfyRgaMnZARyDwOh6HaPPRGCQ/v5mEBONQENCTuG8Zvrr4iUaglG6tu/AcoCOXoERr5T1LW3NYyMQjwCZiN6uFWALUkxd6l+sLr6Nz2yQBpnl1cOqH5zO9pz8HU/8rvJ+acP0YNjfTOJQ39/yJJ0PQy+VM5wMeFXw6Z5/R+vlI7b21Vd78iTlwUaqV8yRQKsyxPjTrdnK/5HrTnug4UoyD79mz/ccnsMGilbMCFL1Lhm10lVmKkgpxP1An+7kpEH6mQ15DOOzYqHzD2i3ERrRsS49HjISzcflcV2IqkgoTbv6z4soqoJtPGK2ITIPpeBXwpnVHwjvVkTa1Y1kjWS/x1Q=
   on:
     tags: true
-  distributions: "sdist bdist_wheel"
+  distributions: sdist bdist_wheel
+  password=Rebb3517h6:
+    secure: WQBKFT3vfop8KzDna5F+E6ej4mzjHP79q+1b+eIHfiyfeHZKsMsUU+tGQwTCg4yxv99GG1A8kD/zjNfWhUpKj7CAyBSKUNJetgLVrz1zUyY3ymbf1oUdrgl/2nhoDpt28dsLChLvcsr4fZUW3p8YYu/Yq4DQsY1KxUdf+yP9939V0rga574meodysRnzteEtgVQC1s9IkAhrOjppkdKaiCbuiIJZliDle+sqhCkoQYcOcvwJQkBzsq7aMJYkjAfNKw0Xv1gx8YHI05Th6MSS/ImPIcbVREGTWjVNkRL4JCGu0i8nHnZXapGE0SpEKElTj8T+LO7Cifyup8+eYlqFUuUatU+mQm1kAXCij4W6Q4/999r9rEvg+rQmDrHjHo9nMIaWj18a4Y0xASocR7O4ESOKkB+bw305SrUKesM69PwDdlB6YWbkxnLJ6thxkuSMy8L6HVqvmi2yqFnNpxO3XpSjviwV6V09jitM6k2foUubivX9m7xH7AgGwA5oiSCWY9QEcAok1xYqh8hTlMdxZ0u3QtwGxLaoB+nZ5ufD6LUSpb5JAZpVU+oBllc69JAG05N5icOL1RUhc9C59PS9OWk1CXXlDjopzJHA4bnHsMwyBy5dcF1dF9WuwWVTVBJBZ8KT7j7i6N1FHC7GirIhKPouQBpQ23v6X5e45z6pPhY=
