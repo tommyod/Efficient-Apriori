@@ -1,20 +1,26 @@
 language: python
+
 notifications:
   email: false
+  
 python:
-- '3.6'
+  - '3.6'
+  
 before_install:
-- pip install pep8
-- pip install flake8
+  - pip install pep8
+  - pip install flake8
+  
 before_script:
-- flake8 --show-source --ignore=F811,W293,W391,W292,W291 --max-line-length=79 --exclude='__init__.py'
+- "flake8 --show-source --ignore=F811,W293,W391,W292,W291 --max-line-length=79 --exclude='__init__.py'"
+
 script:
-- pytest --doctest-modules -v
+  - "pytest --doctest-modules -v"
+  
 deploy:
   provider: pypi
   user: tommyod
   password:
-    secure: RA4gpSGNpzA5/AlA2r9cwe9UCCsh77z3Dy2rFYPNwp7DYhw7DBYY/q2l+gk/+bugauTPo/5n1Gpi3ZwryJABf68yxrXFbjg8xL5G7RMJ6ame+jbOf4NEaFopgBI7DpKU3mWRXFs9EDz1wxqDHqbKdR4PV3ryGcgKTKxZGQwM4dNdsV7vkRsZ2gG8PToGMsSYRfmMkg2YHLO3HSbbYvPy60SAUIPM6noFIj0Rv3PTX8EEAMqrs6FSbkn6/Msr3TCJcM+mmVBKIUixR8+tHqfESn0CsCunsIf8hUNnIS9uothNk0iG0HNqmdpTI4wLkfawTcfg46zbqD6Xmzz/SKCqAsGo623ZxPfDWcDR5hyRTDQ8lUj77rqHM/egfchjsITJ/4Xo7SMAKWW1tLFlnnKsZe8ZiHO4SAelnvQciPedjk9AG2e3r5i+Ngzt/if9qD0jG0RHvkUXEKQ+U1e/5PtzSJIB58QekObzHDG5QWn4BqIzj//2DsReNwGn5ed6ZfsapHxVt0dji6b58XzJ0uhS8BaHp963zv8FqtOlgrHY1QgYRAXBYHo6JYSr/YRlc1hFebeH/MRE+Trj5DltkflPg+mEa6FFfTYmUoH0nJyD7h8I+/Mint2PkHXqkniDBRUdGei8yQs3+Ge0SjgSo9QJJv6UWpMVyNSEnmQZYEzeC5E=
+    secure: NF8rsc3SeM4A5SVD4mSSd4YgYHrjKgoJENrT0iMnFh8XS3xYSh2wiuMO7/GoPpl+HCG9ohh+vubinIZyYMZlo0VChhNEezeUiWx4oafINA+f/yzDhcjLiLSAcylnNSkcleEqPCskeoY/FpygGYFbaBKrPaHyUjBq9aJasKK6EhOoXv19y+36QgYWtjEvfBdRsjdA2lP0Sfyv1zYYMLuUSY4r/ao57EQs2zq3ftGvz6fHO6sKUFS1vO/MbfrG5hVGJ0GeTOb+O1lM5ostnLGWv4jFRTTVsDaxNmv0l8hUZQuSqRFPDkjOTnxORjoQjPsb8i6ctyIjXqVeehBKYkVHRcoqsbDoe6HwUCsst3Fu57xYmRCt303hx5PSK3TKZVR+8i0EvDrslv3xY4BcDpaILS61wWanL/Bd2WL1KMQOop1dJhyE6xGFc7pKk8cOGKSieJjVkkZqRFjXgOZd01HrBDbOWAoDk0YVQZbKlGps0O0WTAopcSA8oYPhCslhrqZSfBO8OVADsYqpa3R/NjUXGULx44EjuD447NK98wyR9J5o71fNlWnltrxrVCHqBNsAh4EUHVaufm8mPaTfk3QiAZtrfzQEK8GOljZOPlpUTd6DVw9tmFKO3k3K+EDi/gYMiSO7liUVzESdl2XeMLwJzeuabB0EHe94GW0/4ra7k5A=
   on:
     tags: true
-  distributions: sdist bdist_wheel
+  distributions: "sdist bdist_wheel"
