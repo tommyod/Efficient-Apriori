@@ -17,6 +17,7 @@ VERSION = __version__
 
 here = path.abspath(path.dirname(__file__))
 
+
 def read(fname):
     return open(path.join(here, fname)).read()
 

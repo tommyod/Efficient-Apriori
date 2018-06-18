@@ -59,11 +59,3 @@ def apriori(transactions: typing.List[tuple], min_support: float=0.5,
 if __name__ == '__main__':
     import pytest
     pytest.main(args=['.', '--doctest-modules', '-v'])
-    
-    
-if __name__ == '__main__':
-    transactions = [('eggs', 'bacon', 'soup'),
-                    ('eggs', 'bacon', 'apple'),
-                    ('soup', 'bacon', 'banana')]
-    itemsets, rules = apriori(transactions, min_support=0.5,  min_confidence=1, verbosity=1)
-    print(rules)
