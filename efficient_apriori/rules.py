@@ -246,7 +246,8 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
 
  
 def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]], 
-                           min_confidence: float, num_transactions: int):
+                           min_confidence: float, num_transactions: int,
+                           verbosity: int=0):
     """
     Bottom up algorithm for generating association rules from itemsets, very
     similar to the fast algorithm proposed in the original 1994 paper by 
@@ -267,6 +268,8 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
         The minimum confidence required for the rule to be yielded.
     num_transactions : int
         The number of transactions in the data set.
+    verbosity : int
+        The level of detail printing when the algorithm runs. Either 0, 1 or 2.
         
     Examples
     --------
@@ -289,6 +292,9 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
         Helper function to retrieve the count of the itemset in the dataset.
         """
         return itemsets[len(itemset)][itemset]
+    
+    if verbosity > 0:
+        print(f'Generating rules from itemsets.')
 
     # For every itemset of a perscribed size
     for size in itemsets.keys():
@@ -296,6 +302,9 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
         # Do not consider itemsets of size 1
         if size < 2:
             continue
+        
+        if verbosity > 0:
+            print(f' Generating rules of size {size}.')
         
         # For every itemset of this size
         for itemset in itemsets[size].keys():
@@ -318,6 +327,9 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
             H_1 = list(itertools.combinations(itemset, 1))
             yield from _ap_genrules(itemset, H_1, itemsets, min_confidence, 
                                     num_transactions)
+            
+    if verbosity > 0:
+        print(f'Rule generation terminated.\n')
     
     
 def _ap_genrules(itemset: tuple, H_m: typing.List[tuple], itemsets: 

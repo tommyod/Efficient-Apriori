@@ -72,12 +72,6 @@ def itemsets_from_transactions_naive(transactions, min_support):
     return L, num_transactions
 
 
-def test_itemsets_from_transactions_regression():
-    """
-    """
-    assert True
-
-
 input_data = [(list(generate_transactions(random.randint(5, 25),
                                           random.randint(1, 8),
                                           (1, random.randint(2, 8)))),
@@ -97,6 +91,18 @@ def test_itemsets_from_transactions_stochastic(transactions, min_support):
     for key in set.union(set(result.keys()), set(naive_result.keys())):
         assert result[key] == naive_result[key]
         
+    
+@pytest.mark.parametrize("transactions, min_support", input_data)
+def test_itemsets_max_length(transactions, min_support):
+    """
+    The that nothing larger than max length is returned.
+    """
+    max_len = random.randint(1, 5)
+    result, _ = itemsets_from_transactions(list(transactions), min_support, 
+                                           max_length=max_len)
+    
+    assert all(list(k <= max_len for k in result.keys()))
+    
         
 def test_itemsets_from_a_generator_callable():
     """

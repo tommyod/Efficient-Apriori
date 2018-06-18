@@ -10,7 +10,7 @@ from efficient_apriori.rules import generate_rules_apriori
 
 
 def apriori(transactions: typing.List[tuple], min_support: float=0.5, 
-            min_confidence: float=0.5):
+            min_confidence: float=0.5, max_length: int=8, verbosity: int=0):
     """
     The classic apriori algorithm as described in 1994 by Agrawal et al.
     
@@ -37,6 +37,10 @@ def apriori(transactions: typing.List[tuple], min_support: float=0.5,
     min_confidence : float
         The minimum confidence of the rules returned. Given a rule X -> Y, the
         confidence is the probability of Y, given X, i.e. P(Y|X) = conf(X -> Y)
+    max_length : int
+        The maximum length of the itemsets and the rules.
+    verbosity : int
+        The level of detail printing when the algorithm runs. Either 0, 1 or 2.
     
     Examples
     --------
@@ -45,11 +49,21 @@ def apriori(transactions: typing.List[tuple], min_support: float=0.5,
     >>> rules
     [{a} -> {b}]
     """
-    itemsets, num_trans = itemsets_from_transactions(transactions, min_support)
-    rules = generate_rules_apriori(itemsets, min_confidence, num_trans)
+    itemsets, num_trans = itemsets_from_transactions(transactions, min_support, 
+                                                     max_length, verbosity)
+    rules = generate_rules_apriori(itemsets, min_confidence, num_trans, 
+                                   verbosity)
     return itemsets, list(rules)
 
           
 if __name__ == '__main__':
     import pytest
     pytest.main(args=['.', '--doctest-modules', '-v'])
+    
+    
+if __name__ == '__main__':
+    transactions = [('eggs', 'bacon', 'soup'),
+                    ('eggs', 'bacon', 'apple'),
+                    ('soup', 'bacon', 'banana')]
+    itemsets, rules = apriori(transactions, min_support=0.5,  min_confidence=1, verbosity=1)
+    print(rules)
