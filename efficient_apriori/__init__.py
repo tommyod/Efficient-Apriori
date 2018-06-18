@@ -4,6 +4,6 @@
 Implementation of the Apriori algorithm.
 """
 
-__version__ = '0.3'
+__version__ = '0.3' 
 
 from efficient_apriori.apriori import apriori
