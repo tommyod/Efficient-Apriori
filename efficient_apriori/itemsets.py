@@ -154,7 +154,8 @@ def apriori_gen(itemsets: typing.List[tuple]):
 
 def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple], 
                                                           typing.Callable], 
-                               min_support: float):
+                               min_support: float, max_length: int=8,
+                               verbosity: int=0):
     """
     Compute itemsets from transactions by building the itemsets bottom up and
     iterating over the transactions to compute the support repedately. This is
@@ -170,6 +171,10 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     min_support : float
         The minimum support of the itemsets, i.e. the minimum frequency as a
         percentage.
+    max_length : int
+        The maximum length of the itemsets.
+    verbosity : int
+        The level of detail printing when the algorithm runs. Either 0, 1 or 2.
     
     Examples
     --------
@@ -215,6 +220,10 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------
+    if verbosity > 0:
+        print(f'Generating itemsets.')
+        print(f' Counting itemsets of length 1.')
+    
     counts = collections.defaultdict(int)
     num_transactions = 0
     for transaction in transactions():
@@ -224,6 +233,12 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
 
     large_itemsets = [(i, c) for (i, c) in counts.items() if 
                       (c / num_transactions) >= min_support]
+    
+    if verbosity > 0:
+        print(f'  Found {len(counts.items())} candidate itemsets of length 1.')
+        print(f'  Found {len(large_itemsets)} large itemsets of length 1.')
+    if verbosity > 1:
+            print(f'    {list((i,) for (i, c) in large_itemsets)}')
 
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
@@ -239,7 +254,9 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     # While there are itemsets of the previous size
     issubset = set.issubset  # Micro-optimization
     k = 2
-    while large_itemsets[k - 1]:
+    while large_itemsets[k - 1] and (max_length != 1):
+        if verbosity > 0:
+            print(f' Counting itemsets of length {k}.')
         
         # STEP 2a) - Build up candidate of larger itemsets 
         
@@ -250,8 +267,19 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         C_k = list(prune_step(itemsets_list, join_step(itemsets_list)))
         C_k_sets = [set(itemset) for itemset in C_k]
         
+        if verbosity > 0:
+            print(f'  Found {len(C_k)} candidate itemsets of length {k}.')
+        if verbosity > 1:
+            print(f'   {C_k}')
+            
+        # If no candidate itemsets were found, break out of the loop
+        if not C_k:
+            break
+        
         # Prepare counts of candidate itemsets (from the pruen step)
         candidate_itemset_counts = collections.defaultdict(int)
+        if verbosity > 1:
+            print(f'    Iterating over transactions.')
         for row, transaction in enumerate(transactions()):
             
             # If we've excluded this transaction earlier, do not consider it
@@ -277,14 +305,27 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         C_k = [(i, c) for (i, c) in candidate_itemset_counts.items() 
                if (c / num_transactions) >= min_support]
         
-        # If no candidate itemsets were found, break out of the loop
+        # If no itemsets were found, break out of the loop
         if not C_k:
             break
         
         # Candidate itemsets were found, add them and progress the while-loop
         # They must be sorted to maintain the invariant when joining/pruning
         large_itemsets[k] = {i: c for (i, c) in sorted(C_k)}
+
+        if verbosity > 0:
+            num_found = len(large_itemsets[k])
+            print(f'  Found {num_found} large itemsets of length {k}.')
+        if verbosity > 1:
+            print(f'   {list(large_itemsets[k].keys())}')
         k += 1
+        
+        # Break out if we are about to consider larger itemsets than the max
+        if k > max_length:
+            break
+        
+    if verbosity > 0:
+        print(f'Itemset generation terminated.\n')
         
     return large_itemsets, num_transactions
 
