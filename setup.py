@@ -33,6 +33,7 @@ setup(
     description=' An efficient Python implementation of the Apriori \
     algorithm.',
     long_description=read('README.md'),
+    long_description_content_type="text/markdown",
     # The project's main homepage.
     url='https://github.com/tommyod/Efficient-Apriori',
 
