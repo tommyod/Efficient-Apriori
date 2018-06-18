@@ -17,7 +17,6 @@ VERSION = __version__
 
 here = path.abspath(path.dirname(__file__))
 
-
 def read(fname):
     return open(path.join(here, fname)).read()
 
@@ -32,9 +31,7 @@ setup(
 
     description=' An efficient Python implementation of the Apriori \
     algorithm.',
-    long_description=' An efficient Python implementation of the Apriori \
-    algorithm.',  
-    # read('README.rst'),
+    long_description=read('README.md'),
     # The project's main homepage.
     url='https://github.com/tommyod/Efficient-Apriori',
 
