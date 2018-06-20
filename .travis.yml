@@ -13,6 +13,8 @@ script:
 deploy:
   provider: pypi
   user: tommyod
+  distributions: sdist bdist_wheel
   password:
     secure: SKInT5B0NhLrTuoqpxWEJ3N8XRZmIZpDlEnBAVacP4IT3XJifCmsreey1RGedttw0mf7RbSeA/7FSKsv5vlmrfRiWYffEiHj3PJ3POm7bBghGtvkNR3S3cd0yK54jZaUxtGlNomwGCuH7zzeGOy8oSkTf6Vw0jHqcJyeuo+aoooiVLQ7EKhvcf1ZoBhVG1HA+4AytPz7cwWuRj3Jdopu2h3iMNwZUK9ynKyZEkJkAV+qatJBahhGhapN9W8IfaA7n5710cO4rrC+3LGCK/zl+Ju6abrRxkx36PPxKdgQ/HELauE/yVfW9jPng2MqY9VcQUxGPGDuNyKnMgrcBI/25AQCTIWDgNzKbWK79oIVaqzyH0U58nbdeICVp8Swp/K4K9kxtOA/MP/JkbKngKvuOBTfqyaykSiCDeT8pPcR1mE+7LtI1weiwm26OGoKkt3/kn1NcyxGet+WiFCV2uGTT+6FdjlnI/031c4D8kr9a4Xkz8vRMSEY51sYGQGLPgVGeVKdDgEoc5kLW+V3qLi3Kw57S4B13EIWHgsmkfUkm43b1SpQuZbgLeUUn3uywgDJkiaqYxwaF8F5QcjjBqsP63tchA0IjNUiDEh63jtFv4EnuaCnOtYpfLBq1y7UiMF1HmLjgElFrm3ziXsc3LsdxYf7PPWuuJF3xFZENy5V+jk=
-  distributions: sdist bdist_wheel
+  on:
+    repo: tommyod/Efficient-Apriori
