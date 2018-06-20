@@ -69,7 +69,9 @@ class Rule(object):
         """
         try:
             return self.count_full / self.count_lhs
-        except (ZeroDivisionError, AttributeError) as error:
+        except ZeroDivisionError:
+            return None
+        except AttributeError:
             return None
     
     @property
@@ -80,9 +82,11 @@ class Rule(object):
         """
         try:
             return self.count_full / self.num_transactions
-        except (ZeroDivisionError, AttributeError) as error:
+        except ZeroDivisionError:
             return None
-    
+        except AttributeError:
+            return None
+        
     @property
     def lift(self):
         """
@@ -95,7 +99,9 @@ class Rule(object):
             prod_counts = self.count_lhs * self.count_rhs
             expected_support = (prod_counts) / self.num_transactions ** 2
             return observed_support / expected_support
-        except (ZeroDivisionError, AttributeError) as error:
+        except ZeroDivisionError:
+            return None
+        except AttributeError:
             return None
         
     @property
@@ -111,7 +117,9 @@ class Rule(object):
             prob_not_rhs = 1 - self.count_rhs / self.num_transactions
             prob_not_rhs_given_lhs = 1 - self.confidence
             return prob_not_rhs / (prob_not_rhs_given_lhs + eps)
-        except (ZeroDivisionError, AttributeError) as error:
+        except ZeroDivisionError:
+            return None
+        except AttributeError:
             return None
         
     @staticmethod

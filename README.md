@@ -1,4 +1,4 @@
-# Efficient-Apriori [![Build Status](https://travis-ci.com/tommyod/Efficient-Apriori.svg?branch=master)](https://travis-ci.com/tommyod/Efficient-Apriori)
+# Efficient-Apriori [![Build Status](https://travis-ci.com/tommyod/Efficient-Apriori.svg?branch=master)](https://travis-ci.com/tommyod/Efficient-Apriori) [![PyPI version](https://badge.fury.io/py/efficient-apriori.svg)](https://badge.fury.io/py/efficient-apriori)
 
 An efficient pure Python implementation of the Apriori algorithm.
 
@@ -27,12 +27,11 @@ More examples are included below.
 
 ## Installation
 
-Here's how to install from GitHub.
+The software is available through GitHub, and through  [PyPI](https://pypi.org/project/efficient-apriori/).
+You may install the software using `pip`.
 
 ```bash
-git clone https://github.com/tommyod/Efficient-Apriori.git
-cd Efficient-Apriori
-pip install .
+pip install efficient-apriori
 ```
 
 ## Contributing

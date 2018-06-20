@@ -87,49 +87,7 @@ def test_adult_dataset():
             assert abs(rule.support - 0.2200792) < 10e-7
             assert abs(rule.confidence - 0.7379261) < 10e-7
             assert abs(rule.lift - 2.249144) < 10e-7
-            
-            
-def test_retail_dataset():
-    """
-    Test on the retail dataset, which may be found here:
-        http://fimi.ua.ac.be/data/
-        
-    Some numeric columns were removed. The age was discretized.
-    The purpose of this test is to assure that the algorithm can deal with a
-    small 4.2 MB (88k rows) data set reasonably efficiently.
-
-    """
-    
-    def data_generator(filename):
-        """
-        Data generator, needs to return a generator to be called several times.
-        """
-        def data_gen():
-            with open(filename) as file:
-                for line in file:
-                    line = line.strip()
-                    yield tuple(k.strip() for k in line.split(' '))      
-        return data_gen
-
-    try:
-        base, _ = os.path.split(__file__)
-        filename = os.path.join(base, 'retail.dat')
-    except NameError:
-        filename = 'adult_data_cleaned.txt'
-    transactions = data_generator(filename)
-    itemsets, rules = apriori(transactions, min_support=0.04, 
-                              min_confidence=0.2, verbosity=1)
-    
-    print(len(rules))
-    
-    transactions = [(1, 2, 7, 4), 
-                    (2, 3, 4) ,
-                    (1, 6, 3) ,
-                    (1, 2, 4, 5)]
-    itemsets, rules = apriori(transactions, min_support=0.5, 
-                              min_confidence=0.2, verbosity=2)
 
 
 if __name__ == '__main__':
-    #pytest.main(args=['.', '--doctest-modules', '-v'])
-    test_retail_dataset()
+    pytest.main(args=['.', '--doctest-modules', '-v'])
