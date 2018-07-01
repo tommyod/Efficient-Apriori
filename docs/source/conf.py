@@ -14,7 +14,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('./../../efficient_apriori'))
+sys.path.insert(0, os.path.abspath('./../..'))
 
 from efficient_apriori import __version__
 
