@@ -7,6 +7,8 @@ Implementation of the Apriori algorithm.
 __version__ = '0.4.4'
 
 from efficient_apriori.apriori import apriori
+from efficient_apriori.itemsets import itemsets_from_transactions
+from efficient_apriori.rules import Rule, generate_rules_apriori
 
 def run_tests():
     """
