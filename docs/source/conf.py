@@ -16,14 +16,13 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+from efficient_apriori import __version__
 
 # -- Project information -----------------------------------------------------
 
 project = 'Efficient-Apriori'
 copyright = '2018, tommyod'
 author = 'tommyod'
-
-from efficient_apriori import __version__
 
 # The short X.Y version
 version = __version__
