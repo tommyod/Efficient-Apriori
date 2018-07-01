@@ -1,1 +1,2 @@
 pytest>=3.6.1
+numpydoc>=0.8.0
