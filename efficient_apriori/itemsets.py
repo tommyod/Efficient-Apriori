@@ -202,11 +202,11 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     elif isinstance(transactions, collections.Callable):
         ret_value = transactions()
         if not isinstance(ret_value, collections.Generator):
-            msg = '`transactions` must be an iterable or a callable' +
+            msg = '`transactions` must be an iterable or a callable ' + \
                   'returning an iterable.'
             raise TypeError(msg)
     else:
-        msg = '`transactions` must be an iterable or a callable' +
+        msg = '`transactions` must be an iterable or a callable ' + \
               'returning an iterable.'
         raise TypeError(msg)
 
