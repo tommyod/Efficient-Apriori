@@ -7,6 +7,7 @@ Overview
 --------
 
 An efficient pure Python implementation of the Apriori algorithm.
+Created for Python 3.6 and 3.7.
 
 The apriori algorithm uncovers hidden structures in categorical data.
 The classical example is a database containing purchases from a supermarket.
@@ -20,7 +21,6 @@ efficient, well-tested implementation of the apriori algorithm as descriped in
 the  `original paper <https://www.macs.hw.ac.uk/~dwcorne/Teaching/agrawal94fast.pdf>`_
 by Agrawal et al, published in 1994.
 
-
 Installation
 ------------
 
@@ -33,7 +33,6 @@ From your terminal, simply run the following command to install the package.
 
 Notice that the name of the package is ``efficient-apriori`` on PyPI, while it's
 imported as ``import efficient_apriori``.
-
 
 A minimal working example
 -------------------------
@@ -79,7 +78,6 @@ It's possible to filter and sort the returned list of association rules.
       print(rule) # Prints the rule and its confidence, support, lift, ...
 
 
-
 Working with large datasets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -104,6 +102,7 @@ likely not fast enough, and you should consult more specialized implementations.
 
     transactions = data_generator('dataset.csv')
     itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)
+
 
 Contributing
 ------------

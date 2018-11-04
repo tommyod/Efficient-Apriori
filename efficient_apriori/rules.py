@@ -140,7 +140,6 @@ class Rule(object):
         """
         Printing of a rule.
         """
-        
         conf = 'conf: {0:.3f}'.format(self.confidence)
         supp = 'supp: {0:.3f}'.format(self.support)
         lift = 'lift: {0:.3f}'.format(self.lift)

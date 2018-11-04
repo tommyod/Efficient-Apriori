@@ -1,6 +1,6 @@
 # Efficient-Apriori [![Build Status](https://travis-ci.com/tommyod/Efficient-Apriori.svg?branch=master)](https://travis-ci.com/tommyod/Efficient-Apriori) [![PyPI version](https://badge.fury.io/py/efficient-apriori.svg)](https://pypi.org/project/efficient-apriori/) [![Documentation Status](https://readthedocs.org/projects/efficient-apriori/badge/?version=latest)](https://efficient-apriori.readthedocs.io/en/latest/?badge=latest)
 
-An efficient pure Python implementation of the Apriori algorithm.
+An efficient pure Python implementation of the Apriori algorithm. Works with Python 3.6 and 3.7.
 
 The apriori algorithm uncovers hidden structures in categorical data.
 The classical example is a database containing purchases from a supermarket.
@@ -27,7 +27,7 @@ More examples are included below.
 
 ## Installation
 
-The software is available through GitHub, and through  [PyPI](https://pypi.org/project/efficient-apriori/).
+The software is available through GitHub, and through [PyPI](https://pypi.org/project/efficient-apriori/).
 You may install the software using `pip`.
 
 ```bash
@@ -36,7 +36,7 @@ pip install efficient-apriori
 
 ## Contributing
 
-You are very welcome to scrutinize the code and make pull requests if you have suggestions for improvements.
+You are very welcome to scrutinize the code and make pull requests if you have suggestions and improvements.
 Your submitted code must be PEP8 compliant, and all tests must pass.
 
 ## More examples
