@@ -5,11 +5,6 @@ notifications:
   
 matrix:
   include:
-  
-    - os: linux
-      sudo: required
-      services: docker
-      python: '3.5'
 
     - os: linux
       sudo: required

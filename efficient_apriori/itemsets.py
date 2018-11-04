@@ -181,12 +181,12 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     >>> # This is an example from the 1994 paper by Agrawal et al.
     >>> transactions = [(1, 3, 4), (2, 3, 5), (1, 2, 3, 5), (2, 5)]
     >>> itemsets, _ = itemsets_from_transactions(transactions, min_support=2/5)
-    >>> itemsets[1]
-    {(1,): 2, (2,): 3, (3,): 3, (5,): 3}
-    >>> itemsets[2]
-    {(1, 3): 2, (2, 3): 2, (2, 5): 3, (3, 5): 2}
-    >>> itemsets[3]
-    {(2, 3, 5): 2}
+    >>> itemsets[1] == {(1,): 2, (2,): 3, (3,): 3, (5,): 3}
+    True
+    >>> itemsets[2] == {(1, 3): 2, (2, 3): 2, (2, 5): 3, (3, 5): 2}
+    True
+    >>> itemsets[3] == {(2, 3, 5): 2}
+    True
     """
     # STEP 0 - Sanitize user inputs
     # -----------------------------

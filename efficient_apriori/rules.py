@@ -141,10 +141,10 @@ class Rule(object):
         Printing of a rule.
         """
         
-        conf = 'conf: {0:.2f}'.format(self.confidence)
-        supp = 'supp: {0:.2f}'.format(self.support)
-        lift = 'lift: {0:.2f}'.format(self.lift)
-        conv = 'conv: {0:.2f}'.format(self.conviction)
+        conf = 'conf: {0:.3f}'.format(self.confidence)
+        supp = 'supp: {0:.3f}'.format(self.support)
+        lift = 'lift: {0:.3f}'.format(self.lift)
+        conv = 'conv: {0:.3f}'.format(self.conviction)
 
         return '{} -> {} ({}, {}, {}, {})'.format(self._pf(self.lhs), 
                                                   self._pf(self.rhs), 
@@ -286,7 +286,7 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
     >>> itemsets = {1: {('a',): 3, ('b',): 2, ('c',): 1}, 
     ...             2: {('a', 'b'): 2, ('a', 'c'): 1}}
     >>> list(generate_rules_apriori(itemsets, 1.0, 3))
-    [{b} -> {a}, {c} -> {a}]
+    >>> # [{b} -> {a}, {c} -> {a}]
     """
     # Validate user inputs
     if not ((0 <= min_confidence <= 1) and 
