@@ -1,8 +1,27 @@
 language: python
+
 notifications:
   email: false
-python:
-- '3.6'
+  
+matrix:
+  include:
+  
+    - os: linux
+      sudo: required
+      services: docker
+      python: '3.5'
+
+    - os: linux
+      sudo: required
+      services: docker
+      python: '3.6'
+
+    - os: linux
+      dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
+      sudo: required
+      services: docker
+      python: '3.7'
+  
 before_install:
 - pip install pep8
 - pip install flake8
