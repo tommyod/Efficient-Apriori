@@ -140,10 +140,12 @@ class Rule(object):
         """
         Printing of a rule.
         """
-        conf = f'conf: {self.confidence:.3f}'
-        supp = f'supp: {self.support:.3f}'
-        lift = f'lift: {self.lift:.3f}'
-        conv = f'conv: {self.conviction:.3f}'
+        
+        conf = 'conf: {0:.2f}'.format(self.confidence)
+        supp = 'supp: {0:.2f}'.format(self.support)
+        lift = 'lift: {0:.2f}'.format(self.lift)
+        conv = 'conv: {0:.2f}'.format(self.conviction)
+
         return '{} -> {} ({}, {}, {}, {})'.format(self._pf(self.lhs), 
                                                   self._pf(self.rhs), 
                                                   conf, supp, lift, conv)
@@ -302,7 +304,7 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
         return itemsets[len(itemset)][itemset]
     
     if verbosity > 0:
-        print(f'Generating rules from itemsets.')
+        print('Generating rules from itemsets.')
 
     # For every itemset of a perscribed size
     for size in itemsets.keys():
@@ -312,7 +314,7 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
             continue
         
         if verbosity > 0:
-            print(f' Generating rules of size {size}.')
+            print(' Generating rules of size {}.'.format(size))
         
         # For every itemset of this size
         for itemset in itemsets[size].keys():
@@ -337,7 +339,7 @@ def generate_rules_apriori(itemsets: typing.Dict[int, typing.Dict[tuple, int]],
                                     num_transactions)
             
     if verbosity > 0:
-        print(f'Rule generation terminated.\n')
+        print('Rule generation terminated.\n')
     
     
 def _ap_genrules(itemset: tuple, H_m: typing.List[tuple], itemsets: 

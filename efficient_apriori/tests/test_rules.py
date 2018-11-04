@@ -157,17 +157,20 @@ def speeds():
     st = time.perf_counter()
     rules_apri = generate_rules_apriori(itemsets, min_conf, num_transactions)
     rules_apri = list(rules_apri)
-    print(f'Fast apriori ran in {round(time.perf_counter() - st, 40)} s')
+    time_formatted = round(time.perf_counter() - st, 40)
+    print('Fast apriori ran in {} s'.format(time_formatted))
     
     st = time.perf_counter()
     rules_simple = generate_rules_simple(itemsets, min_conf, num_transactions)
     rules_simple = list(rules_simple)
-    print(f'Simple apriori ran in {round(time.perf_counter() - st, 40)} s')
+    time_formatted = round(time.perf_counter() - st, 40)
+    print('Simple apriori ran in {} s'.format(time_formatted))
     
     st = time.perf_counter()
     rules_naive = generate_rules_naively(itemsets, min_conf, num_transactions)
     rules_naive = list(rules_naive)
-    print(f'Naive apriori ran in {round(time.perf_counter() - st, 40)} s')
+    time_formatted = round(time.perf_counter() - st, 40)
+    print('Naive apriori ran in {} s'.format(time_formatted))
 
 
 if __name__ == '__main__':
