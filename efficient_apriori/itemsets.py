@@ -212,7 +212,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
 
     if not (isinstance(min_support, numbers.Number) and
             (0 <= min_support <= 1)):
-        raise ValueError(f'`min_support` must be a number between 0 and 1.')
+        raise ValueError('`min_support` must be a number between 0 and 1.')
 
     # Keep a dictionary stating whether to consider the row, this will allow
     # row-pruning later on if no information was retrieved earlier from it
@@ -221,8 +221,8 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------
     if verbosity > 0:
-        print(f'Generating itemsets.')
-        print(f' Counting itemsets of length 1.')
+        print('Generating itemsets.')
+        print(' Counting itemsets of length 1.')
 
     counts = collections.defaultdict(int)
     num_transactions = 0
@@ -235,10 +235,11 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
                       (c / num_transactions) >= min_support]
 
     if verbosity > 0:
-        print(f'  Found {len(counts.items())} candidate itemsets of length 1.')
-        print(f'  Found {len(large_itemsets)} large itemsets of length 1.')
+        num_cand, num_itemsets = len(counts.items()), len(large_itemsets)
+        print('  Found {} candidate itemsets of length 1.'.format(num_cand))
+        print('  Found {} large itemsets of length 1.'.format(num_itemsets))
     if verbosity > 1:
-            print(f'    {list((i,) for (i, c) in large_itemsets)}')
+            print('    {}'.format(list((i,) for (i, c) in large_itemsets)))
 
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
@@ -256,7 +257,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     k = 2
     while large_itemsets[k - 1] and (max_length != 1):
         if verbosity > 0:
-            print(f' Counting itemsets of length {k}.')
+            print(' Counting itemsets of length {}.'.format(k))
 
         # STEP 2a) - Build up candidate of larger itemsets
 
@@ -268,9 +269,10 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         C_k_sets = [set(itemset) for itemset in C_k]
 
         if verbosity > 0:
-            print(f'  Found {len(C_k)} candidate itemsets of length {k}.')
+            print('  Found {} candidate itemsets of length {}.'
+                  .format(len(C_k), k))
         if verbosity > 1:
-            print(f'   {C_k}')
+            print('   {}'.format(C_k))
 
         # If no candidate itemsets were found, break out of the loop
         if not C_k:
@@ -279,7 +281,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         # Prepare counts of candidate itemsets (from the pruen step)
         candidate_itemset_counts = collections.defaultdict(int)
         if verbosity > 1:
-            print(f'    Iterating over transactions.')
+            print('    Iterating over transactions.')
         for row, transaction in enumerate(transactions()):
 
             # If we've excluded this transaction earlier, do not consider it
@@ -315,9 +317,10 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
 
         if verbosity > 0:
             num_found = len(large_itemsets[k])
-            print(f'  Found {num_found} large itemsets of length {k}.')
+            pp = '  Found {} large itemsets of length {}.'.format(num_found, k)
+            print(pp)
         if verbosity > 1:
-            print(f'   {list(large_itemsets[k].keys())}')
+            print('   {}'.format(list(large_itemsets[k].keys())))
         k += 1
 
         # Break out if we are about to consider larger itemsets than the max
@@ -325,7 +328,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
             break
 
     if verbosity > 0:
-        print(f'Itemset generation terminated.\n')
+        print('Itemset generation terminated.\n')
 
     return large_itemsets, num_transactions
 

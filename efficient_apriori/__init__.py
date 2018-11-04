@@ -10,6 +10,13 @@ from efficient_apriori.apriori import apriori
 from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import Rule, generate_rules_apriori
 
+
+apriori = apriori
+itemsets_from_transactions = itemsets_from_transactions
+Rule = Rule
+generate_rules_apriori = generate_rules_apriori
+
+
 def run_tests():
     """
     Run all tests.
