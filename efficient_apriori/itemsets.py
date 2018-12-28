@@ -265,7 +265,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         itemsets_list = list(large_itemsets[k - 1].keys())
 
         # Generate candidates of length k + 1 by joning, prune, and copy as set
-        C_k = list(prune_step(itemsets_list, join_step(itemsets_list)))
+        C_k = list(apriori_gen(itemsets_list))
         C_k_sets = [set(itemset) for itemset in C_k]
 
         if verbosity > 0:

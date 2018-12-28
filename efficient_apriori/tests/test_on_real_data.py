@@ -46,7 +46,7 @@ def test_adult_dataset():
     transactions = data_generator(filename)
     itemsets, rules = apriori(transactions, min_support=0.2, 
                               min_confidence=0.2)
-    
+
     # Test that the rules found in R were also found using this implementation
     rules_set = set(rules)
     assert Rule(('Married-civ-spouse', 'Husband', 'middle-aged'), 
