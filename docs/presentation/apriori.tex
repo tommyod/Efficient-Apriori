@@ -19,7 +19,7 @@
 
 \title{The Apriori Algorithm}
 \subtitle{Association rule learning, \\the Apriori algorithm and \\it's implementation}
-\institute{sdf}
+\institute{Presentation: \texttt{github.com/tommyod/Efficient-Apriori/blob/master/docs/presentation/apriori.pdf}}
 \date{\today}
 \author{\texttt{tommyod @ github}}
 
@@ -275,8 +275,8 @@
 	\begin{easylist}[itemize]
 		\ListProperties(Space=\listSpace, Space*=\listSpace)
 		# Split the problem into two distinct phases.
-		## Finding important (high support) itemsets.
-		## Generating relevant (high confidence) rules.
+		## Finding meaningful (high support) itemsets.
+		## Generating meaningful (high confidence) rules.
 		
 		# \textbf{Phase 1}
 		## The user specifies a desired \emph{minimum support}.
@@ -591,9 +591,9 @@ Masters &  Never-married &  Not-in-family &  White &  Female &  $>$50K & middle-
 \section{Summary and references}
 \begin{frame}[fragile]{Summary and references}
 	
-	The Apriori algorithm discovers frequent itemsets, and then meaningful association rules.
-	Both stages employ bottom-up algorithms.
-	By clever application of the downward closure property of support and confidence, candidates may be pruned prior to expensive computations.
+	The Apriori algorithm discovers frequent itemsets in phase 1, and meaningful association rules in phase 2.
+	Both phases employ clever bottom-up algorithms.
+	By application of the downward closure property of itemsets (support) and rules (confidence), candidates may be pruned prior to expensive computations.
 	
 	\vfill
 	
