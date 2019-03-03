@@ -4,8 +4,9 @@
 Implementation of the Apriori algorithm.
 """
 
-__version__ = '0.4.5'
+__version__ = "0.4.5"
 
+import sys
 from efficient_apriori.apriori import apriori
 from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import Rule, generate_rules_apriori
@@ -23,5 +24,10 @@ def run_tests():
     """
     import pytest
     import os
+
     base, _ = os.path.split(__file__)
-    pytest.main(args=[base, '--doctest-modules'])
+    pytest.main(args=[base, "--doctest-modules"])
+
+
+if (sys.version_info[0] < 3) or (sys.version_info[1] < 6):
+    raise Exception("The `efficient_apriori` package only works for Python 3.6+.")
