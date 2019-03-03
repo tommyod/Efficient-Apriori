@@ -239,7 +239,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         print('  Found {} candidate itemsets of length 1.'.format(num_cand))
         print('  Found {} large itemsets of length 1.'.format(num_itemsets))
     if verbosity > 1:
-            print('    {}'.format(list((i,) for (i, c) in large_itemsets)))
+        print('    {}'.format(list((i,) for (i, c) in large_itemsets)))
 
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
