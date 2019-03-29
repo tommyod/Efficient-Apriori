@@ -195,16 +195,16 @@ def itemsets_from_transactions(
     # -----------------------------
 
     # If the transactions are iterable, convert it to sets for faster lookups
-    if isinstance(transactions, collections.Iterable):
+    if isinstance(transactions, collections.abc.Iterable):
         transaction_sets = [set(t) for t in transactions if len(t) > 0]
 
         def transactions():
             return transaction_sets
 
     # Assume the transactions is a callable, returning a generator
-    elif isinstance(transactions, collections.Callable):
+    elif isinstance(transactions, collections.abc.Callable):
         ret_value = transactions()
-        if not isinstance(ret_value, collections.Generator):
+        if not isinstance(ret_value, collections.abc.Generator):
             msg = (
                 "`transactions` must be an iterable or a callable "
                 + "returning an iterable."
