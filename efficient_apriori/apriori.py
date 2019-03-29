@@ -9,8 +9,13 @@ from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import generate_rules_apriori
 
 
-def apriori(transactions: typing.List[tuple], min_support: float=0.5, 
-            min_confidence: float=0.5, max_length: int=8, verbosity: int=0):
+def apriori(
+    transactions: typing.List[tuple],
+    min_support: float = 0.5,
+    min_confidence: float = 0.5,
+    max_length: int = 8,
+    verbosity: int = 0,
+):
     """
     The classic apriori algorithm as described in 1994 by Agrawal et al.
     
@@ -49,13 +54,16 @@ def apriori(transactions: typing.List[tuple], min_support: float=0.5,
     >>> rules
     [{a} -> {b}]
     """
-    itemsets, num_trans = itemsets_from_transactions(transactions, min_support, 
-                                                     max_length, verbosity)
-    rules = generate_rules_apriori(itemsets, min_confidence, num_trans, 
-                                   verbosity)
+    itemsets, num_trans = itemsets_from_transactions(
+        transactions, min_support, max_length, verbosity
+    )
+    rules = generate_rules_apriori(
+        itemsets, min_confidence, num_trans, verbosity
+    )
     return itemsets, list(rules)
 
-          
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import pytest
-    pytest.main(args=['.', '--doctest-modules', '-v'])
+
+    pytest.main(args=[".", "--doctest-modules", "-v"])
