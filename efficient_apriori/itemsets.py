@@ -78,8 +78,9 @@ def join_step(itemsets: typing.List[tuple]):
         i += skip
 
 
-def prune_step(itemsets: typing.List[tuple],
-               possible_itemsets: typing.List[tuple]):
+def prune_step(
+    itemsets: typing.List[tuple], possible_itemsets: typing.List[tuple]
+):
     """
     Prune possible itemsets whose subsets are not in the list of itemsets.
 
@@ -111,7 +112,7 @@ def prune_step(itemsets: typing.List[tuple],
         # due to the way the `join_step` function merges the sorted itemsets
 
         for i in range(len(possible_itemset) - 2):
-            removed = possible_itemset[:i] + possible_itemset[i + 1:]
+            removed = possible_itemset[:i] + possible_itemset[i + 1 :]
 
             # If every k combination exists in the set of itemsets,
             # yield the possible itemset. If it does not exist, then it's
@@ -152,10 +153,12 @@ def apriori_gen(itemsets: typing.List[tuple]):
     yield from prune_step(itemsets, possible_extensions)
 
 
-def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
-                                                          typing.Callable],
-                               min_support: float, max_length: int=8,
-                               verbosity: int=0):
+def itemsets_from_transactions(
+    transactions: typing.Union[typing.List[tuple], typing.Callable],
+    min_support: float,
+    max_length: int = 8,
+    verbosity: int = 0,
+):
     """
     Compute itemsets from transactions by building the itemsets bottom up and
     iterating over the transactions to compute the support repedately. This is
@@ -202,17 +205,22 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     elif isinstance(transactions, collections.Callable):
         ret_value = transactions()
         if not isinstance(ret_value, collections.Generator):
-            msg = '`transactions` must be an iterable or a callable ' + \
-                  'returning an iterable.'
+            msg = (
+                "`transactions` must be an iterable or a callable "
+                + "returning an iterable."
+            )
             raise TypeError(msg)
     else:
-        msg = '`transactions` must be an iterable or a callable ' + \
-              'returning an iterable.'
+        msg = (
+            "`transactions` must be an iterable or a callable "
+            + "returning an iterable."
+        )
         raise TypeError(msg)
 
-    if not (isinstance(min_support, numbers.Number) and
-            (0 <= min_support <= 1)):
-        raise ValueError('`min_support` must be a number between 0 and 1.')
+    if not (
+        isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)
+    ):
+        raise ValueError("`min_support` must be a number between 0 and 1.")
 
     # Keep a dictionary stating whether to consider the row, this will allow
     # row-pruning later on if no information was retrieved earlier from it
@@ -221,8 +229,8 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------
     if verbosity > 0:
-        print('Generating itemsets.')
-        print(' Counting itemsets of length 1.')
+        print("Generating itemsets.")
+        print(" Counting itemsets of length 1.")
 
     counts = collections.defaultdict(int)
     num_transactions = 0
@@ -231,15 +239,18 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         for item in transaction:
             counts[item] += 1  # Increment counter for single-item itemsets
 
-    large_itemsets = [(i, c) for (i, c) in counts.items() if
-                      (c / num_transactions) >= min_support]
+    large_itemsets = [
+        (i, c)
+        for (i, c) in counts.items()
+        if (c / num_transactions) >= min_support
+    ]
 
     if verbosity > 0:
         num_cand, num_itemsets = len(counts.items()), len(large_itemsets)
-        print('  Found {} candidate itemsets of length 1.'.format(num_cand))
-        print('  Found {} large itemsets of length 1.'.format(num_itemsets))
+        print("  Found {} candidate itemsets of length 1.".format(num_cand))
+        print("  Found {} large itemsets of length 1.".format(num_itemsets))
     if verbosity > 1:
-        print('    {}'.format(list((i,) for (i, c) in large_itemsets)))
+        print("    {}".format(list((i,) for (i, c) in large_itemsets)))
 
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
@@ -257,7 +268,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
     k = 2
     while large_itemsets[k - 1] and (max_length != 1):
         if verbosity > 0:
-            print(' Counting itemsets of length {}.'.format(k))
+            print(" Counting itemsets of length {}.".format(k))
 
         # STEP 2a) - Build up candidate of larger itemsets
 
@@ -269,10 +280,13 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         C_k_sets = [set(itemset) for itemset in C_k]
 
         if verbosity > 0:
-            print('  Found {} candidate itemsets of length {}.'
-                  .format(len(C_k), k))
+            print(
+                "  Found {} candidate itemsets of length {}.".format(
+                    len(C_k), k
+                )
+            )
         if verbosity > 1:
-            print('   {}'.format(C_k))
+            print("   {}".format(C_k))
 
         # If no candidate itemsets were found, break out of the loop
         if not C_k:
@@ -281,7 +295,7 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
         # Prepare counts of candidate itemsets (from the pruen step)
         candidate_itemset_counts = collections.defaultdict(int)
         if verbosity > 1:
-            print('    Iterating over transactions.')
+            print("    Iterating over transactions.")
         for row, transaction in enumerate(transactions()):
 
             # If we've excluded this transaction earlier, do not consider it
@@ -304,8 +318,11 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
                 use_transaction[row] = False
 
         # Only keep the candidates whose support is over the threshold
-        C_k = [(i, c) for (i, c) in candidate_itemset_counts.items()
-               if (c / num_transactions) >= min_support]
+        C_k = [
+            (i, c)
+            for (i, c) in candidate_itemset_counts.items()
+            if (c / num_transactions) >= min_support
+        ]
 
         # If no itemsets were found, break out of the loop
         if not C_k:
@@ -317,10 +334,10 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
 
         if verbosity > 0:
             num_found = len(large_itemsets[k])
-            pp = '  Found {} large itemsets of length {}.'.format(num_found, k)
+            pp = "  Found {} large itemsets of length {}.".format(num_found, k)
             print(pp)
         if verbosity > 1:
-            print('   {}'.format(list(large_itemsets[k].keys())))
+            print("   {}".format(list(large_itemsets[k].keys())))
         k += 1
 
         # Break out if we are about to consider larger itemsets than the max
@@ -328,11 +345,12 @@ def itemsets_from_transactions(transactions: typing.Union[typing.List[tuple],
             break
 
     if verbosity > 0:
-        print('Itemset generation terminated.\n')
+        print("Itemset generation terminated.\n")
 
     return large_itemsets, num_transactions
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import pytest
-    pytest.main(args=['.', '--doctest-modules', '-v'])
+
+    pytest.main(args=[".", "--doctest-modules", "-v"])

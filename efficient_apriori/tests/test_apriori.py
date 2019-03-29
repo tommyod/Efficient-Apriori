@@ -22,33 +22,35 @@ def test_against_R_implementation_1():
     > rules <- apriori(df, parameter = list(supp = 0.2, conf = 0.2))
     > inspect(head(rules, by = "confidence"))
     """
-    
-    transactions = [('a', 'c', 'e'),
-                    ('a', 'c', 'e'),
-                    ('a', 'd', 'e'),
-                    ('b', 'd', 'e'),
-                    ('b', 'd', 'f'),
-                    ('b', 'c', 'f'),
-                    ('b', 'c', 'f')]
-    
+
+    transactions = [
+        ("a", "c", "e"),
+        ("a", "c", "e"),
+        ("a", "d", "e"),
+        ("b", "d", "e"),
+        ("b", "d", "f"),
+        ("b", "c", "f"),
+        ("b", "c", "f"),
+    ]
+
     itemsets, rules = apriori(transactions, 0.2, 0.2)
-    
-    assert Rule(('a',), ('e',)) in rules
-    
+
+    assert Rule(("a",), ("e",)) in rules
+
     for rule in rules:
-        if rule == Rule(('a',), ('e',)):
+        if rule == Rule(("a",), ("e",)):
             assert abs(rule.support - 0.4285714) < 10e-7
             assert rule.confidence == 1
-            
-        if rule == Rule(('c', 'e'), ('a',)):
+
+        if rule == Rule(("c", "e"), ("a",)):
             assert abs(rule.support - 0.2857143) < 10e-7
             assert rule.confidence == 1
-            
-        if rule == Rule(('e',), ('a',)):
+
+        if rule == Rule(("e",), ("a",)):
             assert abs(rule.support - 0.4285714) < 10e-7
             assert rule.confidence == 3 / 4
-    
-    
+
+
 def test_against_R_implementation_2():
     """
     The following R-code was used:
@@ -68,31 +70,54 @@ def test_against_R_implementation_2():
     > rules <- apriori(df, parameter = list(supp = 0.2, conf = 0.2))
     > inspect(head(rules, by = "confidence"))
     """
-    
-    transactions = [('b', 'e', 'g'), ('b', 'f', 'i'), ('c', 'e', 'j'), 
-                    ('b', 'e', 'i'), ('a', 'f', 'i'), ('a', 'e', 'j'), 
-                    ('b', 'd', 'i'), ('c', 'f', 'h'), ('b', 'e', 'g'), 
-                    ('b', 'e', 'j'), ('a', 'e', 'g'), ('b', 'd', 'h'), 
-                    ('a', 'e', 'i'), ('a', 'e', 'h'), ('a', 'f', 'g'), 
-                    ('c', 'd', 'h'), ('b', 'd', 'g'), ('a', 'd', 'j'), 
-                    ('b', 'e', 'h'), ('b', 'f', 'i'), ('b', 'f', 'g'), 
-                    ('c', 'd', 'g'), ('a', 'd', 'i'), ('c', 'f', 'h'), 
-                    ('a', 'e', 'h'), ('a', 'e', 'h'), ('c', 'f', 'h'), 
-                    ('a', 'f', 'g'), ('b', 'f', 'j'), ('b', 'd', 'i'), 
-                    ('a', 'e', 'g'), ('c', 'e', 'g')]
-    
+
+    transactions = [
+        ("b", "e", "g"),
+        ("b", "f", "i"),
+        ("c", "e", "j"),
+        ("b", "e", "i"),
+        ("a", "f", "i"),
+        ("a", "e", "j"),
+        ("b", "d", "i"),
+        ("c", "f", "h"),
+        ("b", "e", "g"),
+        ("b", "e", "j"),
+        ("a", "e", "g"),
+        ("b", "d", "h"),
+        ("a", "e", "i"),
+        ("a", "e", "h"),
+        ("a", "f", "g"),
+        ("c", "d", "h"),
+        ("b", "d", "g"),
+        ("a", "d", "j"),
+        ("b", "e", "h"),
+        ("b", "f", "i"),
+        ("b", "f", "g"),
+        ("c", "d", "g"),
+        ("a", "d", "i"),
+        ("c", "f", "h"),
+        ("a", "e", "h"),
+        ("a", "e", "h"),
+        ("c", "f", "h"),
+        ("a", "f", "g"),
+        ("b", "f", "j"),
+        ("b", "d", "i"),
+        ("a", "e", "g"),
+        ("c", "e", "g"),
+    ]
+
     itemsets, rules = apriori(transactions, 0.2, 0.2)
 
     for rule in rules:
-        if rule == Rule(('a',), ('e',)):
+        if rule == Rule(("a",), ("e",)):
             assert abs(rule.support - 0.21875) < 10e-7
             assert abs(rule.confidence - 0.5833333) < 10e-7
-            
-        if rule == Rule(('e',), ('a',)):
+
+        if rule == Rule(("e",), ("a",)):
             assert abs(rule.support - 0.21875) < 10e-7
             assert abs(rule.confidence - 0.5000000) < 10e-7
-            
-            
+
+
 def test_against_R_implementation_3():
     """
     The following R-code was used:
@@ -109,30 +134,42 @@ def test_against_R_implementation_3():
     > rules <- apriori(df, parameter = list(supp = 0.2, conf = 0.2))
     > inspect(head(rules, by = "confidence"))
     """
-    
-    transactions = [('b', 'e', 'i'), ('b', 'd', 'g'), ('c', 'e', 'h'), 
-                    ('a', 'e', 'j'), ('b', 'e', 'i'), ('b', 'e', 'g'), 
-                    ('a', 'd', 'h'), ('a', 'e', 'j'), ('b', 'e', 'i'), 
-                    ('b', 'e', 'g'), ('a', 'd', 'j'), ('a', 'e', 'i'), 
-                    ('c', 'e', 'j'), ('b', 'e', 'j'), ('a', 'd', 'i'), 
-                    ('c', 'e', 'i')]
-    
+
+    transactions = [
+        ("b", "e", "i"),
+        ("b", "d", "g"),
+        ("c", "e", "h"),
+        ("a", "e", "j"),
+        ("b", "e", "i"),
+        ("b", "e", "g"),
+        ("a", "d", "h"),
+        ("a", "e", "j"),
+        ("b", "e", "i"),
+        ("b", "e", "g"),
+        ("a", "d", "j"),
+        ("a", "e", "i"),
+        ("c", "e", "j"),
+        ("b", "e", "j"),
+        ("a", "d", "i"),
+        ("c", "e", "i"),
+    ]
+
     itemsets, rules = apriori(transactions, 0.2, 0.2)
 
     for rule in rules:
-        if rule == Rule(('b',), ('e',)):
+        if rule == Rule(("b",), ("e",)):
             assert abs(rule.support - 0.3750) < 10e-7
             assert abs(rule.confidence - 0.8571429) < 10e-7
-            
-        if rule == Rule(('i',), ('e',)):
+
+        if rule == Rule(("i",), ("e",)):
             assert abs(rule.support - 0.3125) < 10e-7
             assert abs(rule.confidence - 0.8333333) < 10e-7
-            
-        if rule == Rule(('j',), ('e',)):
+
+        if rule == Rule(("j",), ("e",)):
             assert abs(rule.support - 0.2500) < 10e-7
             assert abs(rule.confidence - 0.8000000) < 10e-7
-            
-        if rule == Rule(('e',), ('b',)):
+
+        if rule == Rule(("e",), ("b",)):
             assert abs(rule.support - 0.3750) < 10e-7
             assert abs(rule.confidence - 0.5000000) < 10e-7
 
@@ -144,19 +181,19 @@ def test_minimal_input():
     transactions = []
     itemsets, rules = apriori(transactions, 0.2, 0.2)
     assert itemsets == {} and rules == []
-    
+
     with pytest.raises(ValueError):
         itemsets, rules = apriori(transactions, -0.2, 0.2)
-        
+
     with pytest.raises(ValueError):
         itemsets, rules = apriori(transactions, 0.2, -0.2)
-        
+
     with pytest.raises(ValueError):
-        itemsets, rules = apriori(transactions, 'asdf', 1)
-        
+        itemsets, rules = apriori(transactions, "asdf", 1)
+
     itemsets, rules = apriori([(1, 2), (1, 2), (1, 3)], 1, 1)
     itemsets, rules = apriori([(1, 2), (1, 2), (1, 3)], 1.0, 1.0)
-    
-    
-if __name__ == '__main__':
-    pytest.main(args=['.', '--doctest-modules', '-v']) 
+
+
+if __name__ == "__main__":
+    pytest.main(args=[".", "--doctest-modules", "-v"])
