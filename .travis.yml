@@ -16,6 +16,12 @@ matrix:
       sudo: required
       services: docker
       python: '3.7'
+        
+     - os: linux
+      dist: xenial   
+      sudo: required
+      services: docker
+      python: '3.8-dev'
   
 before_install:
     - pip install pep8 flake8 black
