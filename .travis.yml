@@ -17,7 +17,7 @@ matrix:
       services: docker
       python: '3.7'
         
-     - os: linux
+    - os: linux
       dist: xenial   
       sudo: required
       services: docker
