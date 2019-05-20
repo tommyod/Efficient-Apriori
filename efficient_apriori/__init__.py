@@ -4,7 +4,9 @@
 Implementation of the Apriori algorithm.
 """
 
-__version__ = "0.4.5"
+# We use semantic versioning
+# See https://semver.org/
+__version__ = "1.0.0"
 
 import sys
 from efficient_apriori.apriori import apriori
