@@ -24,11 +24,12 @@ matrix:
       python: '3.8-dev'
   
 before_install:
-    - pip install pep8 flake8 black
+    - pip install pep8 flake8 black mypy
   
 before_script:
     - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py'
     - black . --check -l 79
+    - mypy efficient_apriori/*.py
 
 script:
     - pytest --doctest-modules -v efficient_apriori
