@@ -70,16 +70,16 @@ def join_step(itemsets: typing.List[tuple]):
 
         # For every 2-combination in the tail items, yield a new candidate
         # itemset, which is sorted.
-        itemset_first = tuple(itemset_first)
+        itemset_first_tuple = tuple(itemset_first)
         for a, b in sorted(itertools.combinations(tail_items, 2)):
-            yield itemset_first + (a,) + (b,)
+            yield itemset_first_tuple + (a,) + (b,)
 
         # Increment the while-loop counter
         i += skip
 
 
 def prune_step(
-    itemsets: typing.List[tuple], possible_itemsets: typing.List[tuple]
+    itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[tuple]
 ):
     """
     Prune possible itemsets whose subsets are not in the list of itemsets.
@@ -202,7 +202,7 @@ def itemsets_from_transactions(
             return transaction_sets
 
     # Assume the transactions is a callable, returning a generator
-    elif isinstance(transactions, collections.abc.Callable):
+    elif callable(transactions):
         ret_value = transactions()
         if not isinstance(ret_value, collections.abc.Generator):
             msg = (
