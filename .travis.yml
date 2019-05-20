@@ -33,3 +33,8 @@ before_script:
 
 script:
     - pytest --doctest-modules -v efficient_apriori
+    - echo "$TRAVIS_TAG"
+    - if [ -n "$TRAVIS_TAG" ]; then
+      pip install twine;
+      python -m twine upload dist/* -u tommyod -p $TWINE_PASSWORD --skip-existing;
+      fi
