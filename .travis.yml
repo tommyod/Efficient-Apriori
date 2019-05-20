@@ -36,5 +36,5 @@ script:
     - echo "$TRAVIS_TAG"
     - if [ -n "$TRAVIS_TAG" ]; then
       pip install twine;
-      python -m twine upload dist/* -u tommyod -p $TWINE_PASSWORD --skip-existing;
+      python -m twine upload dist/* -u tommyod -p $TWINE --skip-existing;
       fi
