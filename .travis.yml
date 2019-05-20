@@ -24,11 +24,17 @@ matrix:
       python: '3.8-dev'
   
 before_install:
-    - pip install pep8 flake8 black
+    - pip install pep8 flake8 black mypy
   
 before_script:
-    - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py'
+    - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py,__init__.py'
     - black . --check -l 79
+    - mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context
 
 script:
     - pytest --doctest-modules -v efficient_apriori
+    - echo "$TRAVIS_TAG"
+    - if [ -n "$TRAVIS_TAG" ]; then
+      pip install twine;
+      python -m twine upload dist/* -u tommyod -p $TWINE --skip-existing;
+      fi

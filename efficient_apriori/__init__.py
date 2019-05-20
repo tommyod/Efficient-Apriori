@@ -4,18 +4,14 @@
 Implementation of the Apriori algorithm.
 """
 
-__version__ = "0.4.5"
+# We use semantic versioning
+# See https://semver.org/
+__version__ = "1.0.0"
 
 import sys
 from efficient_apriori.apriori import apriori
 from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import Rule, generate_rules_apriori
-
-
-apriori = apriori
-itemsets_from_transactions = itemsets_from_transactions
-Rule = Rule
-generate_rules_apriori = generate_rules_apriori
 
 
 def run_tests():

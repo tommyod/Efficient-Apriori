@@ -177,7 +177,9 @@ class Rule(object):
 
 
 def generate_rules_simple(
-    itemsets: typing.List[tuple], min_confidence: float, num_transactions: int
+    itemsets: typing.Dict[int, typing.Dict],
+    min_confidence: float,
+    num_transactions: int,
 ):
     """
     DO NOT USE. This is a simple top-down algorithm for generating association 
@@ -198,7 +200,7 @@ def generate_rules_simple(
 
         # This algorithm returns duplicates, so we keep track of items yielded
         # in a set to avoid yielding duplicates
-        yielded = set()
+        yielded: set = set()
         yielded_add = yielded.add
 
         # Iterate over every itemset of the prescribed size
