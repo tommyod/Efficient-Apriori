@@ -29,7 +29,7 @@ class Rule(object):
     ):
         """
         Initialize a new rule. This call is a thin wrapper around some data.
-        
+
         Parameters
         ----------
         lhs : tuple
@@ -45,13 +45,13 @@ class Rule(object):
             The count of the rhs in the dataset.
         num_transactions : int
             The number of transactions in the dataset.
-        
+
         Examples
         --------
         >>> r = Rule(('a', 'b'), ('c',), 50, 100, 150, 200)
         >>> r.confidence  # Probability of 'c', given 'a' and 'b'
         0.5
-        >>> r.support  # Probability of ('a', 'c', 'c') in the data
+        >>> r.support  # Probability of ('a', 'b', 'c') in the data
         0.25
         >>> # Ratio of observed over expected support if lhs, rhs = independent
         >>> r.lift == 2 / 3
@@ -97,7 +97,7 @@ class Rule(object):
     @property
     def lift(self):
         """
-        The lift of a rule is the ratio of the observed support to the expected 
+        The lift of a rule is the ratio of the observed support to the expected
         support if the lhs and rhs were independent.If X -> Y, then the lift is
         given by the fraction P(X and Y) / (P(X) * P(Y)).
         """
@@ -116,7 +116,7 @@ class Rule(object):
         """
         The conviction of a rule X -> Y is the ratio P(not Y) / P(not Y | X).
         It's the proportion of how often Y does not appear in the data to how
-        often Y does not appear in the data, given X. If the ratio is large, 
+        often Y does not appear in the data, given X. If the ratio is large,
         then the confidence is large and Y appears often.
         """
         try:
@@ -182,12 +182,12 @@ def generate_rules_simple(
     num_transactions: int,
 ):
     """
-    DO NOT USE. This is a simple top-down algorithm for generating association 
+    DO NOT USE. This is a simple top-down algorithm for generating association
     rules. It is included here for testing purposes, and because it is
     mentioned in the 1994 paper by Agrawal et al. It is slow because it does
     not enumerate the search space efficiently: it produces duplicates, and it
     does not prune the search space efficiently.
-    
+
     Simple algorithm for generating association rules from itemsets.
     """
 
@@ -221,11 +221,11 @@ def generate_rules_simple(
 
 def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
     """
-    DO NOT USE. This is the gen-rules algorithm from the 1994 paper by Agrawal 
-    et al. It's a subroutine called by `generate_rules_simple`. However, the 
+    DO NOT USE. This is the gen-rules algorithm from the 1994 paper by Agrawal
+    et al. It's a subroutine called by `generate_rules_simple`. However, the
     algorithm `generate_rules_simple` should not be used.
     The naive algorithm from the original paper.
-    
+
     Parameters
     ----------
     l_k : tuple
@@ -275,15 +275,15 @@ def generate_rules_apriori(
 ):
     """
     Bottom up algorithm for generating association rules from itemsets, very
-    similar to the fast algorithm proposed in the original 1994 paper by 
+    similar to the fast algorithm proposed in the original 1994 paper by
     Agrawal et al.
-    
+
     The algorithm is based on the observation that for {a, b} -> {c, d} to
     hold, both {a, b, c} -> {d} and {a, b, d} -> {c} must hold, since in
     general conf( {a, b, c} -> {d} ) >= conf( {a, b} -> {c, d} ).
     In other words, if either of the two one-consequent rules do not hold, then
     there is no need to ever consider the two-consequent rule.
-    
+
     Parameters
     ----------
     itemsets : dict of dicts
@@ -295,10 +295,10 @@ def generate_rules_apriori(
         The number of transactions in the data set.
     verbosity : int
         The level of detail printing when the algorithm runs. Either 0, 1 or 2.
-        
+
     Examples
     --------
-    >>> itemsets = {1: {('a',): 3, ('b',): 2, ('c',): 1}, 
+    >>> itemsets = {1: {('a',): 3, ('b',): 2, ('c',): 1},
     ...             2: {('a', 'b'): 2, ('a', 'c'): 1}}
     >>> list(generate_rules_apriori(itemsets, 1.0, 3))
     [{b} -> {a}, {c} -> {a}]
@@ -377,10 +377,10 @@ def _ap_genrules(
 ):
     """
     Recursively build up rules by adding more items to the right hand side.
-    
+
     This algorithm is called `ap-genrules` in the original paper. It is
     called by the `generate_rules_apriori` generator above. See it's docs.
-    
+
     Parameters
     ----------
     itemset : tuple
