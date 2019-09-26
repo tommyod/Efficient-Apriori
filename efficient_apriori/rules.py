@@ -129,6 +129,22 @@ class Rule(object):
         except AttributeError:
             return None
 
+    @property
+    def rpf(self):
+        """
+        The rpf (Rule Power Factor) of a rule X -> Y is given
+        by the next expression P(Y|X) * P(X and Y). It helps to perform
+        better confidence ranking among the rules by considering
+        their support values. The more the rpf the more support provided
+        confidence has.
+        """
+        try:
+            return self.confidence * self.support
+        except ZeroDivisionError:
+            return None
+        except AttributeError:
+            return None
+
     @staticmethod
     def _pf(s):
         """
@@ -150,9 +166,10 @@ class Rule(object):
         supp = "supp: {0:.3f}".format(self.support)
         lift = "lift: {0:.3f}".format(self.lift)
         conv = "conv: {0:.3f}".format(self.conviction)
+        rpf = "rpf: {0:.3f}".format(self.rpf)
 
-        return "{} -> {} ({}, {}, {}, {})".format(
-            self._pf(self.lhs), self._pf(self.rhs), conf, supp, lift, conv
+        return "{} -> {} ({}, {}, {}, {}, {})".format(
+            self._pf(self.lhs), self._pf(self.rhs), conf, supp, lift, conv, rpf
         )
 
     def __eq__(self, other):
