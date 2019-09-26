@@ -57,8 +57,8 @@ class Rule(object):
         >>> r.lift == 2 / 3
         True
         >>> print(r)
-        {a, b} -> {c} (conf: 0.500, supp: 0.250, lift: 0.667, conv: 0.500,\
-         rpf: 0.125)
+        {a, b} -> {c} (conf: 0.500, supp: 0.250, lift: 0.667, conv: 0.500, \
+rpf: 0.125)
         >>> r
         {a, b} -> {c}
         """
