@@ -57,8 +57,7 @@ class Rule(object):
         >>> r.lift == 2 / 3
         True
         >>> print(r)
-        {a, b} -> {c} (conf: 0.500, supp: 0.250, lift: 0.667, conv: 0.500, \
-rpf: 0.125)
+        {a, b} -> {c} (conf: 1.500, supp: 0.250, lift: 0.667, conv: 0.500)
         >>> r
         {a, b} -> {c}
         """
@@ -167,10 +166,9 @@ rpf: 0.125)
         supp = "supp: {0:.3f}".format(self.support)
         lift = "lift: {0:.3f}".format(self.lift)
         conv = "conv: {0:.3f}".format(self.conviction)
-        rpf = "rpf: {0:.3f}".format(self.rpf)
 
-        return "{} -> {} ({}, {}, {}, {}, {})".format(
-            self._pf(self.lhs), self._pf(self.rhs), conf, supp, lift, conv, rpf
+        return "{} -> {} ({}, {}, {}, {})".format(
+            self._pf(self.lhs), self._pf(self.rhs), conf, supp, lift, conv
         )
 
     def __eq__(self, other):
