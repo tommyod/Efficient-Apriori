@@ -57,7 +57,7 @@ class Rule(object):
         >>> r.lift == 2 / 3
         True
         >>> print(r)
-        {a, b} -> {c} (conf: 1.500, supp: 0.250, lift: 0.667, conv: 0.500)
+        {a, b} -> {c} (conf: 0.500, supp: 0.250, lift: 0.667, conv: 0.500)
         >>> r
         {a, b} -> {c}
         """
@@ -132,11 +132,7 @@ class Rule(object):
     @property
     def rpf(self):
         """
-        The rpf (Rule Power Factor) of a rule X -> Y is given
-        by the next expression P(Y|X) * P(X and Y). It helps to perform
-        better confidence ranking among the rules by considering
-        their support values. The more the rpf the more support provided
-        confidence has.
+        The RPF (Rule Power Factor) is the confidence times the support.
         """
         try:
             return self.confidence * self.support
