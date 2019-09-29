@@ -175,7 +175,9 @@ class Rule(object):
         """
         Equality of two rules.
         """
-        return (set(self.lhs) == set(other.lhs)) and (set(self.rhs) == set(other.rhs))
+        return (set(self.lhs) == set(other.lhs)) and (
+            set(self.rhs) == set(other.rhs)
+        )
 
     def __hash__(self):
         """
@@ -271,7 +273,9 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
         rhs = tuple(sorted(list(rhs)))
 
         # Create new rule object and yield it
-        yield Rule(a_m, rhs, count(l_k), count(a_m), count(rhs), num_transactions)
+        yield Rule(
+            a_m, rhs, count(l_k), count(a_m), count(rhs), num_transactions
+        )
 
         # If the left hand side has one item only, do not recurse the function
         if len(a_m) <= 1:
@@ -316,10 +320,16 @@ def generate_rules_apriori(
     [{b} -> {a}, {c} -> {a}]
     """
     # Validate user inputs
-    if not ((0 <= min_confidence <= 1) and isinstance(min_confidence, numbers.Number)):
+    if not (
+        (0 <= min_confidence <= 1)
+        and isinstance(min_confidence, numbers.Number)
+    ):
         raise ValueError("`min_confidence` must be a number between 0 and 1.")
 
-    if not ((num_transactions >= 0) and isinstance(num_transactions, numbers.Number)):
+    if not (
+        (num_transactions >= 0)
+        and isinstance(num_transactions, numbers.Number)
+    ):
         raise ValueError("`num_transactions` must be a number greater than 0.")
 
     def count(itemset):
@@ -426,14 +436,21 @@ def _ap_genrules(
         # the upcoming recursive generator call
         if (count(itemset) / count(lhs)) >= min_conf:
             yield Rule(
-                lhs, h_m, count(itemset), count(lhs), count(h_m), num_transactions
+                lhs,
+                h_m,
+                count(itemset),
+                count(lhs),
+                count(h_m),
+                num_transactions,
             )
         else:
             H_m_copy.remove(h_m)
 
     # Unless the list of right-hand sides is empty, recurse the generator call
     if H_m_copy:
-        yield from _ap_genrules(itemset, H_m_copy, itemsets, min_conf, num_transactions)
+        yield from _ap_genrules(
+            itemset, H_m_copy, itemsets, min_conf, num_transactions
+        )
 
 
 if __name__ == "__main__":
