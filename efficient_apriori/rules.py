@@ -129,6 +129,18 @@ class Rule(object):
         except AttributeError:
             return None
 
+    @property
+    def rpf(self):
+        """
+        The RPF (Rule Power Factor) is the confidence times the support.
+        """
+        try:
+            return self.confidence * self.support
+        except ZeroDivisionError:
+            return None
+        except AttributeError:
+            return None
+
     @staticmethod
     def _pf(s):
         """
