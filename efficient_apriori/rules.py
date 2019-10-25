@@ -7,7 +7,7 @@ Implementations of algorithms related to association rules.
 import typing
 import numbers
 import itertools
-from efficient_apriori.itemsets import apriori_gen
+from efficient_apriori.itemsets import apriori_gen, ItemsetCount
 
 
 class Rule(object):
@@ -104,7 +104,7 @@ class Rule(object):
         try:
             observed_support = self.count_full / self.num_transactions
             prod_counts = self.count_lhs * self.count_rhs
-            expected_support = (prod_counts) / self.num_transactions ** 2
+            expected_support = prod_counts / self.num_transactions ** 2
             return observed_support / expected_support
         except ZeroDivisionError:
             return None
@@ -280,7 +280,7 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
 
 
 def generate_rules_apriori(
-    itemsets: typing.Dict[int, typing.Dict[tuple, int]],
+    itemsets: typing.Dict[int, typing.Dict[tuple, ItemsetCount]],
     min_confidence: float,
     num_transactions: int,
     verbosity: int = 0,
@@ -332,7 +332,7 @@ def generate_rules_apriori(
         """
         Helper function to retrieve the count of the itemset in the dataset.
         """
-        return itemsets[len(itemset)][itemset]
+        return itemsets[len(itemset)][itemset].itemset_count
 
     if verbosity > 0:
         print("Generating rules from itemsets.")
@@ -383,7 +383,7 @@ def generate_rules_apriori(
 def _ap_genrules(
     itemset: tuple,
     H_m: typing.List[tuple],
-    itemsets: typing.Dict[int, typing.Dict[tuple, int]],
+    itemsets: typing.Dict[int, typing.Dict[tuple, ItemsetCount]],
     min_conf: float,
     num_transactions: int,
 ):
@@ -411,7 +411,7 @@ def _ap_genrules(
         """
         Helper function to retrieve the count of the itemset in the dataset.
         """
-        return itemsets[len(itemset)][itemset]
+        return itemsets[len(itemset)][itemset].itemset_count
 
     # If H_1 is so large that calling `apriori_gen` will produce right-hand
     # sides as large as `itemset`, there will be no right hand side

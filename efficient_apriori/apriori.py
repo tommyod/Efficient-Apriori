@@ -54,6 +54,10 @@ def apriori(
     >>> rules
     [{a} -> {b}]
     """
+
+    # TODO: also add warning/error when min_support is < 1
+    # TODO: add warning when very high proportion of transactions remain between iterations
+
     itemsets, num_trans = itemsets_from_transactions(
         transactions, min_support, max_length, verbosity
     )

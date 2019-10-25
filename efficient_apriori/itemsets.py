@@ -10,6 +10,17 @@ import numbers
 import typing
 
 
+class ItemsetCount:
+    itemset_count = 0
+    members = []
+
+
+class TransactionWithId:
+    def __init__(self, transaction: typing.Tuple, id_: typing.Optional[str]):
+        self.transaction = transaction
+        self.id = id_
+
+
 def join_step(itemsets: typing.List[tuple]):
     """
     Join k length itemsets into k + 1 length itemsets.
@@ -154,11 +165,13 @@ def apriori_gen(itemsets: typing.List[tuple]):
 
 
 def itemsets_from_transactions(
-    transactions: typing.Union[typing.List[tuple], typing.Callable],
+    transactions: typing.Union[typing.List[tuple],
+                               typing.Callable,
+                               typing.List[TransactionWithId]],
     min_support: float,
     max_length: int = 8,
     verbosity: int = 0,
-):
+) -> typing.Tuple[typing.Dict[int, typing.Dict[tuple, ItemsetCount]], int]:
     """
     Compute itemsets from transactions by building the itemsets bottom up and
     iterating over the transactions to compute the support repedately. This is
@@ -195,11 +208,20 @@ def itemsets_from_transactions(
     # -----------------------------
 
     # If the transactions are iterable, convert it to sets for faster lookups
-    if isinstance(transactions, collections.abc.Iterable):
-        transaction_sets = [set(t) for t in transactions if len(t) > 0]
+    if isinstance(transactions, list):
+        if transactions and isinstance(transactions[0], TransactionWithId):
+            def transaction_rows():
+                return [(t.id, set(t.transaction),) for t in transactions]
 
-        def transactions():
-            return transaction_sets
+            def increment_count(row_id, count: ItemsetCount):
+                count.itemset_count += 1
+                count.members.append(row_id)
+        else:
+            def transaction_rows():
+                return enumerate([set(t) for t in transactions if len(t) > 0])
+
+            def increment_count(_, count: ItemsetCount):
+                count.itemset_count += 1
 
     # Assume the transactions is a callable, returning a generator
     elif callable(transactions):
@@ -210,6 +232,8 @@ def itemsets_from_transactions(
                 + "returning an iterable."
             )
             raise TypeError(msg)
+        first = next(ret_value)
+        return first, itertools.chain([first], ret_value)
     else:
         msg = (
             "`transactions` must be an iterable or a callable "
@@ -232,17 +256,19 @@ def itemsets_from_transactions(
         print("Generating itemsets.")
         print(" Counting itemsets of length 1.")
 
-    counts = collections.defaultdict(int)
+    counts = collections.defaultdict(lambda: ItemsetCount())
     num_transactions = 0
-    for transaction in transactions():
+    for row, transaction in transaction_rows():
         num_transactions += 1  # Increment counter for transactions
         for item in transaction:
-            counts[item] += 1  # Increment counter for single-item itemsets
+            item_count = counts[item]
+            # Increment counter for single-item itemsets
+            increment_count(row, item_count)
 
     large_itemsets = [
         (i, c)
         for (i, c) in counts.items()
-        if (c / num_transactions) >= min_support
+        if (c.itemset_count / num_transactions) >= min_support
     ]
 
     if verbosity > 0:
@@ -275,7 +301,7 @@ def itemsets_from_transactions(
         # Retrieve the itemsets of the previous size, i.e. of size k - 1
         itemsets_list = list(large_itemsets[k - 1].keys())
 
-        # Generate candidates of length k + 1 by joning, prune, and copy as set
+        # Generate candidates of length k + 1 by joining, prune, and copy as set
         C_k = list(apriori_gen(itemsets_list))
         C_k_sets = [set(itemset) for itemset in C_k]
 
@@ -292,11 +318,11 @@ def itemsets_from_transactions(
         if not C_k:
             break
 
-        # Prepare counts of candidate itemsets (from the pruen step)
-        candidate_itemset_counts = collections.defaultdict(int)
+        # Prepare counts of candidate itemsets (from the prune step)
+        candidate_itemset_counts = collections.defaultdict(lambda: ItemsetCount())
         if verbosity > 1:
             print("    Iterating over transactions.")
-        for row, transaction in enumerate(transactions()):
+        for row, transaction in transaction_rows():
 
             # If we've excluded this transaction earlier, do not consider it
             if not use_transaction[row]:
@@ -309,7 +335,8 @@ def itemsets_from_transactions(
                 # This is where most of the time is spent in the algorithm
                 # If the candidate set is a subset, add count and mark the row
                 if issubset(candidate_set, transaction):
-                    candidate_itemset_counts[candidate] += 1
+                    candidate_counts = candidate_itemset_counts[candidate]
+                    increment_count(row, candidate_counts)
                     found_any = True
 
             # If no candidate sets were found in this row, skip this row of
@@ -321,7 +348,7 @@ def itemsets_from_transactions(
         C_k = [
             (i, c)
             for (i, c) in candidate_itemset_counts.items()
-            if (c / num_transactions) >= min_support
+            if (c.itemset_count / num_transactions) >= min_support
         ]
 
         # If no itemsets were found, break out of the loop
