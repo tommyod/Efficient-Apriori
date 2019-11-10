@@ -21,7 +21,7 @@ matrix:
       dist: xenial   
       sudo: required
       services: docker
-      python: '3.8-dev'
+      python: '3.8'
   
 before_install:
     - pip install pep8 flake8 black mypy
