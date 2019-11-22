@@ -5,12 +5,15 @@ High-level implementations of the apriori algorithm.
 """
 
 import typing
-from efficient_apriori.itemsets import itemsets_from_transactions
+from efficient_apriori.itemsets import itemsets_from_transactions, \
+    TransactionWithId, ItemsetCount
 from efficient_apriori.rules import generate_rules_apriori
 
 
 def apriori(
-    transactions: typing.List[tuple],
+    transactions: typing.Union[typing.List[tuple],
+                               typing.Callable,
+                               typing.List[TransactionWithId]],
     min_support: float = 0.5,
     min_confidence: float = 0.5,
     max_length: int = 8,
@@ -30,7 +33,9 @@ def apriori(
     
     Parameters
     ----------
-    transactions : list of tuples, or a callable returning a generator
+    transactions : list of tuples, list of itemsets.TransactionWithId,
+        or a callable returning a generator. Use TransactionWithId's when
+        the transactions have ids which should appear in the outputs.
         The transactions may be either a list of tuples, where the tuples must
         contain hashable items. Alternatively, a callable returning a generator
         may be passed. A generator is not sufficient, since the algorithm will
@@ -55,16 +60,26 @@ def apriori(
     [{a} -> {b}]
     """
 
-    # TODO: also add warning/error when min_support is < 1
-    # TODO: add warning when very high proportion of transactions remain between iterations
-
     itemsets, num_trans = itemsets_from_transactions(
         transactions, min_support, max_length, verbosity
     )
+
+    if itemsets and isinstance(next(iter(itemsets[1].values())), ItemsetCount):
+        itemsets_for_rules = _convert_to_counts(itemsets)
+    else:
+        itemsets_for_rules = itemsets
+
     rules = generate_rules_apriori(
-        itemsets, min_confidence, num_trans, verbosity
+        itemsets_for_rules, min_confidence, num_trans, verbosity
     )
     return itemsets, list(rules)
+
+
+def _convert_to_counts(itemsets):
+    itemsets_counts = {}
+    for size, sets in itemsets.items():
+        itemsets_counts[size] = {i: c.itemset_count for i, c in sets.items()}
+    return itemsets_counts
 
 
 if __name__ == "__main__":

@@ -8,17 +8,99 @@ import itertools
 import collections
 import numbers
 import typing
+from abc import ABC, abstractmethod
+
+from collections import defaultdict
+
+from attr import dataclass
 
 
+@dataclass
 class ItemsetCount:
-    itemset_count = 0
-    members = []
+    itemset_count: int = 0
+    members: set = set()
 
 
 class TransactionWithId:
-    def __init__(self, transaction: typing.Tuple, id_: typing.Optional[str]):
+    def __init__(self, transaction: tuple, id_: typing.Optional):
         self.transaction = transaction
         self.id = id_
+
+    def __repr__(self):
+        t = ', '.join(self.transaction)
+        return "TransactionWithId{transaction=%s, id=%s}" % (t, self.id)
+
+
+class TransactionBroker(ABC):
+    def __init__(self, transactions):
+        self.transactions = transactions
+
+    @abstractmethod
+    def rows(self):
+        pass
+
+
+class Transactions(TransactionBroker):
+    def rows(self):
+        transaction_sets = [set(t) for t in self.transactions if len(t) > 0]
+        return enumerate(transaction_sets)
+
+
+class TransactionsWithIDs(TransactionBroker):
+    def rows(self):
+        return [(t.id, set(t.transaction),) for t in self.transactions]
+
+
+class GeneratorTransactions(Transactions):
+    def rows(self):
+        count = 0
+        for t in self.transactions():
+            yield count, set(t)
+            count += 1
+
+
+class GeneratorTransactionsWithIds(TransactionsWithIDs):
+    def rows(self):
+        for t in self.transactions():
+            yield t.id, set(t.transaction)
+
+
+class CountBroker(ABC):
+    @abstractmethod
+    def get_counter(self):
+        pass
+
+    @abstractmethod
+    def increment_count(self, transaction_id: str, count):
+        pass
+
+    @abstractmethod
+    def get_count(self, count):
+        pass
+
+
+class Count(CountBroker):
+    def get_counter(self):
+        return 0
+
+    def increment_count(self, _, count):
+        return count + 1
+
+    def get_count(self, count):
+        return count
+
+
+class CountWithIds(CountBroker):
+    def get_counter(self):
+        return ItemsetCount()
+
+    def increment_count(self, transaction_id: str, count: ItemsetCount):
+        count.itemset_count += 1
+        count.members.add(transaction_id)
+        return count
+
+    def get_count(self, count):
+        return count.itemset_count
 
 
 def join_step(itemsets: typing.List[tuple]):
@@ -47,7 +129,7 @@ def join_step(itemsets: typing.List[tuple]):
     # Iterate over every itemset in the itemsets
     while i < len(itemsets):
 
-        # The number of rows to skip in the while-loop, intially set to 1
+        # The number of rows to skip in the while-loop, initially set to 1
         skip = 1
 
         # Get all but the last item in the itemset, and the last item
@@ -90,7 +172,7 @@ def join_step(itemsets: typing.List[tuple]):
 
 
 def prune_step(
-    itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[tuple]
+        itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[tuple]
 ):
     """
     Prune possible itemsets whose subsets are not in the list of itemsets.
@@ -123,7 +205,7 @@ def prune_step(
         # due to the way the `join_step` function merges the sorted itemsets
 
         for i in range(len(possible_itemset) - 2):
-            removed = possible_itemset[:i] + possible_itemset[i + 1 :]
+            removed = possible_itemset[:i] + possible_itemset[i + 1:]
 
             # If every k combination exists in the set of itemsets,
             # yield the possible itemset. If it does not exist, then it's
@@ -143,7 +225,7 @@ def apriori_gen(itemsets: typing.List[tuple]):
     """
     Compute all possible k + 1 length supersets from k length itemsets.
 
-    This is done efficienly by using the downward-closure property of the
+    This is done efficiently by using the downward-closure property of the
     support function, which states that if support(S) > k, then support(s) > k
     for every subset s of S.
 
@@ -165,13 +247,13 @@ def apriori_gen(itemsets: typing.List[tuple]):
 
 
 def itemsets_from_transactions(
-    transactions: typing.Union[typing.List[tuple],
-                               typing.Callable,
-                               typing.List[TransactionWithId]],
-    min_support: float,
-    max_length: int = 8,
-    verbosity: int = 0,
-) -> typing.Tuple[typing.Dict[int, typing.Dict[tuple, ItemsetCount]], int]:
+        transactions: typing.Union[typing.List[tuple],
+                                   typing.Callable,
+                                   typing.List[TransactionWithId]],
+        min_support: float,
+        max_length: int = 8,
+        verbosity: int = 0,
+):
     """
     Compute itemsets from transactions by building the itemsets bottom up and
     iterating over the transactions to compute the support repedately. This is
@@ -204,51 +286,53 @@ def itemsets_from_transactions(
     >>> itemsets[3] == {(2, 3, 5): 2}
     True
     """
+
+    def empty_result(transaction_count):
+        return dict(), transaction_count
+
     # STEP 0 - Sanitize user inputs
     # -----------------------------
-
-    # If the transactions are iterable, convert it to sets for faster lookups
-    if isinstance(transactions, list):
-        if transactions and isinstance(transactions[0], TransactionWithId):
-            def transaction_rows():
-                return [(t.id, set(t.transaction),) for t in transactions]
-
-            def increment_count(row_id, count: ItemsetCount):
-                count.itemset_count += 1
-                count.members.append(row_id)
-        else:
-            def transaction_rows():
-                return enumerate([set(t) for t in transactions if len(t) > 0])
-
-            def increment_count(_, count: ItemsetCount):
-                count.itemset_count += 1
-
-    # Assume the transactions is a callable, returning a generator
-    elif callable(transactions):
-        ret_value = transactions()
-        if not isinstance(ret_value, collections.abc.Generator):
-            msg = (
-                "`transactions` must be an iterable or a callable "
-                + "returning an iterable."
-            )
-            raise TypeError(msg)
-        first = next(ret_value)
-        return first, itertools.chain([first], ret_value)
-    else:
-        msg = (
-            "`transactions` must be an iterable or a callable "
-            + "returning an iterable."
-        )
-        raise TypeError(msg)
-
     if not (
-        isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)
+            isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)
     ):
         raise ValueError("`min_support` must be a number between 0 and 1.")
 
+    if not transactions:
+        return empty_result(0)
+    elif isinstance(transactions, collections.Iterable):
+        first = next(iter(transactions))
+        if transactions and isinstance(first, TransactionWithId):
+            transaction_broker = TransactionsWithIDs(transactions)
+            count_broker = CountWithIds()
+        else:
+            transaction_broker = Transactions(transactions)
+            count_broker = Count()
+    # Assume the transactions is a callable, returning a generator
+    elif callable(transactions):
+        generator = transactions()
+        if not isinstance(generator, collections.abc.Generator):
+            msg = (
+                    "`transactions` must be an iterable or a callable "
+                    + "returning an iterable."
+            )
+            raise TypeError(msg)
+        first = next(generator)
+        if isinstance(first, TransactionWithId):
+            transaction_broker = GeneratorTransactionsWithIds(transactions)
+            count_broker = CountWithIds()
+        else:
+            transaction_broker = GeneratorTransactions(transactions)
+            count_broker = Count()
+    else:
+        msg = (
+                "`transactions` must be an iterable or a callable "
+                + "returning an iterable."
+        )
+        raise TypeError(msg)
+
     # Keep a dictionary stating whether to consider the row, this will allow
     # row-pruning later on if no information was retrieved earlier from it
-    use_transaction = collections.defaultdict(lambda: True)
+    use_transaction = defaultdict(lambda: True)
 
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------
@@ -256,23 +340,23 @@ def itemsets_from_transactions(
         print("Generating itemsets.")
         print(" Counting itemsets of length 1.")
 
-    counts = collections.defaultdict(lambda: ItemsetCount())
+    c = defaultdict(count_broker.get_counter)
     num_transactions = 0
-    for row, transaction in transaction_rows():
+    for row, transaction in transaction_broker.rows():
         num_transactions += 1  # Increment counter for transactions
         for item in transaction:
-            item_count = counts[item]
+            item_count = c[item]
             # Increment counter for single-item itemsets
-            increment_count(row, item_count)
+            c[item] = count_broker.increment_count(row, item_count)
 
     large_itemsets = [
         (i, c)
-        for (i, c) in counts.items()
-        if (c.itemset_count / num_transactions) >= min_support
+        for (i, c) in c.items()
+        if (count_broker.get_count(c) / num_transactions) >= min_support
     ]
 
     if verbosity > 0:
-        num_cand, num_itemsets = len(counts.items()), len(large_itemsets)
+        num_cand, num_itemsets = len(c.items()), len(large_itemsets)
         print("  Found {} candidate itemsets of length 1.".format(num_cand))
         print("  Found {} large itemsets of length 1.".format(num_itemsets))
     if verbosity > 1:
@@ -284,7 +368,7 @@ def itemsets_from_transactions(
 
     # No large itemsets were found, return immediately
     else:
-        return dict(), num_transactions
+        return empty_result(num_transactions)
 
     # STEP 2 - Build up the size of the itemsets
     # ------------------------------------------
@@ -301,7 +385,7 @@ def itemsets_from_transactions(
         # Retrieve the itemsets of the previous size, i.e. of size k - 1
         itemsets_list = list(large_itemsets[k - 1].keys())
 
-        # Generate candidates of length k + 1 by joining, prune, and copy as set
+        # Gen candidates of length k + 1 by joining, prune, and copy as set
         C_k = list(apriori_gen(itemsets_list))
         C_k_sets = [set(itemset) for itemset in C_k]
 
@@ -319,10 +403,10 @@ def itemsets_from_transactions(
             break
 
         # Prepare counts of candidate itemsets (from the prune step)
-        candidate_itemset_counts = collections.defaultdict(lambda: ItemsetCount())
+        counts = defaultdict(count_broker.get_counter)
         if verbosity > 1:
             print("    Iterating over transactions.")
-        for row, transaction in transaction_rows():
+        for row, transaction in transaction_broker.rows():
 
             # If we've excluded this transaction earlier, do not consider it
             if not use_transaction[row]:
@@ -335,8 +419,8 @@ def itemsets_from_transactions(
                 # This is where most of the time is spent in the algorithm
                 # If the candidate set is a subset, add count and mark the row
                 if issubset(candidate_set, transaction):
-                    candidate_counts = candidate_itemset_counts[candidate]
-                    increment_count(row, candidate_counts)
+                    c = counts[candidate]
+                    counts[candidate] = count_broker.increment_count(row, c)
                     found_any = True
 
             # If no candidate sets were found in this row, skip this row of
@@ -347,8 +431,8 @@ def itemsets_from_transactions(
         # Only keep the candidates whose support is over the threshold
         C_k = [
             (i, c)
-            for (i, c) in candidate_itemset_counts.items()
-            if (c.itemset_count / num_transactions) >= min_support
+            for (i, c) in counts.items()
+            if (count_broker.get_count(c) / num_transactions) >= min_support
         ]
 
         # If no itemsets were found, break out of the loop
