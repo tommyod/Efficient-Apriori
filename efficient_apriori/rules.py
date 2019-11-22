@@ -7,7 +7,7 @@ Implementations of algorithms related to association rules.
 import typing
 import numbers
 import itertools
-from efficient_apriori.itemsets import apriori_gen, ItemsetCount
+from efficient_apriori.itemsets import apriori_gen
 
 
 class Rule(object):
@@ -280,7 +280,7 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
 
 
 def generate_rules_apriori(
-    itemsets: typing.Dict[int, typing.Dict[tuple, ItemsetCount]],
+    itemsets: typing.Dict[int, typing.Dict[tuple, int]],
     min_confidence: float,
     num_transactions: int,
     verbosity: int = 0,
@@ -332,7 +332,7 @@ def generate_rules_apriori(
         """
         Helper function to retrieve the count of the itemset in the dataset.
         """
-        return itemsets[len(itemset)][itemset].itemset_count
+        return itemsets[len(itemset)][itemset]
 
     if verbosity > 0:
         print("Generating rules from itemsets.")
@@ -383,7 +383,7 @@ def generate_rules_apriori(
 def _ap_genrules(
     itemset: tuple,
     H_m: typing.List[tuple],
-    itemsets: typing.Dict[int, typing.Dict[tuple, ItemsetCount]],
+    itemsets: typing.Dict[int, typing.Dict[tuple, int]],
     min_conf: float,
     num_transactions: int,
 ):
@@ -411,7 +411,7 @@ def _ap_genrules(
         """
         Helper function to retrieve the count of the itemset in the dataset.
         """
-        return itemsets[len(itemset)][itemset].itemset_count
+        return itemsets[len(itemset)][itemset]
 
     # If H_1 is so large that calling `apriori_gen` will produce right-hand
     # sides as large as `itemset`, there will be no right hand side
