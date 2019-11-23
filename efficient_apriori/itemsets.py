@@ -11,14 +11,13 @@ import typing
 from abc import ABC, abstractmethod
 
 from collections import defaultdict
-
-from attr import dataclass
+from dataclasses import field, dataclass
 
 
 @dataclass
 class ItemsetCount:
     itemset_count: int = 0
-    members: set = set()
+    members: set = field(default_factory=set)
 
 
 class TransactionWithId:

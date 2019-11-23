@@ -128,12 +128,13 @@ def test_itemsets_from_a_generator_callable():
         A generator for testing.
         """
         for i in range(4):
-            yield TransactionWithId(tuple(j + i for j in range(5)), i)
+            transactions = tuple(j + i for j in range(5))
+            yield TransactionWithId(transactions, i)
 
     itemsets, _ = itemsets_from_transactions(generator, min_support=3 / 4)
     assert itemsets[3] == {
-        (2, 3, 4): ItemsetCount(itemset_count=3, members={0, 1, 2, 3}),
-        (3, 4, 5): ItemsetCount(itemset_count=3, members={0, 1, 2, 3})
+        (2, 3, 4): ItemsetCount(itemset_count=3, members={0, 1, 2}),
+        (3, 4, 5): ItemsetCount(itemset_count=3, members={1, 2, 3})
     }
 
 
@@ -142,13 +143,13 @@ def test_itemsets_from_a_file():
     Test generator feature.
     """
 
-    def file_generator(filename):
+    def file_generator(filename_):
         """
         A file generator for testing.
         """
 
         def generate_from_file():
-            with open(filename) as file:
+            with open(filename_) as file:
                 for i, line in enumerate(file):
                     transactions = tuple(line.strip("\n").split(","))
                     yield TransactionWithId(transactions, i)
