@@ -30,7 +30,7 @@ class TransactionWithId:
         return "TransactionWithId{transaction=%s, id=%s}" % (t, self.id)
 
 
-class TransactionBroker(ABC):
+class _TransactionBroker(ABC):
     def __init__(self, transactions):
         self.transactions = transactions
 
@@ -39,18 +39,18 @@ class TransactionBroker(ABC):
         pass
 
 
-class Transactions(TransactionBroker):
+class _Transactions(_TransactionBroker):
     def rows(self):
-        transaction_sets = [set(t) for t in self.transactions if len(t) > 0]
+        transaction_sets = [set(t) for t in self.transactions if t]
         return enumerate(transaction_sets)
 
 
-class TransactionsWithIDs(TransactionBroker):
+class _TransactionsWithIDs(_TransactionBroker):
     def rows(self):
         return [(t.id, set(t.transaction),) for t in self.transactions]
 
 
-class GeneratorTransactions(Transactions):
+class _GeneratorTransactions(_Transactions):
     def rows(self):
         count = 0
         for t in self.transactions():
@@ -58,13 +58,13 @@ class GeneratorTransactions(Transactions):
             count += 1
 
 
-class GeneratorTransactionsWithIds(TransactionsWithIDs):
+class _GeneratorTransactionsWithIds(_TransactionsWithIDs):
     def rows(self):
         for t in self.transactions():
             yield t.id, set(t.transaction)
 
 
-class CountBroker(ABC):
+class _CountBroker(ABC):
     @abstractmethod
     def get_counter(self):
         pass
@@ -78,7 +78,7 @@ class CountBroker(ABC):
         pass
 
 
-class Count(CountBroker):
+class _Count(_CountBroker):
     def get_counter(self):
         return 0
 
@@ -89,7 +89,7 @@ class Count(CountBroker):
         return count
 
 
-class CountWithIds(CountBroker):
+class _CountWithIds(_CountBroker):
     def get_counter(self):
         return ItemsetCount()
 
@@ -302,11 +302,11 @@ def itemsets_from_transactions(
     elif isinstance(transactions, collections.Iterable):
         first = next(iter(transactions))
         if transactions and isinstance(first, TransactionWithId):
-            transaction_broker = TransactionsWithIDs(transactions)
-            count_broker = CountWithIds()
+            transaction_broker = _TransactionsWithIDs(transactions)
+            count_broker = _CountWithIds()
         else:
-            transaction_broker = Transactions(transactions)
-            count_broker = Count()
+            transaction_broker = _Transactions(transactions)
+            count_broker = _Count()
     # Assume the transactions is a callable, returning a generator
     elif callable(transactions):
         generator = transactions()
@@ -318,11 +318,11 @@ def itemsets_from_transactions(
             raise TypeError(msg)
         first = next(generator)
         if isinstance(first, TransactionWithId):
-            transaction_broker = GeneratorTransactionsWithIds(transactions)
-            count_broker = CountWithIds()
+            transaction_broker = _GeneratorTransactionsWithIds(transactions)
+            count_broker = _CountWithIds()
         else:
-            transaction_broker = GeneratorTransactions(transactions)
-            count_broker = Count()
+            transaction_broker = _GeneratorTransactions(transactions)
+            count_broker = _Count()
     else:
         msg = (
                 "`transactions` must be an iterable or a callable "
