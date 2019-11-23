@@ -149,15 +149,18 @@ def test_itemsets_from_a_file():
 
         def generate_from_file():
             with open(filename) as file:
-                for line in file:
-                    yield tuple(line.strip("\n").split(","))
+                for i, line in enumerate(file):
+                    transactions = tuple(line.strip("\n").split(","))
+                    yield TransactionWithId(transactions, i)
 
         return generate_from_file
 
     base, filename = os.path.split(__file__)
     gen_obj = file_generator(os.path.join(base, "transactions.txt"))
     result, _ = itemsets_from_transactions(gen_obj, min_support=4 / 4)
-    assert result[2] == {("A", "C"): 4}
+    assert result[2] == {
+        ("A", "C"): ItemsetCount(itemset_count=4, members={0, 1, 2, 3})
+    }
 
 
 if __name__ == "__main__":
