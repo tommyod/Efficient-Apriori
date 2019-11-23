@@ -261,7 +261,8 @@ def itemsets_from_transactions(
 
     Parameters
     ----------
-    transactions : either a list of itemsets (tuples with hashable entries),
+    transactions : a list of itemsets (tuples with hashable entries),
+                   a list of itemsets.TransactionWithId
                    or a function returning a generator
         A list of transactions. They can be of varying size. To pass through
         data without reading everything into memory at once, a callable
