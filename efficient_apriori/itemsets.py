@@ -25,7 +25,6 @@ class ItemsetCount:
 
 
 class _ItemsetCounter(ABC):
-
     @abstractmethod
     def itemset_counter(self):
         pass
@@ -43,13 +42,13 @@ class _ItemsetCounter(ABC):
         pass
 
     @abstractmethod
-    def candidate_itemset_counts(self, C_k, C_k_sets, counter, counts, row,
-                                 transaction):
+    def candidate_itemset_counts(
+        self, C_k, C_k_sets, counter, counts, row, transaction
+    ):
         pass
 
 
 class _Counter(_ItemsetCounter):
-
     def itemset_counter(self):
         return 0
 
@@ -67,12 +66,14 @@ class _Counter(_ItemsetCounter):
 
     def large_itemsets(self, counts, min_support, num_transactions):
         return [
-            (i, c) for (i, c) in counts.items()
+            (i, c)
+            for (i, c) in counts.items()
             if (c / num_transactions) >= min_support
         ]
 
-    def candidate_itemset_counts(self, C_k, C_k_sets, counter, counts, row,
-                                 transaction):
+    def candidate_itemset_counts(
+        self, C_k, C_k_sets, counter, counts, row, transaction
+    ):
         # Assert that no items were found in this row
         found_any = False
         issubset = set.issubset  # Micro-optimization
@@ -86,7 +87,6 @@ class _Counter(_ItemsetCounter):
 
 
 class _CounterWithIds(_ItemsetCounter):
-
     def itemset_counter(self):
         return ItemsetCount()
 
@@ -104,12 +104,14 @@ class _CounterWithIds(_ItemsetCounter):
 
     def large_itemsets(self, counts, min_support, num_transactions):
         return [
-            (i, count) for (i, count) in counts.items()
+            (i, count)
+            for (i, count) in counts.items()
             if (count.itemset_count / num_transactions) >= min_support
         ]
 
-    def candidate_itemset_counts(self, C_k, C_k_sets, counter, counts, row,
-                                 transaction):
+    def candidate_itemset_counts(
+        self, C_k, C_k_sets, counter, counts, row, transaction
+    ):
         # Assert that no items were found in this row
         found_any = False
         issubset = set.issubset  # Micro-optimization
@@ -191,7 +193,7 @@ def join_step(itemsets: typing.List[tuple]):
 
 
 def prune_step(
-        itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[tuple]
+    itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[tuple]
 ):
     """
     Prune possible itemsets whose subsets are not in the list of itemsets.
@@ -224,7 +226,7 @@ def prune_step(
         # due to the way the `join_step` function merges the sorted itemsets
 
         for i in range(len(possible_itemset) - 2):
-            removed = possible_itemset[:i] + possible_itemset[i + 1:]
+            removed = possible_itemset[:i] + possible_itemset[i + 1 :]
 
             # If every k combination exists in the set of itemsets,
             # yield the possible itemset. If it does not exist, then it's
@@ -266,12 +268,11 @@ def apriori_gen(itemsets: typing.List[tuple]):
 
 
 def itemsets_from_transactions(
-        transactions: typing.Union[typing.List[tuple],
-                                   typing.Callable],
-        min_support: float,
-        max_length: int = 8,
-        verbosity: int = 0,
-        output_transaction_ids: bool = False
+    transactions: typing.Union[typing.List[tuple], typing.Callable],
+    min_support: float,
+    max_length: int = 8,
+    verbosity: int = 0,
+    output_transaction_ids: bool = False,
 ):
     """
     Compute itemsets from transactions by building the itemsets bottom up and
@@ -316,7 +317,7 @@ def itemsets_from_transactions(
     # STEP 0 - Sanitize user inputs
     # -----------------------------
     if not (
-            isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)
+        isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)
     ):
         raise ValueError("`min_support` must be a number between 0 and 1.")
 
@@ -325,23 +326,29 @@ def itemsets_from_transactions(
     else:
         counter = _Counter()
 
-    wrong_transaction_type_msg = "`transactions` must be an iterable or a " \
-                                 "callable returning an iterable."
+    wrong_transaction_type_msg = (
+        "`transactions` must be an iterable or a "
+        "callable returning an iterable."
+    )
     if not transactions:
         return empty_result(0)
     elif isinstance(transactions, collections.Iterable):
+
         def transaction_rows():
             count = 0
             for t in transactions:
                 yield count, set(t)
                 count += 1
+
     # Assume the transactions is a callable, returning a generator
     elif callable(transactions):
+
         def transaction_rows():
             count = 0
             for t in transactions():
                 yield count, set(t)
                 count += 1
+
         generator = transactions()
         if not isinstance(generator, collections.abc.Generator):
             raise TypeError(wrong_transaction_type_msg)
@@ -360,8 +367,9 @@ def itemsets_from_transactions(
 
     counts, num_transactions = counter.singleton_itemsets(transaction_rows)
 
-    large_itemsets = counter.large_itemsets(counts, min_support,
-                                            num_transactions)
+    large_itemsets = counter.large_itemsets(
+        counts, min_support, num_transactions
+    )
 
     if verbosity > 0:
         num_cand, num_itemsets = len(counts.items()), len(large_itemsets)
@@ -372,8 +380,9 @@ def itemsets_from_transactions(
 
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
-        large_itemsets = {1: {(i,): counts for (i, counts) in
-                              sorted(large_itemsets)}}
+        large_itemsets = {
+            1: {(i,): counts for (i, counts) in sorted(large_itemsets)}
+        }
     # No large itemsets were found, return immediately
     else:
         return empty_result(num_transactions)
@@ -420,7 +429,8 @@ def itemsets_from_transactions(
                 continue
 
             counts, found_any = counter.candidate_itemset_counts(
-                C_k, C_k_sets, counter, counts, row, transaction)
+                C_k, C_k_sets, counter, counts, row, transaction
+            )
 
             # If no candidate sets were found in this row, skip this row of
             # transactions in the future
