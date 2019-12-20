@@ -9,8 +9,7 @@ import pytest
 import itertools
 import random
 
-from efficient_apriori.itemsets import itemsets_from_transactions, \
-    TransactionWithId, ItemsetCount
+from efficient_apriori.itemsets import itemsets_from_transactions, ItemsetCount
 
 
 def generate_transactions(
@@ -26,10 +25,9 @@ def generate_transactions(
 
     items = list(range(unique_items))
 
-    for transaction_num in range(num_transactions):
+    for _ in range(num_transactions):
         items_this_row = random.randint(*items_row)
-        t = random.sample(items, k=min(unique_items, items_this_row))
-        yield TransactionWithId(t, str(transaction_num))
+        yield random.sample(items, k=min(unique_items, items_this_row))
 
 
 def itemsets_from_transactions_naive(transactions, min_support):
@@ -38,7 +36,7 @@ def itemsets_from_transactions_naive(transactions, min_support):
     """
 
     # Get the unique items from every transaction
-    unique_items = {k for t in transactions for k in t.transaction}
+    unique_items = {k for ts in transactions for k in ts}
     num_transactions = len(transactions)
 
     # Create an output dictionary
@@ -52,10 +50,10 @@ def itemsets_from_transactions_naive(transactions, min_support):
 
             # Naively count how many transactions contain the combination
             counts = ItemsetCount()
-            for t in transactions:
-                if set.issubset(set(combination), set(t.transaction)):
+            for i, t in enumerate(transactions):
+                if set.issubset(set(combination), set(t)):
                     counts.itemset_count += 1
-                    counts.members.add(t.id)
+                    counts.members.add(i)
 
             # If the count exceeds the minimum support, add it
             if (counts.itemset_count / num_transactions) >= min_support:
@@ -96,7 +94,8 @@ def test_itemsets_from_transactions_stochastic(transactions, min_support):
     """
     Test 50 random inputs.
     """
-    result, _ = itemsets_from_transactions(list(transactions), min_support)
+    result, _ = itemsets_from_transactions(list(transactions), min_support,
+                                           output_transaction_ids=True)
     naive_result, _ = itemsets_from_transactions_naive(
         list(transactions), min_support
     )
@@ -112,7 +111,8 @@ def test_itemsets_max_length(transactions, min_support):
     """
     max_len = random.randint(1, 5)
     result, _ = itemsets_from_transactions(
-        list(transactions), min_support, max_length=max_len
+        list(transactions), min_support, max_length=max_len,
+        output_transaction_ids=True
     )
 
     assert all(list(k <= max_len for k in result.keys()))
@@ -129,9 +129,10 @@ def test_itemsets_from_a_generator_callable():
         """
         for i in range(4):
             transactions = tuple(j + i for j in range(5))
-            yield TransactionWithId(transactions, i)
+            yield transactions
 
-    itemsets, _ = itemsets_from_transactions(generator, min_support=3 / 4)
+    itemsets, _ = itemsets_from_transactions(generator, min_support=3 / 4,
+                                             output_transaction_ids=True)
     assert itemsets[3] == {
         (2, 3, 4): ItemsetCount(itemset_count=3, members={0, 1, 2}),
         (3, 4, 5): ItemsetCount(itemset_count=3, members={1, 2, 3})
@@ -150,15 +151,16 @@ def test_itemsets_from_a_file():
 
         def generate_from_file():
             with open(filename_) as file:
-                for i, line in enumerate(file):
+                for line in file:
                     transactions = tuple(line.strip("\n").split(","))
-                    yield TransactionWithId(transactions, i)
+                    yield transactions
 
         return generate_from_file
 
     base, filename = os.path.split(__file__)
     gen_obj = file_generator(os.path.join(base, "transactions.txt"))
-    result, _ = itemsets_from_transactions(gen_obj, min_support=4 / 4)
+    result, _ = itemsets_from_transactions(gen_obj, min_support=4 / 4,
+                                           output_transaction_ids=True)
     assert result[2] == {
         ("A", "C"): ItemsetCount(itemset_count=4, members={0, 1, 2, 3})
     }

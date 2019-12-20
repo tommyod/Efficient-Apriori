@@ -83,20 +83,19 @@ itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)
 
 ### Transactions with IDs
 
-If your transactions have IDs and you would like the results to show which 
-had frequent itemsets, you can convert your transactions to `TransactionWithId` 
-objects. This will return itemsets as `ItemsetCount`s which have a `members` 
-property which is the set of ids of frequent transactions.   
+If you need to know which transactions occurred in the frequent itemsets,
+set the `output_transaction_ids` parameter to `True`.
+This changes the output to contain `ItemsetCount` objects for each itemset have 
+a `members` property which is the set of ids of frequent transactions as well 
+as a `count` property. The ids are the enumeration of the transactions in the
+order they appear.    
 
 ```python
 from efficient_apriori import apriori
-from efficient_apriori.itemsets import TransactionWithId
-transactions = [
-    TransactionWithId(('eggs', 'bacon', 'soup'), '1'),
-    TransactionWithId(('eggs', 'bacon', 'apple'), '2'),
-    TransactionWithId(('soup', 'bacon', 'banana'), '3'),
-]
-itemsets, rules = apriori(transactions, min_support=0.2,  min_confidence=1)
+transactions = [('eggs', 'bacon', 'soup'),
+                ('eggs', 'bacon', 'apple'),
+                ('soup', 'bacon', 'banana')]
+itemsets, rules = apriori(transactions, output_transaction_ids=True)
 print(itemsets)
-# {1: {('bacon',): ItemsetCount(itemset_count=3, members={'1', '2', '3'}), ...
+# {1: {('bacon',): ItemsetCount(itemset_count=3, members={'0', '1', '2'}), ...
 ```

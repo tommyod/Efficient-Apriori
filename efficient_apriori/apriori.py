@@ -5,19 +5,18 @@ High-level implementations of the apriori algorithm.
 """
 
 import typing
-from efficient_apriori.itemsets import itemsets_from_transactions, \
-    TransactionWithId, ItemsetCount
+from efficient_apriori.itemsets import itemsets_from_transactions, ItemsetCount
 from efficient_apriori.rules import generate_rules_apriori
 
 
 def apriori(
     transactions: typing.Union[typing.List[tuple],
-                               typing.Callable,
-                               typing.List[TransactionWithId]],
+                               typing.Callable],
     min_support: float = 0.5,
     min_confidence: float = 0.5,
     max_length: int = 8,
     verbosity: int = 0,
+    output_transaction_ids: bool = False
 ):
     """
     The classic apriori algorithm as described in 1994 by Agrawal et al.
@@ -51,7 +50,10 @@ def apriori(
         The maximum length of the itemsets and the rules.
     verbosity : int
         The level of detail printing when the algorithm runs. Either 0, 1 or 2.
-    
+    output_transaction_ids : bool
+        If set to true, the output contains the ids of transactions that
+        contain a frequent itemset. The ids are the enumeration of the
+        transactions in the sequence they appear.
     Examples
     --------
     >>> transactions = [('a', 'b', 'c'), ('a', 'b', 'd'), ('f', 'b', 'g')]
@@ -61,7 +63,8 @@ def apriori(
     """
 
     itemsets, num_trans = itemsets_from_transactions(
-        transactions, min_support, max_length, verbosity
+        transactions, min_support, max_length, verbosity,
+        output_transaction_ids
     )
 
     if itemsets and isinstance(next(iter(itemsets[1].values())), ItemsetCount):
