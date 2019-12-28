@@ -80,3 +80,22 @@ def data_generator(filename):
 transactions = data_generator('dataset.csv')
 itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)
 ```
+
+### Transactions with IDs
+
+If you need to know which transactions occurred in the frequent itemsets,
+set the `output_transaction_ids` parameter to `True`.
+This changes the output to contain `ItemsetCount` objects for each itemset have 
+a `members` property which is the set of ids of frequent transactions as well 
+as a `count` property. The ids are the enumeration of the transactions in the
+order they appear.    
+
+```python
+from efficient_apriori import apriori
+transactions = [('eggs', 'bacon', 'soup'),
+                ('eggs', 'bacon', 'apple'),
+                ('soup', 'bacon', 'banana')]
+itemsets, rules = apriori(transactions, output_transaction_ids=True)
+print(itemsets)
+# {1: {('bacon',): ItemsetCount(itemset_count=3, members={'0', '1', '2'}), ...
+```

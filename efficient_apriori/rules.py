@@ -104,7 +104,7 @@ class Rule(object):
         try:
             observed_support = self.count_full / self.num_transactions
             prod_counts = self.count_lhs * self.count_rhs
-            expected_support = (prod_counts) / self.num_transactions ** 2
+            expected_support = prod_counts / self.num_transactions ** 2
             return observed_support / expected_support
         except ZeroDivisionError:
             return None
