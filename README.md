@@ -38,6 +38,7 @@ pip install efficient-apriori
 
 You are very welcome to scrutinize the code and make pull requests if you have suggestions and improvements.
 Your submitted code must be PEP8 compliant, and all tests must pass.
+Contributors: [CRJFisher](https://github.com/CRJFisher)
 
 ## More examples
 
@@ -85,8 +86,8 @@ itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)
 
 If you need to know which transactions occurred in the frequent itemsets,
 set the `output_transaction_ids` parameter to `True`.
-This changes the output to contain `ItemsetCount` objects for each itemset have 
-a `members` property which is the set of ids of frequent transactions as well 
+This changes the output to contain `ItemsetCount` objects for each itemset.
+The objects have `members` property containing is the set of ids of frequent transactions as well 
 as a `count` property. The ids are the enumeration of the transactions in the
 order they appear.    
 
