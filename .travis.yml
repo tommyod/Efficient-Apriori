@@ -3,25 +3,11 @@ language: python
 notifications:
   email: false
   
-matrix:
-  include:
-
-    - os: linux
-      sudo: required
-      services: docker
-      python: '3.6'
-
-    - os: linux
-      dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
-      sudo: required
-      services: docker
-      python: '3.7'
-        
-    - os: linux
-      dist: xenial   
-      sudo: required
-      services: docker
-      python: '3.8'
+python:
+    - 3.5
+    - 3.6
+    - 3.7
+    - 3.8
   
 before_install:
     - pip install pep8 flake8 black mypy
