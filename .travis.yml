@@ -17,7 +17,7 @@ before_script:
     - mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
 
 script:
-    - pip install -f requirements.txt
+    - pip install -r requirements.txt
     - pip install pytest
     - pip install .
     - pytest --doctest-modules -v efficient_apriori
