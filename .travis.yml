@@ -3,37 +3,28 @@ language: python
 notifications:
   email: false
   
-matrix:
-  include:
-
-    - os: linux
-      sudo: required
-      services: docker
-      python: '3.6'
-
-    - os: linux
-      dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
-      sudo: required
-      services: docker
-      python: '3.7'
-        
-    - os: linux
-      dist: xenial   
-      sudo: required
-      services: docker
-      python: '3.8'
+python:
+    - 3.6
+    - 3.7
+    - 3.8
   
 before_install:
     - pip install pep8 flake8 black mypy
   
 before_script:
-    - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py,__init__.py'
-    - black . --check -l 79
-    - mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context
+    - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py,__init__.py';
+    - black . --check -l 79;
+    - mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
 
 script:
+    - pip install -r requirements.txt
+    - pip install pytest
+    - pip install .
     - pytest --doctest-modules -v efficient_apriori
     - echo "$TRAVIS_TAG"
+    - echo "$TRAVIS_BRANCH"
+    - echo "$TRAVIS_PULL_REQUEST"
+    - echo "$TRAVIS_PULL_REQUEST_BRANCH"
     - if [ -n "$TRAVIS_TAG" ]; then
       pip install twine;
       python setup.py sdist bdist_wheel;

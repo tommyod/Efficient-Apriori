@@ -6,6 +6,7 @@ Implementations of algorithms related to itemsets.
 
 import itertools
 import collections
+import collections.abc
 import numbers
 import typing
 from abc import ABC, abstractmethod
@@ -19,7 +20,7 @@ class ItemsetCount:
     itemset_count: int = 0
     members: set = field(default_factory=set)
 
-    def increment_count(self, transaction_id: str):
+    def increment_count(self, transaction_id: int):
         self.itemset_count += 1
         self.members.add(transaction_id)
 
@@ -311,9 +312,6 @@ def itemsets_from_transactions(
     True
     """
 
-    def empty_result(transaction_count):
-        return dict(), transaction_count
-
     # STEP 0 - Sanitize user inputs
     # -----------------------------
     if not (
@@ -321,43 +319,42 @@ def itemsets_from_transactions(
     ):
         raise ValueError("`min_support` must be a number between 0 and 1.")
 
-    if transactions and output_transaction_ids:
-        counter = _CounterWithIds()
-    else:
-        counter = _Counter()
+    counter: typing.Union[_CounterWithIds, _Counter]  # Type info for mypy
+    counter = (
+        _CounterWithIds()
+        if (transactions and output_transaction_ids)
+        else _Counter()
+    )
 
     wrong_transaction_type_msg = (
         "`transactions` must be an iterable or a "
         "callable returning an iterable."
     )
+
     if not transactions:
-        return empty_result(0)
-    elif isinstance(transactions, collections.Iterable):
+        return dict(), 0  # large_itemsets, num_transactions
+
+    if isinstance(transactions, collections.abc.Iterable):
 
         def transaction_rows():
-            count = 0
-            for t in transactions:
+            for count, t in enumerate(transactions):
                 yield count, set(t)
-                count += 1
 
     # Assume the transactions is a callable, returning a generator
     elif callable(transactions):
 
         def transaction_rows():
-            count = 0
-            for t in transactions():
+            for count, t in enumerate(transactions()):
                 yield count, set(t)
-                count += 1
 
-        generator = transactions()
-        if not isinstance(generator, collections.abc.Generator):
+        if not isinstance(transactions(), collections.abc.Generator):
             raise TypeError(wrong_transaction_type_msg)
     else:
         raise TypeError(wrong_transaction_type_msg)
 
     # Keep a dictionary stating whether to consider the row, this will allow
     # row-pruning later on if no information was retrieved earlier from it
-    use_transaction = defaultdict(lambda: True)
+    use_transaction: typing.DefaultDict[int, bool] = defaultdict(lambda: True)
 
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------
@@ -381,11 +378,11 @@ def itemsets_from_transactions(
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
         large_itemsets = {
-            1: {(i,): counts for (i, counts) in sorted(large_itemsets)}
+            1: {(i,): counts for (i, counts) in (large_itemsets)}
         }
     # No large itemsets were found, return immediately
     else:
-        return empty_result(num_transactions)
+        return dict(), 0  # large_itemsets, num_transactions
 
     # STEP 2 - Build up the size of the itemsets
     # ------------------------------------------
@@ -399,7 +396,8 @@ def itemsets_from_transactions(
         # STEP 2a) - Build up candidate of larger itemsets
 
         # Retrieve the itemsets of the previous size, i.e. of size k - 1
-        itemsets_list = list(large_itemsets[k - 1].keys())
+        # They must be sorted to maintain the invariant when joining/pruning
+        itemsets_list = sorted(large_itemsets[k - 1].keys())
 
         # Gen candidates of length k + 1 by joining, prune, and copy as set
         C_k = list(apriori_gen(itemsets_list))
@@ -445,8 +443,7 @@ def itemsets_from_transactions(
             break
 
         # Candidate itemsets were found, add them and progress the while-loop
-        # They must be sorted to maintain the invariant when joining/pruning
-        large_itemsets[k] = {i: counts for (i, counts) in sorted(C_k)}
+        large_itemsets[k] = {i: counts for (i, counts) in C_k}
 
         if verbosity > 0:
             num_found = len(large_itemsets[k])
