@@ -6,6 +6,7 @@ Implementations of algorithms related to itemsets.
 
 import itertools
 import collections
+import collections.abc
 import numbers
 import typing
 from abc import ABC, abstractmethod
@@ -335,7 +336,7 @@ def itemsets_from_transactions(
 
     if not transactions:
         return empty_result(0)
-    elif isinstance(transactions, collections.Iterable):
+    elif isinstance(transactions, collections.abc.Iterable):
 
         def transaction_rows():
             count = 0
