@@ -334,25 +334,20 @@ def itemsets_from_transactions(
     if not transactions:
         return dict(), 0
 
-    elif isinstance(transactions, collections.abc.Iterable):
+    if isinstance(transactions, collections.abc.Iterable):
 
         def transaction_rows():
-            count = 0
-            for t in transactions:
+            for count, t in enumerate(transactions):
                 yield count, set(t)
-                count += 1
 
     # Assume the transactions is a callable, returning a generator
     elif callable(transactions):
 
         def transaction_rows():
-            count = 0
-            for t in transactions():
+            for count, t in enumerate(transactions()):
                 yield count, set(t)
-                count += 1
 
-        generator = transactions()
-        if not isinstance(generator, collections.abc.Generator):
+        if not isinstance(transactions(), collections.abc.Generator):
             raise TypeError(wrong_transaction_type_msg)
     else:
         raise TypeError(wrong_transaction_type_msg)
@@ -387,7 +382,7 @@ def itemsets_from_transactions(
         }
     # No large itemsets were found, return immediately
     else:
-        return empty_result(num_transactions)
+        return dict(), 0
 
     # STEP 2 - Build up the size of the itemsets
     # ------------------------------------------
