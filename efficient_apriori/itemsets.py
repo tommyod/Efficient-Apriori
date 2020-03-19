@@ -385,7 +385,7 @@ def itemsets_from_transactions(
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
         large_itemsets = {
-            1: {(i,): counts for (i, counts) in sorted(large_itemsets)}
+            1: {(i,): counts for (i, counts) in (large_itemsets)}
         }
     # No large itemsets were found, return immediately
     else:
@@ -403,7 +403,8 @@ def itemsets_from_transactions(
         # STEP 2a) - Build up candidate of larger itemsets
 
         # Retrieve the itemsets of the previous size, i.e. of size k - 1
-        itemsets_list = list(large_itemsets[k - 1].keys())
+        # They must be sorted to maintain the invariant when joining/pruning
+        itemsets_list = sorted(large_itemsets[k - 1].keys())
 
         # Gen candidates of length k + 1 by joining, prune, and copy as set
         C_k = list(apriori_gen(itemsets_list))
@@ -449,8 +450,7 @@ def itemsets_from_transactions(
             break
 
         # Candidate itemsets were found, add them and progress the while-loop
-        # They must be sorted to maintain the invariant when joining/pruning
-        large_itemsets[k] = {i: counts for (i, counts) in sorted(C_k)}
+        large_itemsets[k] = {i: counts for (i, counts) in C_k}
 
         if verbosity > 0:
             num_found = len(large_itemsets[k])
