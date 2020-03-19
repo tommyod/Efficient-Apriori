@@ -266,7 +266,7 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
 
         # Create the right hand set: rhs = (l_k - a_m) , and keep it sorted
         rhs = set(l_k).difference(set(a_m))
-        rhs = tuple(sorted(list(rhs)))
+        rhs = tuple(sorted(rhs))
 
         # Create new rule object and yield it
         yield Rule(
@@ -355,7 +355,7 @@ def generate_rules_apriori(
 
                 # Compute the left hand side
                 remaining = set(itemset).difference(set(removed))
-                lhs = tuple(sorted(list(remaining)))
+                lhs = tuple(sorted(remaining))
 
                 # If the confidence is high enough, yield the rule
                 conf = count(itemset) / count(lhs)
@@ -426,7 +426,7 @@ def _ap_genrules(
     # For every possible right hand side
     for h_m in H_m:
         # Compute the right hand side of the rule
-        lhs = tuple(sorted(list(set(itemset).difference(set(h_m)))))
+        lhs = tuple(sorted(set(itemset).difference(set(h_m))))
 
         # If the confidence is high enough, yield the rule, else remove from
         # the upcoming recursive generator call

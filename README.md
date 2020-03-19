@@ -23,8 +23,7 @@ transactions = [('eggs', 'bacon', 'soup'),
 itemsets, rules = apriori(transactions, min_support=0.5, min_confidence=1)
 print(rules)  # [{eggs} -> {bacon}, {soup} -> {bacon}]
 ```
-If your data is in a pandas DataFrame, you must convert it to a list of tuples.
-See [this issue](https://github.com/tommyod/Efficient-Apriori/issues/12) for more information.
+If your data is in a pandas DataFrame, you must [convert it to a list of tuples](https://github.com/tommyod/Efficient-Apriori/issues/12).
 **More examples are included below.**
 
 ## Installation

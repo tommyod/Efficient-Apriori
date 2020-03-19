@@ -20,7 +20,7 @@ class ItemsetCount:
     itemset_count: int = 0
     members: set = field(default_factory=set)
 
-    def increment_count(self, transaction_id: str):
+    def increment_count(self, transaction_id: int):
         self.itemset_count += 1
         self.members.add(transaction_id)
 
