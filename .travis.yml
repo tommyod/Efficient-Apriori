@@ -4,7 +4,6 @@ notifications:
   email: false
   
 python:
-    - 3.5
     - 3.6
     - 3.7
     - 3.8
@@ -20,6 +19,9 @@ before_script:
       fi
 
 script:
+    - pip install -f requirements.txt
+    - pip install pytest
+    - pip install .
     - pytest --doctest-modules -v efficient_apriori
     - echo "$TRAVIS_TAG"
     - echo "$TRAVIS_BRANCH"
