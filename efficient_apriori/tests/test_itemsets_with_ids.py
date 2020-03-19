@@ -119,6 +119,9 @@ def test_itemsets_max_length(transactions, min_support):
     )
 
     assert all(list(k <= max_len for k in result.keys()))
+    for length, itemsets in result.items():
+        for itemset_count in result.values():
+            assert all(isinstance(i, int) for i in itemset_count.members)
 
 
 def test_itemsets_from_a_generator_callable():
