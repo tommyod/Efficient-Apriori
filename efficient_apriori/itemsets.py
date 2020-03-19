@@ -331,11 +331,9 @@ def itemsets_from_transactions(
         "callable returning an iterable."
     )
 
-    def empty_result(transaction_count: int):
-        return dict(), transaction_count
-
     if not transactions:
-        return empty_result(0)
+        return dict(), 0
+
     elif isinstance(transactions, collections.abc.Iterable):
 
         def transaction_rows():
