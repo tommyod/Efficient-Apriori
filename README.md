@@ -99,5 +99,5 @@ transactions = [('eggs', 'bacon', 'soup'),
                 ('soup', 'bacon', 'banana')]
 itemsets, rules = apriori(transactions, output_transaction_ids=True)
 print(itemsets)
-# {1: {('bacon',): ItemsetCount(itemset_count=3, members={'0', '1', '2'}), ...
+# {1: {('bacon',): ItemsetCount(itemset_count=3, members={0, 1, 2}), ...
 ```
