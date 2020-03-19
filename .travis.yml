@@ -9,14 +9,12 @@ python:
     - 3.8
   
 before_install:
-    - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pip install pep8 flake8 black mypy; fi
+    - pip install pep8 flake8 black mypy
   
 before_script:
-    - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then 
-      flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py,__init__.py';
-      black . --check -l 79;
-      mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
-      fi
+    - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py,__init__.py';
+    - black . --check -l 79;
+    - mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
 
 script:
     - pip install -f requirements.txt
