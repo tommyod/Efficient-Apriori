@@ -22,10 +22,6 @@ script:
     - pip install .
     - pytest --doctest-modules -v efficient_apriori
     - # If 'TRAVIS_PULL_REQUEST_BRANCH' is empty and we're on master, then deploy
-    - echo "$TRAVIS_PULL_REQUEST_BRANCH"
-    - echo "$TRAVIS_PULL_REQUEST"
-    - echo "$TRAVIS_BRANCH"
-    - echo (-z "$TRAVIS_PULL_REQUEST_BRANCH" && "$TRAVIS_PULL_REQUEST" == 'false' && "$TRAVIS_BRANCH" = 'master')
     - if [[ -z "$TRAVIS_PULL_REQUEST_BRANCH" && "$TRAVIS_PULL_REQUEST" == 'false' && "$TRAVIS_BRANCH" = 'master' ]]; then
       pip install twine;
       python setup.py sdist bdist_wheel;
