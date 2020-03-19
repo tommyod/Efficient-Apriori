@@ -25,6 +25,7 @@ matrix:
   
 before_install:
     - pip install pep8 flake8 black mypy
+    - mypy --version
   
 before_script:
     - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py,__init__.py'
@@ -34,6 +35,9 @@ before_script:
 script:
     - pytest --doctest-modules -v efficient_apriori
     - echo "$TRAVIS_TAG"
+    - echo "$TRAVIS_BRANCH"
+    - echo "$TRAVIS_PULL_REQUEST"
+    - echo "$TRAVIS_PULL_REQUEST_BRANCH"
     - if [ -n "$TRAVIS_TAG" ]; then
       pip install twine;
       python setup.py sdist bdist_wheel;
