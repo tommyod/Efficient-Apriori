@@ -332,7 +332,7 @@ def itemsets_from_transactions(
     )
 
     if not transactions:
-        return dict(), 0
+        return dict(), 0  # large_itemsets, num_transactions
 
     if isinstance(transactions, collections.abc.Iterable):
 
@@ -382,7 +382,7 @@ def itemsets_from_transactions(
         }
     # No large itemsets were found, return immediately
     else:
-        return dict(), 0
+        return dict(), 0  # large_itemsets, num_transactions
 
     # STEP 2 - Build up the size of the itemsets
     # ------------------------------------------
