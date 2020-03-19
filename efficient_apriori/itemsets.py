@@ -311,9 +311,6 @@ def itemsets_from_transactions(
     True
     """
 
-    def empty_result(transaction_count: int):
-        return dict(), transaction_count
-
     # STEP 0 - Sanitize user inputs
     # -----------------------------
     if not (
@@ -321,15 +318,21 @@ def itemsets_from_transactions(
     ):
         raise ValueError("`min_support` must be a number between 0 and 1.")
 
-    if transactions and output_transaction_ids:
-        counter = _CounterWithIds()
-    else:
-        counter = _Counter()
+    counter: typing.Union[_CounterWithIds, _Counter]  # Type info for mypy
+    counter = (
+        _CounterWithIds()
+        if (transactions and output_transaction_ids)
+        else _Counter()
+    )
 
     wrong_transaction_type_msg = (
         "`transactions` must be an iterable or a "
         "callable returning an iterable."
     )
+
+    def empty_result(transaction_count: int):
+        return dict(), transaction_count
+
     if not transactions:
         return empty_result(0)
     elif isinstance(transactions, collections.Iterable):
@@ -357,7 +360,7 @@ def itemsets_from_transactions(
 
     # Keep a dictionary stating whether to consider the row, this will allow
     # row-pruning later on if no information was retrieved earlier from it
-    use_transaction = defaultdict(lambda: True)
+    use_transaction: typing.DefaultDict[int, bool] = defaultdict(lambda: True)
 
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------

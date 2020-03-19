@@ -354,8 +354,8 @@ def generate_rules_apriori(
             for removed in itertools.combinations(itemset, 1):
 
                 # Compute the left hand side
-                lhs = set(itemset).difference(set(removed))
-                lhs = tuple(sorted(list(lhs)))
+                remaining = set(itemset).difference(set(removed))
+                lhs = tuple(sorted(list(remaining)))
 
                 # If the confidence is high enough, yield the rule
                 conf = count(itemset) / count(lhs)
