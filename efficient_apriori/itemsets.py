@@ -311,7 +311,7 @@ def itemsets_from_transactions(
     True
     """
 
-    def empty_result(transaction_count):
+    def empty_result(transaction_count:int):
         return dict(), transaction_count
 
     # STEP 0 - Sanitize user inputs
