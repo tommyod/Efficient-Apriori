@@ -20,10 +20,12 @@ from efficient_apriori import apriori
 transactions = [('eggs', 'bacon', 'soup'),
                 ('eggs', 'bacon', 'apple'),
                 ('soup', 'bacon', 'banana')]
-itemsets, rules = apriori(transactions, min_support=0.5,  min_confidence=1)
+itemsets, rules = apriori(transactions, min_support=0.5, min_confidence=1)
 print(rules)  # [{eggs} -> {bacon}, {soup} -> {bacon}]
 ```
-More examples are included below.
+If your data is in a pandas DataFrame, you must convert it to a list of tuples.
+See [this issue](https://github.com/tommyod/Efficient-Apriori/issues/12) for more information.
+**More examples are included below.**
 
 ## Installation
 
@@ -51,18 +53,18 @@ from efficient_apriori import apriori
 transactions = [('eggs', 'bacon', 'soup'),
                 ('eggs', 'bacon', 'apple'),
                 ('soup', 'bacon', 'banana')]
-itemsets, rules = apriori(transactions, min_support=0.2,  min_confidence=1)
+itemsets, rules = apriori(transactions, min_support=0.2, min_confidence=1)
 
 # Print out every rule with 2 items on the left hand side,
 # 1 item on the right hand side, sorted by lift
 rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
 for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
-  print(rule) # Prints the rule and its confidence, support, lift, ...
+  print(rule)  # Prints the rule and its confidence, support, lift, ...
 ```
 
 ### Working with large datasets
 
-If you have data that is too large to fit into memory, you may pass a function returning a generator instead of a list.
+If you have **data that is too large to fit in memory**, you may pass a function returning a generator instead of a list.
 The `min_support` will most likely have to be a large value, or the algorithm will take very long before it terminates.
 If you have massive amounts of data, this Python implementation is likely not fast enough, and you should consult more specialized implementations.
 
@@ -70,6 +72,7 @@ If you have massive amounts of data, this Python implementation is likely not fa
 def data_generator(filename):
   """
   Data generator, needs to return a generator to be called several times.
+  Use this approach if data is too large to fit in memory. If not use a list.
   """
   def data_gen():
     with open(filename) as file:
@@ -84,12 +87,10 @@ itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)
 
 ### Transactions with IDs
 
-If you need to know which transactions occurred in the frequent itemsets,
-set the `output_transaction_ids` parameter to `True`.
+If you need to know which transactions occurred in the frequent itemsets, set the `output_transaction_ids` parameter to `True`.
 This changes the output to contain `ItemsetCount` objects for each itemset.
-The objects have `members` property containing is the set of ids of frequent transactions as well 
-as a `count` property. The ids are the enumeration of the transactions in the
-order they appear.    
+The objects have a `members` property containing is the set of ids of frequent transactions as well as a `count` property. 
+The ids are the enumeration of the transactions in the order they appear.    
 
 ```python
 from efficient_apriori import apriori
