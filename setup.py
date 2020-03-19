@@ -38,7 +38,7 @@ setup(
     url="https://github.com/tommyod/Efficient-Apriori",
     # Author details
     author="tommyod",
-    author_email="tod001@uib.no",
+    author_email="tommy.odland@gmail.com",
     # Choose your license
     license="MIT",
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -47,7 +47,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         # Indicate who your project is intended for
         # 'Intended Audience :: End Users/Desktop',
         # 'Intended Audience :: Healthcare Industry',
@@ -57,6 +57,7 @@ setup(
         # that you indicate whether you support Python 2, Python 3 or both.
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
