@@ -27,6 +27,7 @@ itemsets, rules = apriori(transactions, min_support=0.5, min_confidence=1)
 print(rules)  # [{eggs} -> {bacon}, {soup} -> {bacon}]
 ```
 If your data is in a pandas DataFrame, you must [convert it to a list of tuples](https://github.com/tommyod/Efficient-Apriori/issues/12).
+Do you have **missing values**, or does the algorithm **run for a long time**? See [this comment](https://github.com/tommyod/Efficient-Apriori/issues/30#issuecomment-626129085).
 **More examples are included below.**
 
 ## Installation
