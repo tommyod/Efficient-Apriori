@@ -9,7 +9,7 @@ python:
     - 3.8
   
 before_install:
-    - pip install pep8 flake8 black mypy
+    - pip install pep8 flake8 black==19.10b0 mypy
   
 before_script:
     - flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=79 --exclude='conf.py,__init__.py';
