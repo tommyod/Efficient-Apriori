@@ -31,7 +31,7 @@ jobs:
           
       - name: Run tests and linting
         run: |
-          pip install pep8 flake8 black mypy pytest twine --quiet
+          pip install pep8 flake8 black mypy pytest twine setuptools --upgrade --quiet
           flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=120 --exclude='conf.py,__init__.py';
           black . --check -l 120;
           mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
@@ -43,8 +43,7 @@ jobs:
 
       - name: Build wheels ${{ matrix.python-version }} on ${{ matrix.os }}
         run: |
-          python setup.py sdist;
-          python setup.py bdist_wheel;
+          python setup.py sdist bdist_wheel;
 
       - name: Publish Python distribution to PyPI
         if: github.ref == 'refs/heads/master'
