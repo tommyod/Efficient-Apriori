@@ -46,7 +46,8 @@ jobs:
         env:
           CIBW_BUILD: 'cp36-* cp37-* cp38-*'
         run: |
-          python setup.py sdist bdist_wheel;
+          python setup.py sdist;
+          python setup.py bdist_wheel;
 
       - name: Publish Python distribution to PyPI
         if: github.ref == 'refs/heads/master' && matrix.python-version == '3.8'
