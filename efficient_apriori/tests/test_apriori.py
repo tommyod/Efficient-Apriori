@@ -12,10 +12,10 @@ from efficient_apriori.rules import Rule
 def test_against_R_implementation_1():
     """
     The following R-code was used:
-        
+
     > install.packages("arules")
-    > col1 = c("a", "a", "a", "b", "b", "b", "b") 
-    > col2 = c("c", "c", "d", "d", "d", "c", "c") 
+    > col1 = c("a", "a", "a", "b", "b", "b", "b")
+    > col2 = c("c", "c", "d", "d", "d", "c", "c")
     > col3 = c("e", "e", "e", "e", "f", "f", "f")
     > df = data.frame(col1, col2, col3)
     > df <- data.frame(sapply(df, as.factor))
@@ -54,16 +54,16 @@ def test_against_R_implementation_1():
 def test_against_R_implementation_2():
     """
     The following R-code was used:
-        
+
     > install.packages("arules")
-    > col1 = c("b", "b", "c", "b", "a", "a", "b", "c", "b", "b", "a", "b", "a", 
-    "a", "a", "c", "b", "a", "b", "b", "b", "c", "a", "c", "a", "a", "c", "a", 
-    "b", "b", "a", "c") 
-    > col2 = c("e", "f", "e", "e", "f", "e", "d", "f", "e", "e", "e", "d", "e", 
-    "e", "f", "d", "d", "d", "e", "f", "f", "d", "d", "f", "e", "e", "f", "f", 
-    "f", "d", "e", "e") 
-    > col3 = c("g", "i", "j", "i", "i", "j", "i", "h", "g", "j", "g", "h", "i", 
-    "h", "g", "h", "g", "j", "h", "i", "g", "g", "i", "h", "h", "h", "h", "g", 
+    > col1 = c("b", "b", "c", "b", "a", "a", "b", "c", "b", "b", "a", "b", "a",
+    "a", "a", "c", "b", "a", "b", "b", "b", "c", "a", "c", "a", "a", "c", "a",
+    "b", "b", "a", "c")
+    > col2 = c("e", "f", "e", "e", "f", "e", "d", "f", "e", "e", "e", "d", "e",
+    "e", "f", "d", "d", "d", "e", "f", "f", "d", "d", "f", "e", "e", "f", "f",
+    "f", "d", "e", "e")
+    > col3 = c("g", "i", "j", "i", "i", "j", "i", "h", "g", "j", "g", "h", "i",
+    "h", "g", "h", "g", "j", "h", "i", "g", "g", "i", "h", "h", "h", "h", "g",
     "j", "i", "g", "g")
     > df = data.frame(col1, col2, col3)
     > df <- data.frame(sapply(df, as.factor))
@@ -121,13 +121,13 @@ def test_against_R_implementation_2():
 def test_against_R_implementation_3():
     """
     The following R-code was used:
-        
+
     > install.packages("arules")
-    > col1 = c("b", "b", "c", "a", "b", "b", "a", "a", "b", "b", "a", "a", "c", 
-    "b", "a", "c") 
-    > col2 = c("e", "d", "e", "e", "e", "e", "d", "e", "e", "e", "d", "e", "e", 
-    "e", "d", "e") 
-    > col3 = c("i", "g", "h", "j", "i", "g", "h", "j", "i", "g", "j", "i", "j", 
+    > col1 = c("b", "b", "c", "a", "b", "b", "a", "a", "b", "b", "a", "a", "c",
+    "b", "a", "c")
+    > col2 = c("e", "d", "e", "e", "e", "e", "d", "e", "e", "e", "d", "e", "e",
+    "e", "d", "e")
+    > col3 = c("i", "g", "h", "j", "i", "g", "h", "j", "i", "g", "j", "i", "j",
     "j", "i", "i")
     > df = data.frame(col1, col2, col3)
     > df <- data.frame(sapply(df, as.factor))

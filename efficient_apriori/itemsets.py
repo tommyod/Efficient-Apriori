@@ -43,9 +43,7 @@ class _ItemsetCounter(ABC):
         pass
 
     @abstractmethod
-    def candidate_itemset_counts(
-        self, C_k, C_k_sets, counter, counts, row, transaction
-    ):
+    def candidate_itemset_counts(self, C_k, C_k_sets, counter, counts, row, transaction):
         pass
 
 
@@ -66,15 +64,9 @@ class _Counter(_ItemsetCounter):
         return counts, num_transactions
 
     def large_itemsets(self, counts, min_support, num_transactions):
-        return [
-            (i, c)
-            for (i, c) in counts.items()
-            if (c / num_transactions) >= min_support
-        ]
+        return [(i, c) for (i, c) in counts.items() if (c / num_transactions) >= min_support]
 
-    def candidate_itemset_counts(
-        self, C_k, C_k_sets, counter, counts, row, transaction
-    ):
+    def candidate_itemset_counts(self, C_k, C_k_sets, counter, counts, row, transaction):
         # Assert that no items were found in this row
         found_any = False
         issubset = set.issubset  # Micro-optimization
@@ -104,15 +96,9 @@ class _CounterWithIds(_ItemsetCounter):
         return counts, num_transactions
 
     def large_itemsets(self, counts, min_support, num_transactions):
-        return [
-            (i, count)
-            for (i, count) in counts.items()
-            if (count.itemset_count / num_transactions) >= min_support
-        ]
+        return [(i, count) for (i, count) in counts.items() if (count.itemset_count / num_transactions) >= min_support]
 
-    def candidate_itemset_counts(
-        self, C_k, C_k_sets, counter, counts, row, transaction
-    ):
+    def candidate_itemset_counts(self, C_k, C_k_sets, counter, counts, row, transaction):
         # Assert that no items were found in this row
         found_any = False
         issubset = set.issubset  # Micro-optimization
@@ -193,9 +179,7 @@ def join_step(itemsets: typing.List[tuple]):
         i += skip
 
 
-def prune_step(
-    itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[tuple]
-):
+def prune_step(itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[tuple]):
     """
     Prune possible itemsets whose subsets are not in the list of itemsets.
 
@@ -314,22 +298,13 @@ def itemsets_from_transactions(
 
     # STEP 0 - Sanitize user inputs
     # -----------------------------
-    if not (
-        isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)
-    ):
+    if not (isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)):
         raise ValueError("`min_support` must be a number between 0 and 1.")
 
     counter: typing.Union[_CounterWithIds, _Counter]  # Type info for mypy
-    counter = (
-        _CounterWithIds()
-        if (transactions and output_transaction_ids)
-        else _Counter()
-    )
+    counter = _CounterWithIds() if (transactions and output_transaction_ids) else _Counter()
 
-    wrong_transaction_type_msg = (
-        "`transactions` must be an iterable or a "
-        "callable returning an iterable."
-    )
+    wrong_transaction_type_msg = "`transactions` must be an iterable or a " "callable returning an iterable."
 
     if not transactions:
         return dict(), 0  # large_itemsets, num_transactions
@@ -364,9 +339,7 @@ def itemsets_from_transactions(
 
     counts, num_transactions = counter.singleton_itemsets(transaction_rows)
 
-    large_itemsets = counter.large_itemsets(
-        counts, min_support, num_transactions
-    )
+    large_itemsets = counter.large_itemsets(counts, min_support, num_transactions)
 
     if verbosity > 0:
         num_cand, num_itemsets = len(counts.items()), len(large_itemsets)
@@ -377,9 +350,7 @@ def itemsets_from_transactions(
 
     # If large itemsets were found, convert to dictionary
     if large_itemsets:
-        large_itemsets = {
-            1: {(i,): counts for (i, counts) in (large_itemsets)}
-        }
+        large_itemsets = {1: {(i,): counts for (i, counts) in (large_itemsets)}}
     # No large itemsets were found, return immediately
     else:
         return dict(), 0  # large_itemsets, num_transactions
@@ -404,11 +375,7 @@ def itemsets_from_transactions(
         C_k_sets = [set(itemset) for itemset in C_k]
 
         if verbosity > 0:
-            print(
-                "  Found {} candidate itemsets of length {}.".format(
-                    len(C_k), k
-                )
-            )
+            print("  Found {} candidate itemsets of length {}.".format(len(C_k), k))
         if verbosity > 1:
             print("   {}".format(C_k))
 
@@ -426,9 +393,7 @@ def itemsets_from_transactions(
             if not use_transaction[row]:
                 continue
 
-            counts, found_any = counter.candidate_itemset_counts(
-                C_k, C_k_sets, counter, counts, row, transaction
-            )
+            counts, found_any = counter.candidate_itemset_counts(C_k, C_k_sets, counter, counts, row, transaction)
 
             # If no candidate sets were found in this row, skip this row of
             # transactions in the future

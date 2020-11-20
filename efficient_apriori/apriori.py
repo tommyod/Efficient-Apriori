@@ -19,8 +19,8 @@ def apriori(
 ):
     """
     The classic apriori algorithm as described in 1994 by Agrawal et al.
-    
-    The Apriori algorithm works in two phases. Phase 1 iterates over the 
+
+    The Apriori algorithm works in two phases. Phase 1 iterates over the
     transactions several times to build up itemsets of the desired support
     level. Phase 2 builds association rules of the desired confidence given the
     itemsets found in Phase 1. Both of these phases may be correctly
@@ -28,7 +28,7 @@ def apriori(
     itemset and checking it's support. The Apriori prunes the search space
     efficiently by deciding apriori if an itemset possibly has the desired
     support, before iterating over the entire dataset and checking.
-    
+
     Parameters
     ----------
     transactions : list of tuples, list of itemsets.TransactionWithId,
@@ -74,9 +74,7 @@ def apriori(
     else:
         itemsets_for_rules = itemsets
 
-    rules = generate_rules_apriori(
-        itemsets_for_rules, min_confidence, num_trans, verbosity
-    )
+    rules = generate_rules_apriori(itemsets_for_rules, min_confidence, num_trans, verbosity)
     return itemsets, list(rules)
 
 

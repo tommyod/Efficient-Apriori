@@ -37,11 +37,7 @@ def generate_rules_naively(itemsets, min_confidence, num_transactions):
         return itemsets[len(itemset)][itemset]
 
     # For every itemset size greater than 1, yield every itemset of that size
-    itemsets_gen = (
-        iset
-        for size in filter(lambda x: x > 1, itemsets.keys())
-        for iset in itemsets[size].keys()
-    )
+    itemsets_gen = (iset for size in filter(lambda x: x > 1, itemsets.keys()) for iset in itemsets[size].keys())
 
     for itemset in itemsets_gen:
         count_full = count(itemset)
@@ -50,9 +46,7 @@ def generate_rules_naively(itemsets, min_confidence, num_transactions):
         for lhs in proper_subsets(itemset):
             rhs = set(itemset).difference(set(lhs))
             rhs = tuple(sorted(list(rhs)))
-            rule = Rule(
-                lhs, rhs, count_full, count(lhs), count(rhs), num_transactions
-            )
+            rule = Rule(lhs, rhs, count_full, count(lhs), count(rhs), num_transactions)
 
             # If the confidence of the rule is high enough, yield it
             if rule.confidence >= min_confidence:
@@ -62,16 +56,14 @@ def generate_rules_naively(itemsets, min_confidence, num_transactions):
 def test_generate_rules_apriori_large():
     """
     Test with lots of data.
-    This test will fail if the second argument to `_ap_genrules` is not 
+    This test will fail if the second argument to `_ap_genrules` is not
     validated as non-empty before the recursive function call. We must have
     if H_m_copy:
         yield from _ap_genrules
     for this test to pass.
     """
 
-    transactions = generate_transactions(
-        num_transactions=100, unique_items=30, items_row=(1, 20), seed=123
-    )
+    transactions = generate_transactions(num_transactions=100, unique_items=30, items_row=(1, 20), seed=123)
 
     itemsets, num_transactions = itemsets_from_transactions(transactions, 0.1)
 
