@@ -12,9 +12,7 @@ import random
 from efficient_apriori.itemsets import itemsets_from_transactions
 
 
-def generate_transactions(
-    num_transactions, unique_items, items_row=(1, 100), seed=None
-):
+def generate_transactions(num_transactions, unique_items, items_row=(1, 100), seed=None):
     """
     Generate synthetic transactions.
     """
@@ -94,9 +92,7 @@ def test_itemsets_from_transactions_stochastic(transactions, min_support):
     Test 50 random inputs.
     """
     result, _ = itemsets_from_transactions(list(transactions), min_support)
-    naive_result, _ = itemsets_from_transactions_naive(
-        list(transactions), min_support
-    )
+    naive_result, _ = itemsets_from_transactions_naive(list(transactions), min_support)
 
     for key in set.union(set(result.keys()), set(naive_result.keys())):
         assert result[key] == naive_result[key]
@@ -108,9 +104,7 @@ def test_itemsets_max_length(transactions, min_support):
     The that nothing larger than max length is returned.
     """
     max_len = random.randint(1, 5)
-    result, _ = itemsets_from_transactions(
-        list(transactions), min_support, max_length=max_len
-    )
+    result, _ = itemsets_from_transactions(list(transactions), min_support, max_length=max_len)
 
     assert all(list(k <= max_len for k in result.keys()))
 
