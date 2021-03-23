@@ -165,17 +165,24 @@ class Rule(object):
 
         return "{} -> {} ({}, {}, {}, {})".format(self._pf(self.lhs), self._pf(self.rhs), conf, supp, lift, conv)
 
+    def __key(self):
+        return (frozenset(self.lhs), frozenset(self.rhs))
+
+
     def __eq__(self, other):
         """
         Equality of two rules.
         """
-        return (set(self.lhs) == set(other.lhs)) and (set(self.rhs) == set(other.rhs))
+        if isinstance(other, Rule):
+            return self.__key() == other.__key()
+        else:
+            raise NotImplemented
 
     def __hash__(self):
         """
         Hashing a rule for efficient set and dict representation.
         """
-        return hash(frozenset(self.lhs + self.rhs))
+        return hash(self.__key())
 
     def __len__(self):
         """
