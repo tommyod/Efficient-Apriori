@@ -176,7 +176,7 @@ class Rule(object):
         if isinstance(other, Rule):
             return self.__key() == other.__key()
         else:
-            raise NotImplemented
+            raise NotImplementedError
 
     def __hash__(self):
         """
