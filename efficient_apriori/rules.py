@@ -168,7 +168,6 @@ class Rule(object):
     def __key(self):
         return (frozenset(self.lhs), frozenset(self.rhs))
 
-
     def __eq__(self, other):
         """
         Equality of two rules.
