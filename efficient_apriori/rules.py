@@ -398,18 +398,19 @@ def _ap_genrules(
         return itemsets[len(itemset)][itemset]
 
     # If H_1 is so large that calling `apriori_gen` will produce right-hand
-    # sides as large as `itemset`, there will be no right hand side
-    # This cannot happen, so abort if it will
+    # sides as large as `itemset`, there will be no right hand side.
+    # This should not happen happen, so we return.
     if len(itemset) <= (len(H_m[0]) + 1):
         return
 
-    # Generate left-hand itemsets of length k + 1 if H is of length k
+    # Generate right-hand itemsets of length k + 1 if H is of length k
     H_m = list(apriori_gen(H_m))
     H_m_copy = H_m.copy()
 
     # For every possible right hand side
     for h_m in H_m:
-        # Compute the right hand side of the rule
+        
+        # Compute the left hand side of the rule
         lhs = tuple(sorted(set(itemset).difference(set(h_m))))
 
         # If the confidence is high enough, yield the rule, else remove from
