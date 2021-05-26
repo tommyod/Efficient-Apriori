@@ -409,7 +409,7 @@ def _ap_genrules(
 
     # For every possible right hand side
     for h_m in H_m:
-        
+
         # Compute the left hand side of the rule
         lhs = tuple(sorted(set(itemset).difference(set(h_m))))
 
