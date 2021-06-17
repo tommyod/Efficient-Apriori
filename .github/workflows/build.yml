@@ -34,6 +34,7 @@ jobs:
           pip install pep8 flake8 black mypy pytest twine setuptools wheel --upgrade --quiet
           flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=120 --exclude='conf.py,__init__.py';
           black . --check -l 120;
+          mypy --install-types;
           mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
           pip install -r requirements.txt
           pip install -e .
