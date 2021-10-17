@@ -5,7 +5,7 @@ High-level implementations of the apriori algorithm.
 """
 
 import typing
-from efficient_apriori.itemsets import itemsets_from_transactions, ItemsetCount
+from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import generate_rules_apriori
 
 

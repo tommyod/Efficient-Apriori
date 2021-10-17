@@ -2,35 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Oct 17 08:42:18 2021
-
 @author: tommy
-
-
-BEFORE
-
-MIN_SUPPORTS [0.1, 0.05, 0.01]
-MAX_LENGTHS [1, 2, 3, 4, 5]
-APYRIO: Average time on file 'adult_data_cleaned.txt' was: 0.37
-APYRIO: Average time on file 'online-retail.txt' was: 0.718
-EFF_AP: Average time on file 'adult_data_cleaned.txt' was: 2.002
-EFF_AP: Average time on file 'online-retail.txt' was: 74.347
-
-MIN_SUPPORTS [0.1, 0.02]
-MAX_LENGTHS [1, 2]
-APYRIO: Average time on file 'adult_data_cleaned.txt' was: 0.077
-APYRIO: Average time on file 'online-retail.txt' was: 0.249
-EFF_AP: Average time on file 'adult_data_cleaned.txt' was: 0.403
-EFF_AP: Average time on file 'online-retail.txt' was: 4.995
-
-
-AFTER 
-
-MIN_SUPPORTS [0.1, 0.02]
-MAX_LENGTHS [1, 2]
-APYRIO: Average time on file 'adult_data_cleaned.txt' was: 0.08
-APYRIO: Average time on file 'online-retail.txt' was: 0.249
-EFF_AP: Average time on file 'adult_data_cleaned.txt' was: 0.105
-EFF_AP: Average time on file 'online-retail.txt' was: 0.299
 
 MIN_SUPPORTS [0.1, 0.05, 0.01]
 MAX_LENGTHS [1, 2, 3, 4, 5]
