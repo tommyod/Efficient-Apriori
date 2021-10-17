@@ -113,11 +113,11 @@ def test_transaction_manager():
     assert len(manager) == 4
     assert manager.transaction_indices({0}) == {0, 3}
     assert manager.transaction_indices({2, 3}) == {1}
-    assert manager.transaction_support_geq({0}, 0.5)
-    assert manager.transaction_support_geq({0}, 0.1)
-    assert not manager.transaction_support_geq({0}, 0.55)
-    assert manager.transaction_support_geq({0, 1}, 0.25)
-    assert not manager.transaction_support_geq({0, 1}, 0.26)
+    assert manager.transaction_indices_sc({0}, 0.5) == (True, {0, 3})
+    assert manager.transaction_indices_sc({0}, 0.1) == (True, {0, 3})
+    assert manager.transaction_indices_sc({0}, 0.55) == (False, None)
+    assert manager.transaction_indices_sc({0, 1}, 0.25) == (True, {0})
+    assert manager.transaction_indices_sc({0, 1}, 0.26) == (False, None)
 
 
 if __name__ == "__main__":

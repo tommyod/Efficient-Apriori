@@ -9,6 +9,7 @@ import numbers
 import typing
 import collections
 from dataclasses import field, dataclass
+import collections.abc
 
 
 @dataclass
@@ -21,11 +22,10 @@ class TransactionManager:
     # The brilliant transaction manager idea is due to:
     # https://github.com/ymoch/apyori/blob/master/apyori.py
 
-    def __init__(self, transactions: typing.Iterable[typing.Union[set, tuple, list]]):
+    def __init__(self, transactions: typing.Iterable[typing.Iterable[typing.Hashable]]):
 
         # A lookup that returns indices of transactions for each item
         self._indices_by_item = collections.defaultdict(set)
-        self._items = set(item for transaction in transactions for item in transaction)
 
         # Populate
         for i, transaction in enumerate(transactions):
@@ -37,19 +37,13 @@ class TransactionManager:
 
     @property
     def items(self):
-        return self._items
+        return set(self._indices_by_item.keys())
 
     def __len__(self):
         return self._transactions
 
-    def transaction_indices(self, transaction: set):
+    def transaction_indices(self, transaction: typing.Iterable[typing.Hashable]):
         """Return the indices of the transaction."""
-
-        # TODO: taking in 'min_support' here we could short-circuit ?
-
-        if len(transaction) == 1:
-            item = next(iter(transaction))
-            return self._indices_by_item[item]
 
         transaction = set(transaction)  # Copy
         item = transaction.pop()
@@ -58,6 +52,38 @@ class TransactionManager:
             item = transaction.pop()
             indices_intersection = indices_intersection.intersection(self._indices_by_item[item])
         return indices_intersection
+
+    def transaction_indices_sc(self, transaction: typing.Iterable[typing.Hashable], min_support: float = 0):
+        """Return the indices of the transaction, with short-circuiting.
+
+        Returns (over_min_support, set_of_indices)
+        """
+
+        # TODO: taking in 'min_support' here we could short-circuit ?
+
+        # Sort items by number of transaction rows the item appears in,
+        # starting with the item beloning to the most transactions
+        transaction = sorted(transaction, key=lambda item: len(self._indices_by_item[item]), reverse=True)
+
+        # Pop item appearing in the fewest
+        item = transaction.pop()
+        indices_intersection = self._indices_by_item[item]
+        support = len(indices_intersection) / len(self)
+        if support < min_support:
+            return False, None
+
+        # The support is a non-increasing function
+        # Sorting by number of transactions the items appear in is a heuristic
+        # to make the support drop as quickly as possible
+        while transaction:
+            item = transaction.pop()
+            indices_intersection = indices_intersection.intersection(self._indices_by_item[item])
+            support = len(indices_intersection) / len(self)
+            if support < min_support:
+                return False, None
+
+        # No short circuit happened
+        return True, indices_intersection
 
 
 def join_step(itemsets: typing.List[tuple]):
@@ -250,7 +276,6 @@ def itemsets_from_transactions(
         return dict(), 0  # large_itemsets, num_transactions
 
     # Store in transaction manager
-    transactions = [set(transaction) for transaction in transactions]
     manager = TransactionManager(transactions)
 
     # STEP 1 - Generate all large itemsets of size 1
@@ -259,7 +284,7 @@ def itemsets_from_transactions(
         print("Generating itemsets.")
         print(" Counting itemsets of length 1.")
 
-    candidates: typing.Dict[tuple, int] = {(item,): len(manager.transaction_indices({item})) for item in manager.items}
+    candidates: typing.Dict[tuple, int] = {(item,): len(indices) for item, indices in manager._indices_by_item.items()}
     large_itemsets: typing.Dict[int, typing.Dict[tuple, int]] = {
         1: {item: count for (item, count) in candidates.items() if count / len(manager) >= min_support}
     }
@@ -310,8 +335,8 @@ def itemsets_from_transactions(
         # Keep only large transactions
         found_itemsets: typing.Dict[tuple, int] = dict()
         for candidate in C_k:
-            indices = manager.transaction_indices(set(candidate))
-            if len(indices) / len(manager) >= min_support:
+            over_min_support, indices = manager.transaction_indices_sc(candidate, min_support=min_support)
+            if over_min_support:
                 found_itemsets[candidate] = len(indices)
 
         # If no itemsets were found, break out of the loop
