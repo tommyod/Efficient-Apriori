@@ -78,32 +78,6 @@ It's possible to filter and sort the returned list of association rules.
       print(rule) # Prints the rule and its confidence, support, lift, ...
 
 
-Working with large datasets
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you have data that is too large to fit into memory, you may pass a function
-returning a generator instead of a list. The `min_support` will most likely
-have to be a large value, or the algorithm will take very long before it
-terminates. If you have massive amounts of data, this Python implementation is
-likely not fast enough, and you should consult more specialized implementations.
-
-.. code-block:: python
-
-    def data_generator(filename):
-      """
-      Data generator, needs to return a generator to be called several times.
-      """
-      def data_gen():
-        with open(filename) as file:
-          for line in file:
-            yield tuple(k.strip() for k in line.split(','))
-
-      return data_gen
-
-    transactions = data_generator('dataset.csv')
-    itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)
-
-
 Contributing
 ------------
 
