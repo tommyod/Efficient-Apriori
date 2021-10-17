@@ -295,7 +295,7 @@ def itemsets_from_transactions(
         print("    {}".format(list(item for item in large_itemsets.get(1, dict()).keys())))
 
     # If large itemsets were found, convert to dictionary
-    if not large_itemsets[1]:
+    if not large_itemsets.get(1, dict()):
         return dict(), 0  # large_itemsets, num_transactions
 
     # STEP 2 - Build up the size of the itemsets
@@ -342,13 +342,12 @@ def itemsets_from_transactions(
         if not found_itemsets:
             break
 
-        # Candidate itemsets were found, add them and progress the while-loop
+        # Candidate itemsets were found, add them
         large_itemsets[k] = {i: counts for (i, counts) in found_itemsets.items()}
 
         if verbosity > 0:
             num_found = len(large_itemsets[k])
-            pp = "  Found {} large itemsets of length {}.".format(num_found, k)
-            print(pp)
+            print("  Found {} large itemsets of length {}.".format(num_found, k))
         if verbosity > 1:
             print("   {}".format(list(large_itemsets[k].keys())))
         k += 1
