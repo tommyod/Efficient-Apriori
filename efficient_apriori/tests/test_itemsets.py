@@ -81,14 +81,14 @@ input_data = [
         ),
         random.randint(1, 4) / 10,
     )
-    for i in range(10)
+    for i in range(500)
 ]
 
 
 @pytest.mark.parametrize("transactions, min_support", input_data)
 def test_itemsets_from_transactions_stochastic(transactions, min_support):
     """
-    Test 50 random inputs.
+    Test random inputs.
     """
     result, _ = itemsets_from_transactions(list(transactions), min_support)
     naive_result, _ = itemsets_from_transactions_naive(list(transactions), min_support)

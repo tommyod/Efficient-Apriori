@@ -47,19 +47,17 @@ class TransactionManager:
 
         transaction = set(transaction)  # Copy
         item = transaction.pop()
-        indices_intersection = self._indices_by_item[item]
+        indices = self._indices_by_item[item]
         while transaction:
             item = transaction.pop()
-            indices_intersection = indices_intersection.intersection(self._indices_by_item[item])
-        return indices_intersection
+            indices = indices.intersection(self._indices_by_item[item])
+        return indices
 
     def transaction_indices_sc(self, transaction: typing.Iterable[typing.Hashable], min_support: float = 0):
         """Return the indices of the transaction, with short-circuiting.
 
-        Returns (over_min_support, set_of_indices)
+        Returns (over_or_equal_to_min_support, set_of_indices)
         """
-
-        # TODO: taking in 'min_support' here we could short-circuit ?
 
         # Sort items by number of transaction rows the item appears in,
         # starting with the item beloning to the most transactions
@@ -67,8 +65,8 @@ class TransactionManager:
 
         # Pop item appearing in the fewest
         item = transaction.pop()
-        indices_intersection = self._indices_by_item[item]
-        support = len(indices_intersection) / len(self)
+        indices = self._indices_by_item[item]
+        support = len(indices) / len(self)
         if support < min_support:
             return False, None
 
@@ -77,13 +75,13 @@ class TransactionManager:
         # to make the support drop as quickly as possible
         while transaction:
             item = transaction.pop()
-            indices_intersection = indices_intersection.intersection(self._indices_by_item[item])
-            support = len(indices_intersection) / len(self)
+            indices = indices.intersection(self._indices_by_item[item])
+            support = len(indices) / len(self)
             if support < min_support:
                 return False, None
 
         # No short circuit happened
-        return True, indices_intersection
+        return True, indices
 
 
 def join_step(itemsets: typing.List[tuple]):
@@ -272,6 +270,7 @@ def itemsets_from_transactions(
     if not (isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)):
         raise ValueError("`min_support` must be a number between 0 and 1.")
 
+    # If not transactions are present
     if not transactions:
         return dict(), 0  # large_itemsets, num_transactions
 
@@ -286,7 +285,7 @@ def itemsets_from_transactions(
 
     candidates: typing.Dict[tuple, int] = {(item,): len(indices) for item, indices in manager._indices_by_item.items()}
     large_itemsets: typing.Dict[int, typing.Dict[tuple, int]] = {
-        1: {item: count for (item, count) in candidates.items() if count / len(manager) >= min_support}
+        1: {item: count for (item, count) in candidates.items() if (count / len(manager)) >= min_support}
     }
 
     if verbosity > 0:
@@ -296,7 +295,7 @@ def itemsets_from_transactions(
         print("    {}".format(list(item for item in large_itemsets.get(1, dict()).keys())))
 
     # If large itemsets were found, convert to dictionary
-    if not large_itemsets:
+    if not large_itemsets[1]:
         return dict(), 0  # large_itemsets, num_transactions
 
     # STEP 2 - Build up the size of the itemsets
