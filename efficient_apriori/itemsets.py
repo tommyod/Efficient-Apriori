@@ -21,7 +21,7 @@ class TransactionManager:
     # The brilliant transaction manager idea is due to:
     # https://github.com/ymoch/apyori/blob/master/apyori.py
 
-    def __init__(self, transactions: typing.List[set]):
+    def __init__(self, transactions: typing.Iterable[typing.Union[set, tuple, list]]):
 
         # A lookup that returns indices of transactions for each item
         self._indices_by_item = collections.defaultdict(set)
@@ -202,7 +202,7 @@ def apriori_gen(itemsets: typing.List[tuple]):
 
 
 def itemsets_from_transactions(
-    transactions: typing.List[set],
+    transactions: typing.Iterable[typing.Union[set, tuple, list]],
     min_support: float,
     max_length: int = 8,
     verbosity: int = 0,
@@ -215,11 +215,7 @@ def itemsets_from_transactions(
 
     Parameters
     ----------
-    transactions : a list of itemsets (tuples with hashable entries),
-                   or a function returning a generator
-        A list of transactions. They can be of varying size. To pass through
-        data without reading everything into memory at once, a callable
-        returning a generator may also be passed.
+    transactions : a list of itemsets (tuples/sets/lists with hashable entries)
     min_support : float
         The minimum support of the itemsets, i.e. the minimum frequency as a
         percentage.
@@ -263,20 +259,19 @@ def itemsets_from_transactions(
         print("Generating itemsets.")
         print(" Counting itemsets of length 1.")
 
-    candidates = {(item,): len(manager.transaction_indices({item})) for item in manager.items}
-    large_itemsets = {item: count for (item, count) in candidates.items() if count / len(manager) >= min_support}
+    candidates: typing.Dict[tuple, int] = {(item,): len(manager.transaction_indices({item})) for item in manager.items}
+    large_itemsets: typing.Dict[int, typing.Dict[tuple, int]] = {
+        1: {item: count for (item, count) in candidates.items() if count / len(manager) >= min_support}
+    }
 
     if verbosity > 0:
         print("  Found {} candidate itemsets of length 1.".format(len(manager.items)))
-        print("  Found {} large itemsets of length 1.".format(len(large_itemsets)))
+        print("  Found {} large itemsets of length 1.".format(len(large_itemsets.get(1, dict()))))
     if verbosity > 1:
-        print("    {}".format(list(item for item in large_itemsets.keys())))
+        print("    {}".format(list(item for item in large_itemsets.get(1, dict()).keys())))
 
     # If large itemsets were found, convert to dictionary
-    if large_itemsets:
-        large_itemsets = {1: large_itemsets}
-    # No large itemsets were found, return immediately
-    else:
+    if not large_itemsets:
         return dict(), 0  # large_itemsets, num_transactions
 
     # STEP 2 - Build up the size of the itemsets
@@ -297,7 +292,7 @@ def itemsets_from_transactions(
         # Gen candidates of length k + 1 by joining, prune, and copy as set
         # This algorithm assumes that the list of itemsets are sorted,
         # and that the itemsets themselves are sorted tuples
-        C_k = list(apriori_gen(itemsets_list))
+        C_k: typing.List[tuple] = list(apriori_gen(itemsets_list))
 
         if verbosity > 0:
             print("  Found {} candidate itemsets of length {}.".format(len(C_k), k))
@@ -313,20 +308,18 @@ def itemsets_from_transactions(
             print("    Iterating over transactions.")
 
         # Keep only large transactions
-        C_k_new = dict()
+        found_itemsets: typing.Dict[tuple, int] = dict()
         for candidate in C_k:
             indices = manager.transaction_indices(set(candidate))
             if len(indices) / len(manager) >= min_support:
-                C_k_new[candidate] = len(indices)
-
-        C_k = C_k_new
+                found_itemsets[candidate] = len(indices)
 
         # If no itemsets were found, break out of the loop
-        if not C_k:
+        if not found_itemsets:
             break
 
         # Candidate itemsets were found, add them and progress the while-loop
-        large_itemsets[k] = {i: counts for (i, counts) in C_k.items()}
+        large_itemsets[k] = {i: counts for (i, counts) in found_itemsets.items()}
 
         if verbosity > 0:
             num_found = len(large_itemsets[k])

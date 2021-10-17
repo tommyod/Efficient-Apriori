@@ -10,7 +10,7 @@ from efficient_apriori.rules import generate_rules_apriori
 
 
 def apriori(
-    transactions: typing.Union[typing.List[tuple], typing.Callable],
+    transactions: typing.Iterable[typing.Union[set, tuple, list]],
     min_support: float = 0.5,
     min_confidence: float = 0.5,
     max_length: int = 8,
