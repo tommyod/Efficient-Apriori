@@ -18,6 +18,9 @@ class ItemsetCount:
 
 
 class TransactionManager:
+    # The brilliant transaction manager idea is due to:
+    # https://github.com/ymoch/apyori/blob/master/apyori.py
+
     def __init__(self, transactions: typing.List[set]):
 
         # A lookup that returns indices of transactions for each item
@@ -354,15 +357,7 @@ def itemsets_from_transactions(
 
 
 if __name__ == "__main__":
+
     import pytest
 
-    # This is an example from the 1994 paper by Agrawal et al.
-    transactions = [(1, 3, 4), (2, 3, 5), (1, 2, 3, 5), (2, 5)]
-    itemsets, _ = itemsets_from_transactions(transactions, min_support=2 / 5)
-    assert itemsets[1] == {(1,): 2, (2,): 3, (3,): 3, (5,): 3}
-
-    assert itemsets[2] == {(1, 3): 2, (2, 3): 2, (2, 5): 3, (3, 5): 2}
-
-    assert itemsets[3] == {(2, 3, 5): 2}
-
-    # pytest.main(args=[".", "--doctest-modules", "-v"])
+    pytest.main(args=[".", "--doctest-modules", "-v"])
