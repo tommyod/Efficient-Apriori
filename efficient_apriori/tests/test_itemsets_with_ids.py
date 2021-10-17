@@ -4,7 +4,6 @@
 Tests for algorithms related to association rules.
 """
 
-import os
 import pytest
 import itertools
 import random
@@ -116,50 +115,6 @@ def test_itemsets_max_length(transactions, min_support):
     for length, itemsets in result.items():
         for itemset_count in itemsets.values():
             assert all(isinstance(i, int) for i in itemset_count.members)
-
-
-def test_itemsets_from_a_generator_callable():
-    """
-    Test generator feature.
-    """
-
-    def generator():
-        """
-        A generator for testing.
-        """
-        for i in range(4):
-            transactions = tuple(j + i for j in range(5))
-            yield transactions
-
-    itemsets, _ = itemsets_from_transactions(generator, min_support=3 / 4, output_transaction_ids=True)
-    assert itemsets[3] == {
-        (2, 3, 4): ItemsetCount(itemset_count=3, members={0, 1, 2}),
-        (3, 4, 5): ItemsetCount(itemset_count=3, members={1, 2, 3}),
-    }
-
-
-def test_itemsets_from_a_file():
-    """
-    Test generator feature.
-    """
-
-    def file_generator(filename_):
-        """
-        A file generator for testing.
-        """
-
-        def generate_from_file():
-            with open(filename_) as file:
-                for line in file:
-                    transactions = tuple(line.strip("\n").split(","))
-                    yield transactions
-
-        return generate_from_file
-
-    base, filename = os.path.split(__file__)
-    gen_obj = file_generator(os.path.join(base, "transactions.txt"))
-    result, _ = itemsets_from_transactions(gen_obj, min_support=4 / 4, output_transaction_ids=True)
-    assert result[2] == {("A", "C"): ItemsetCount(itemset_count=4, members={0, 1, 2, 3})}
 
 
 if __name__ == "__main__":

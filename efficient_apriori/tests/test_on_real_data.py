@@ -28,24 +28,18 @@ def test_adult_dataset():
 
     """
 
-    def data_generator(filename):
-        """
-        Data generator, needs to return a generator to be called several times.
-        """
-
-        def data_gen():
-            with open(filename) as file:
-                for line in file:
-                    yield tuple(k.strip() for k in line.split(","))
-
-        return data_gen
+    def transactions_from_file(filename):
+        with open(filename) as file:
+            for line in file:
+                yield tuple(k.strip() for k in line.split(","))
 
     try:
         base, _ = os.path.split(__file__)
         filename = os.path.join(base, "adult_data_cleaned.txt")
     except NameError:
         filename = "adult_data_cleaned.txt"
-    transactions = data_generator(filename)
+
+    transactions = transactions_from_file(filename)
     itemsets, rules = apriori(transactions, min_support=0.2, min_confidence=0.2)
 
     # Test that the rules found in R were also found using this implementation

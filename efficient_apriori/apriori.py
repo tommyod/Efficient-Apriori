@@ -31,14 +31,8 @@ def apriori(
 
     Parameters
     ----------
-    transactions : list of tuples, list of itemsets.TransactionWithId,
-        or a callable returning a generator. Use TransactionWithId's when
-        the transactions have ids which should appear in the outputs.
-        The transactions may be either a list of tuples, where the tuples must
-        contain hashable items. Alternatively, a callable returning a generator
-        may be passed. A generator is not sufficient, since the algorithm will
-        exhaust it, and it needs to iterate over it several times. Therefore,
-        a callable returning a generator must be passed.
+    transactions : list of transactions (sets/tuples/lists). Each element in
+        the transactions must be hashable.
     min_support : float
         The minimum support of the rules returned. The support is frequency of
         which the items in the rule appear together in the data set.
@@ -66,23 +60,19 @@ def apriori(
         min_support,
         max_length,
         verbosity,
-        output_transaction_ids,
+        output_transaction_ids=True,
     )
 
-    if itemsets and isinstance(next(iter(itemsets[1].values())), ItemsetCount):
-        itemsets_for_rules = _convert_to_counts(itemsets)
+    itemsets_raw = {
+        length: {item: counter.itemset_count for (item, counter) in itemsets.items()}
+        for (length, itemsets) in itemsets.items()
+    }
+    rules = generate_rules_apriori(itemsets_raw, min_confidence, num_trans, verbosity)
+
+    if output_transaction_ids:
+        return itemsets, list(rules)
     else:
-        itemsets_for_rules = itemsets
-
-    rules = generate_rules_apriori(itemsets_for_rules, min_confidence, num_trans, verbosity)
-    return itemsets, list(rules)
-
-
-def _convert_to_counts(itemsets):
-    itemsets_counts = {}
-    for size, sets in itemsets.items():
-        itemsets_counts[size] = {i: c.itemset_count for i, c in sets.items()}
-    return itemsets_counts
+        return itemsets, list(rules)
 
 
 if __name__ == "__main__":
