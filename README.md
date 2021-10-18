@@ -11,6 +11,8 @@ This repository contains an efficient, well-tested implementation of the apriori
 
 **The code is stable and in widespread use.** It's cited in the book "*Mastering Machine Learning Algorithms*" by Bonaccorso.
 
+**The code is fast.** See timings in [this PR](https://github.com/tommyod/Efficient-Apriori/pull/40).
+
 
 ## Example
 
@@ -63,29 +65,6 @@ itemsets, rules = apriori(transactions, min_support=0.2, min_confidence=1)
 rules_rhs = filter(lambda rule: len(rule.lhs) == 2 and len(rule.rhs) == 1, rules)
 for rule in sorted(rules_rhs, key=lambda rule: rule.lift):
   print(rule)  # Prints the rule and its confidence, support, lift, ...
-```
-
-### Working with large datasets
-
-If you have **data that is too large to fit in memory**, you may pass a function returning a generator instead of a list.
-The `min_support` will most likely have to be a large value, or the algorithm will take very long before it terminates.
-If you have massive amounts of data, this Python implementation is likely not fast enough, and you should consult more specialized implementations.
-
-```python
-def data_generator(filename):
-  """
-  Data generator, needs to return a generator to be called several times.
-  Use this approach if data is too large to fit in memory. If not use a list.
-  """
-  def data_gen():
-    with open(filename) as file:
-      for line in file:
-        yield tuple(k.strip() for k in line.split(','))      
-
-  return data_gen
-
-transactions = data_generator('dataset.csv')
-itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.6)
 ```
 
 ### Transactions with IDs
