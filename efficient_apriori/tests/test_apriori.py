@@ -7,6 +7,41 @@ Tests for algorithms related to association rules.
 import pytest
 from efficient_apriori.apriori import apriori
 from efficient_apriori.rules import Rule
+from efficient_apriori.itemsets import ItemsetCount
+
+
+def test_api():
+
+    transactions = [
+        ("a", "c", "e"),
+        ("a", "c", "e"),
+        ("a", "d", "e"),
+        ("b", "d", "e"),
+        ("b", "d", "f"),
+        ("b", "c", "f"),
+        ("b", "c", "f"),
+    ]
+
+    itemsets, rules = apriori(transactions, 0.2, 0.2)
+
+    assert itemsets[1] == {("a",): 3, ("c",): 4, ("e",): 4, ("d",): 3, ("b",): 4, ("f",): 3}
+    assert all(isinstance(rule, Rule) for rule in rules)
+
+    for count, itemsets_dict in itemsets.items():
+        assert isinstance(itemsets_dict, dict)
+        for itemset, count in itemsets_dict.items():
+
+            actual_count = sum(1 if set(itemset).issubset(set(trans)) else 0 for trans in transactions)
+            assert count == actual_count
+
+    itemsets, rules = apriori(transactions, 0.2, 0.2, output_transaction_ids=True)
+    for count, itemsets_dict in itemsets.items():
+        assert isinstance(itemsets_dict, dict)
+        for itemset, counter in itemsets_dict.items():
+            assert isinstance(counter, ItemsetCount)
+
+            actual_count = sum(1 if set(itemset).issubset(set(trans)) else 0 for trans in transactions)
+            assert counter.itemset_count == actual_count
 
 
 def test_against_R_implementation_1():

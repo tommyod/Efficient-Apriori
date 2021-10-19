@@ -72,7 +72,7 @@ def apriori(
     if output_transaction_ids:
         return itemsets, list(rules)
     else:
-        return itemsets, list(rules)
+        return itemsets_raw, list(rules)
 
 
 if __name__ == "__main__":
