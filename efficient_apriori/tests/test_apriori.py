@@ -11,7 +11,7 @@ from efficient_apriori.itemsets import ItemsetCount
 
 
 def test_api():
-    
+
     transactions = [
         ("a", "c", "e"),
         ("a", "c", "e"),
@@ -24,26 +24,24 @@ def test_api():
 
     itemsets, rules = apriori(transactions, 0.2, 0.2)
 
-    assert itemsets[1] == {('a',): 3, ('c',): 4, ('e',): 4, ('d',): 3, ('b',): 4, ('f',): 3}
+    assert itemsets[1] == {("a",): 3, ("c",): 4, ("e",): 4, ("d",): 3, ("b",): 4, ("f",): 3}
     assert all(isinstance(rule, Rule) for rule in rules)
-    
+
     for count, itemsets_dict in itemsets.items():
         assert isinstance(itemsets_dict, dict)
         for itemset, count in itemsets_dict.items():
-            
+
             actual_count = sum(1 if set(itemset).issubset(set(trans)) else 0 for trans in transactions)
             assert count == actual_count
-            
+
     itemsets, rules = apriori(transactions, 0.2, 0.2, output_transaction_ids=True)
     for count, itemsets_dict in itemsets.items():
         assert isinstance(itemsets_dict, dict)
         for itemset, counter in itemsets_dict.items():
             assert isinstance(counter, ItemsetCount)
-            
+
             actual_count = sum(1 if set(itemset).issubset(set(trans)) else 0 for trans in transactions)
             assert counter.itemset_count == actual_count
-            
-    
 
 
 def test_against_R_implementation_1():
@@ -86,7 +84,6 @@ def test_against_R_implementation_1():
         if rule == Rule(("e",), ("a",)):
             assert abs(rule.support - 0.4285714) < 10e-7
             assert rule.confidence == 3 / 4
-            
 
 
 def test_against_R_implementation_2():
