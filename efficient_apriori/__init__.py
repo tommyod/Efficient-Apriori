@@ -6,7 +6,7 @@ Implementation of the Apriori algorithm.
 
 # We use semantic versioning
 # See https://semver.org/
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 import sys
 from efficient_apriori.apriori import apriori
