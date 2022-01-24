@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false # Allow one of the matrix builds to fail without failing others
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: ['3.7', '3.8', '3.9', '3.10']
         
     # The job
     name: Python ${{ matrix.python-version }}
