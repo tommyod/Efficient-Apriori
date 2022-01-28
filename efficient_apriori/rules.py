@@ -335,9 +335,12 @@ def generate_rules_apriori(
 
         # For every itemset of this size
         for itemset in itemsets[size].keys():
+            # Generate combinations to start off of. These 1-combinations will
+            # be merged to 2-combinations in the function `_ap_genrules`
+            H_1 = list(itertools.combinations(itemset, 1))
 
             # Special case to capture rules such as {others} -> {1 item}
-            for removed in itertools.combinations(itemset, 1):
+            for removed in H_1:
 
                 # Compute the left hand side
                 remaining = set(itemset).difference(set(removed))
@@ -354,10 +357,11 @@ def generate_rules_apriori(
                         count(removed),
                         num_transactions,
                     )
+                # otherwise, remove the 1-item rhs from H_1, since no larger rhs with that item in it will have high
+                # enough confidence.
+                else:
+                    H_1.remove(removed)
 
-            # Generate combinations to start off of. These 1-combinations will
-            # be merged to 2-combinations in the function `_ap_genrules`
-            H_1 = list(itertools.combinations(itemset, 1))
             yield from _ap_genrules(itemset, H_1, itemsets, min_confidence, num_transactions)
 
     if verbosity > 0:
