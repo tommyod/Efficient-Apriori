@@ -2,12 +2,41 @@
 # -*- coding: utf-8 -*-
 """
 Tests for algorithms related to association rules.
+
+./apriori chess.dat chess_itemsets.out -s90 -c50 -ts -v' (%a)' -Z
+
+
+%S		relative item set support as a percentage
+%X		relative body set support as a percentage
+%C		rule confidence as a percentage
+%L		lift value of a rule as a percentage
+
+./apriori chess.dat chess_rules.out -s90 -c50 -tr -Z -v' (%S)(%X)'
+
+
 """
 
 import pytest
 import os
 from efficient_apriori.apriori import apriori
 from efficient_apriori.rules import Rule
+
+
+def read_dat_file(filename):
+    with open(filename, "r") as file:
+        for line in file:
+            yield set(element.strip() for element in line.split(" "))
+
+
+class TestOnDatFiles:
+    def test_chess(self):
+
+        transactions = list(read_dat_file(filename="datasets/chess.dat"))
+        itemsets, rules = apriori(transactions, min_support=0.9, min_confidence=0.5)
+
+        print(itemsets[1])
+
+        assert True
 
 
 def test_adult_dataset():
@@ -97,4 +126,4 @@ def test_adult_dataset():
 
 
 if __name__ == "__main__":
-    pytest.main(args=[".", "--doctest-modules", "-v"])
+    pytest.main(args=[__file__, "--doctest-modules", "-v"])
