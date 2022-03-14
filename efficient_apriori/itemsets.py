@@ -28,6 +28,7 @@ class TransactionManager:
         self._indices_by_item = collections.defaultdict(set)
 
         # Populate
+        i = -1
         for i, transaction in enumerate(transactions):
             for item in transaction:
                 self._indices_by_item[item].add(i)
@@ -270,12 +271,13 @@ def itemsets_from_transactions(
     if not (isinstance(min_support, numbers.Number) and (0 <= min_support <= 1)):
         raise ValueError("`min_support` must be a number between 0 and 1.")
 
-    # If not transactions are present
-    if not transactions:
-        return dict(), 0  # large_itemsets, num_transactions
-
     # Store in transaction manager
     manager = TransactionManager(transactions)
+
+    # If no transactions are present
+    transaction_count = len(manager)
+    if transaction_count == 0:
+        return dict(), 0  # large_itemsets, num_transactions
 
     # STEP 1 - Generate all large itemsets of size 1
     # ----------------------------------------------
