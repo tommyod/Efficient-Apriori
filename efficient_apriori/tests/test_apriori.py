@@ -239,10 +239,10 @@ def test_iterator_input():
     itemsets, rules = apriori(transactions, 0.2, 0.2)
     assert itemsets == {} and rules == []
 
-    transactions = [(1, 2), (1, 2), (1, 3)]
+    transactions = [(1, 2), (1, 2), (1, 3), (1, 4), (1, 3)]
     transactions_iter = iter(transactions)
-    itemsets1, rules1 = apriori(transactions_iter, 1, 1)
-    itemsets2, rules2 = apriori(transactions, 1, 1)
+    itemsets1, rules1 = apriori(transactions_iter, 0.2, 1)
+    itemsets2, rules2 = apriori(transactions, 0.2, 1)
     assert len(rules1) == len(rules2)
     for i in range(len(rules1)):
         assert rules1[i] == rules2[i]
