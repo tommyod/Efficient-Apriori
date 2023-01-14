@@ -336,6 +336,9 @@ def generate_rules_apriori(
         # For every itemset of this size
         for itemset in itemsets[size].keys():
 
+            # Generate combinations to start off of. These 1-combinations will
+            # be merged to 2-combinations in the function `_ap_genrules`
+            H_1 = []
             # Special case to capture rules such as {others} -> {1 item}
             for removed in itertools.combinations(itemset, 1):
 
@@ -355,9 +358,9 @@ def generate_rules_apriori(
                         num_transactions,
                     )
 
-            # Generate combinations to start off of. These 1-combinations will
-            # be merged to 2-combinations in the function `_ap_genrules`
-            H_1 = list(itertools.combinations(itemset, 1))
+                    # Consider the removed item for 2-combinations in the function `_ap_genrules`
+                    H_1.append(removed)
+
             yield from _ap_genrules(itemset, H_1, itemsets, min_confidence, num_transactions)
 
     if verbosity > 0:
