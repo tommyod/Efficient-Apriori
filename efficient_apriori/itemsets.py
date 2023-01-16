@@ -25,20 +25,20 @@ class TransactionManager:
     def __init__(self, transactions: typing.Iterable[typing.Iterable[typing.Hashable]]):
 
         # A lookup that returns indices of transactions for each item
-        self._indices_by_item = collections.defaultdict(set)
+        self.indices_by_item = collections.defaultdict(set)
 
         # Populate
         i = -1
         for i, transaction in enumerate(transactions):
             for item in transaction:
-                self._indices_by_item[item].add(i)
+                self.indices_by_item[item].add(i)
 
         # Total number of transactions
         self._transactions = i + 1
 
     @property
     def items(self):
-        return set(self._indices_by_item.keys())
+        return set(self.indices_by_item.keys())
 
     def __len__(self):
         return self._transactions
@@ -48,10 +48,10 @@ class TransactionManager:
 
         transaction = set(transaction)  # Copy
         item = transaction.pop()
-        indices = self._indices_by_item[item]
+        indices = self.indices_by_item[item]
         while transaction:
             item = transaction.pop()
-            indices = indices.intersection(self._indices_by_item[item])
+            indices = indices.intersection(self.indices_by_item[item])
         return indices
 
     def transaction_indices_sc(self, transaction: typing.Iterable[typing.Hashable], min_support: float = 0):
@@ -62,11 +62,11 @@ class TransactionManager:
 
         # Sort items by number of transaction rows the item appears in,
         # starting with the item beloning to the most transactions
-        transaction = sorted(transaction, key=lambda item: len(self._indices_by_item[item]), reverse=True)
+        transaction = sorted(transaction, key=lambda item: len(self.indices_by_item[item]), reverse=True)
 
         # Pop item appearing in the fewest
         item = transaction.pop()
-        indices = self._indices_by_item[item]
+        indices = self.indices_by_item[item]
         support = len(indices) / len(self)
         if support < min_support:
             return False, None
@@ -76,7 +76,7 @@ class TransactionManager:
         # to make the support drop as quickly as possible
         while transaction:
             item = transaction.pop()
-            indices = indices.intersection(self._indices_by_item[item])
+            indices = indices.intersection(self.indices_by_item[item])
             support = len(indices) / len(self)
             if support < min_support:
                 return False, None
@@ -285,7 +285,7 @@ def itemsets_from_transactions(
         print("Generating itemsets.")
         print(" Counting itemsets of length 1.")
 
-    candidates: typing.Dict[tuple, int] = {(item,): len(indices) for item, indices in manager._indices_by_item.items()}
+    candidates: typing.Dict[tuple, int] = {(item,): len(indices) for item, indices in manager.indices_by_item.items()}
     large_itemsets: typing.Dict[int, typing.Dict[tuple, int]] = {
         1: {item: count for (item, count) in candidates.items() if (count / len(manager)) >= min_support}
     }

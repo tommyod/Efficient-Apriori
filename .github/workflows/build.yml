@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false # Allow one of the matrix builds to fail without failing others
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        # https://www.python.org/downloads/
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
         
     # The job
     name: Python ${{ matrix.python-version }}
@@ -21,23 +22,22 @@ jobs:
     steps:
     
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
           
       - name: Run tests and linting
         run: |
           pip install pep8 flake8 black mypy pytest twine setuptools wheel --upgrade --quiet
-          flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=120 --exclude='conf.py,__init__.py';
+          flake8 --show-source --ignore=F811,W293,W391,W292,W291,E252,W503,E203 --max-line-length=120 --exclude='conf.py';
           black . --check -l 120;
           python3 -m pip install types-dataclasses;
           mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
           pip install -r requirements.txt
-          pip install -e .
+          pip install .
           pytest --doctest-modules -v efficient_apriori
 
 # ======================= BUILD WHEELS AND UPLOAD TO PYPI ==================================
@@ -48,7 +48,7 @@ jobs:
 
       - name: Publish Python distribution to PyPI
         if: github.ref == 'refs/heads/master'
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip_existing: true
           user: __token__
