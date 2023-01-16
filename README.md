@@ -45,7 +45,7 @@ pip install efficient-apriori
 
 You are very welcome to scrutinize the code and make pull requests if you have suggestions and improvements.
 Your submitted code must be PEP8 compliant, and all tests must pass.
-Contributors: [CRJFisher](https://github.com/CRJFisher)
+See list of contributors [here](https://github.com/tommyod/Efficient-Apriori/graphs/contributors).
 
 ## More examples
 
