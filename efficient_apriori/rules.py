@@ -10,7 +10,7 @@ import itertools
 from efficient_apriori.itemsets import apriori_gen
 
 
-class Rule(object):
+class Rule:
     """
     A class for a rule.
     """
@@ -220,9 +220,9 @@ def generate_rules_simple(
                 # If the rule has been yieded, keep going, else add and yield
                 if result in yielded:
                     continue
-                else:
-                    yielded_add(result)
-                    yield result
+
+                yielded_add(result)
+                yield result
 
 
 def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
