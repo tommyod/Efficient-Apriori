@@ -361,6 +361,10 @@ def generate_rules_apriori(
                     # Consider the removed item for 2-combinations in the function `_ap_genrules`
                     H_1.append(removed)
 
+            # If H_1 is empty, there is nothing for passing to _ap_genrules, so continue to the next itemset
+            if len(H_1) == 0:
+                continue
+
             yield from _ap_genrules(itemset, H_1, itemsets, min_confidence, num_transactions)
 
     if verbosity > 0:
