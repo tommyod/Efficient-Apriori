@@ -252,7 +252,7 @@ def test_empty_H_1():
     single item in right hand side that satifies the required minimum confidence.
     The issue is raised in #57.
     """
-    # The results are received from commit
+    # The results are received from commit 01d174379c51758aa2f6d2926b473124928dc631
     true_itemsets_raw = {1: {(1,): 4, (2,): 5, (3,): 4}, 2: {(1, 2): 4, (1, 3): 3, (2, 3): 4}, 3: {(1, 2, 3): 3}}
     true_rules = [
         Rule((2,), (1,), 4, 5, 4, 5),
