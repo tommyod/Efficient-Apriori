@@ -11,7 +11,6 @@ from efficient_apriori.itemsets import ItemsetCount
 
 
 def test_api():
-
     transactions = [
         ("a", "c", "e"),
         ("a", "c", "e"),
@@ -30,7 +29,6 @@ def test_api():
     for count, itemsets_dict in itemsets.items():
         assert isinstance(itemsets_dict, dict)
         for itemset, count in itemsets_dict.items():
-
             actual_count = sum(1 if set(itemset).issubset(set(trans)) else 0 for trans in transactions)
             assert count == actual_count
 
@@ -246,6 +244,29 @@ def test_iterator_input():
     assert len(rules1) == len(rules2)
     for i in range(len(rules1)):
         assert rules1[i] == rules2[i]
+
+
+def test_empty_H_1():
+    """
+    An example of the case where there are itemsets without any Rule with
+    single item in right hand side that satifies the required minimum confidence.
+    The issue is raised in #57.
+    """
+    # The results are received from commit
+    true_itemsets_raw = {1: {(1,): 4, (2,): 5, (3,): 4}, 2: {(1, 2): 4, (1, 3): 3, (2, 3): 4}, 3: {(1, 2, 3): 3}}
+    true_rules = [
+        Rule((2,), (1,), 4, 5, 4, 5),
+        Rule((1,), (2,), 4, 4, 5, 5),
+        Rule((3,), (2,), 4, 4, 5, 5),
+        Rule((2,), (3,), 4, 5, 4, 5),
+        Rule((1, 3), (2,), 3, 3, 5, 5),
+    ]
+
+    transactions = [(1, 2, 3), (1, 2, 3), (1, 2, 3), (1, 2), (2, 3)]
+    itemsets_raw, rules = apriori(transactions, 0.4, 0.8)
+
+    assert itemsets_raw == true_itemsets_raw
+    assert all(rule == true_rule for rule, true_rule in zip(rules, true_rules))
 
 
 if __name__ == "__main__":
