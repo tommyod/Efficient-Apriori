@@ -41,10 +41,8 @@ def itemsets_from_transactions_naive(transactions, min_support):
 
     # For every possible combination length
     for k in range(1, len(unique_items) + 1):
-
         # For every possible combination
         for combination in itertools.combinations(unique_items, k):
-
             # Naively count how many transactions contain the combination
             counts = ItemsetCount()
             for i, t in enumerate(transactions):
