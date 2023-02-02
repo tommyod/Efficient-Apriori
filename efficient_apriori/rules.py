@@ -201,7 +201,6 @@ def generate_rules_simple(
 
     # Iterate over every size
     for size in itemsets.keys():
-
         # Do not consider itemsets of size 1
         if size < 2:
             continue
@@ -213,10 +212,8 @@ def generate_rules_simple(
 
         # Iterate over every itemset of the prescribed size
         for itemset in itemsets[size].keys():
-
             # Generate rules
             for result in _genrules(itemset, itemset, itemsets, min_confidence, num_transactions):
-
                 # If the rule has been yieded, keep going, else add and yield
                 if result in yielded:
                     continue
@@ -250,7 +247,6 @@ def _genrules(l_k, a_m, itemsets, min_conf, num_transactions):
     # Iterate over every k - 1 combination of a_m to produce
     # rules of the form a -> (l - a)
     for a_m in itertools.combinations(a_m, len(a_m) - 1):
-
         # Compute the count of this rule, which is a_m -> (l_k - a_m)
         confidence = count(l_k) / count(a_m)
 
@@ -325,7 +321,6 @@ def generate_rules_apriori(
 
     # For every itemset of a perscribed size
     for size in itemsets.keys():
-
         # Do not consider itemsets of size 1
         if size < 2:
             continue
@@ -335,13 +330,11 @@ def generate_rules_apriori(
 
         # For every itemset of this size
         for itemset in itemsets[size].keys():
-
             # Generate combinations to start off of. These 1-combinations will
             # be merged to 2-combinations in the function `_ap_genrules`
             H_1 = []
             # Special case to capture rules such as {others} -> {1 item}
             for removed in itertools.combinations(itemset, 1):
-
                 # Compute the left hand side
                 remaining = set(itemset).difference(set(removed))
                 lhs = tuple(sorted(remaining))
@@ -360,6 +353,10 @@ def generate_rules_apriori(
 
                     # Consider the removed item for 2-combinations in the function `_ap_genrules`
                     H_1.append(removed)
+
+            # If H_1 is empty, there is nothing for passing to _ap_genrules, so continue to the next itemset
+            if len(H_1) == 0:
+                continue
 
             yield from _ap_genrules(itemset, H_1, itemsets, min_confidence, num_transactions)
 
@@ -412,7 +409,6 @@ def _ap_genrules(
 
     # For every possible right hand side
     for h_m in H_m:
-
         # Compute the left hand side of the rule
         lhs = tuple(sorted(set(itemset).difference(set(h_m))))
 

@@ -23,7 +23,6 @@ class TransactionManager:
     # https://github.com/ymoch/apyori/blob/master/apyori.py
 
     def __init__(self, transactions: typing.Iterable[typing.Iterable[typing.Hashable]]):
-
         # A lookup that returns indices of transactions for each item
         self.indices_by_item = collections.defaultdict(set)
 
@@ -110,7 +109,6 @@ def join_step(itemsets: typing.List[tuple]):
     i = 0
     # Iterate over every itemset in the itemsets
     while i < len(itemsets):
-
         # The number of rows to skip in the while-loop, initially set to 1
         skip = 1
 
@@ -128,13 +126,11 @@ def join_step(itemsets: typing.List[tuple]):
 
         # Iterate over ever itemset following this itemset
         for j in range(i + 1, len(itemsets)):
-
             # Get all but the last item in the itemset, and the last item
             *itemset_n_first, itemset_n_last = itemsets[j]
 
             # If it's the same, append and skip this itemset in while-loop
             if itemset_first == itemset_n_first:
-
                 # Micro-optimization
                 tail_items_append(itemset_n_last)
                 skip += 1
@@ -178,7 +174,6 @@ def prune_step(itemsets: typing.Iterable[tuple], possible_itemsets: typing.List[
 
     # Go through every possible itemset
     for possible_itemset in possible_itemsets:
-
         # Remove 1 from the combination, same as k-1 combinations
         # The itemsets created by removing the last two items in the possible
         # itemsets must be part of the itemsets by definition,
@@ -375,7 +370,6 @@ def itemsets_from_transactions(
 
 
 if __name__ == "__main__":
-
     import pytest
 
     pytest.main(args=[".", "--doctest-modules", "-v"])
