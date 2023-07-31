@@ -142,7 +142,7 @@ def join_step(itemsets: typing.List[tuple]):
         # For every 2-combination in the tail items, yield a new candidate
         # itemset, which is sorted.
         itemset_first_tuple = tuple(itemset_first)
-        for a, b in sorted(itertools.combinations(tail_items, 2)):
+        for a, b in itertools.combinations(tail_items, 2):
             yield itemset_first_tuple + (a,) + (b,)
 
         # Increment the while-loop counter
