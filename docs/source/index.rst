@@ -7,7 +7,6 @@ Overview
 --------
 
 An efficient pure Python implementation of the Apriori algorithm.
-Created for Python 3.6 and 3.7.
 
 The apriori algorithm uncovers hidden structures in categorical data.
 The classical example is a database containing purchases from a supermarket.
