@@ -44,7 +44,8 @@ jobs:
 
       - name: Build wheels ${{ matrix.python-version }} on ${{ matrix.os }}
         run: |
-          python setup.py sdist bdist_wheel;
+          python -m pip install build
+          python -m build;
 
       - name: Publish Python distribution to PyPI
         if: github.ref == 'refs/heads/master'
