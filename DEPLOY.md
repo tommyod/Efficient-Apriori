@@ -3,7 +3,7 @@
 First update the version number, then do (change `0.X.Y`).
 
 ```bash
-$ python3 setup.py sdist bdist_wheel
+$ python3 -m build
 $ twine upload --repository-url https://upload.pypi.org/legacy/ dist/efficient_apriori-0.X.Y*
 ```
 
