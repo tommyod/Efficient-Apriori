@@ -36,7 +36,6 @@ jobs:
           black . --check -l 120;
           python3 -m pip install types-dataclasses;
           mypy efficient_apriori/*.py --ignore-missing-imports --show-error-context;
-          pip install -r requirements.txt
           pip install .
           pytest --doctest-modules -v efficient_apriori
 
