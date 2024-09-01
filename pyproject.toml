@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "efficient_apriori"
+version = "2.0.4"
 dynamic = ["readme","dependencies","version"]
 description = " An efficient Python implementation of the Apriori algorithm."
 license = {file = "LICENSE"}
