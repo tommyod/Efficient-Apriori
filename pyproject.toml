@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools","twine", "wheel","efficient_apriori"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -19,16 +19,18 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 [project.urls]
 Source = "https://github.com/tommyod/Efficient-Apriori"
+Homepage = "https://github.com/tommyod/Efficient-Apriori"
+Documentation = "https://github.com/tommyod/Efficient-Apriori#readme"
 Repository = "https://github.com/tommyod/Efficient-Apriori.git"
+
 
 [tool.setuptools.dynamic]
 version = {attr = "efficient_apriori.__version__"}
 readme = { file = "README.md", content-type = "text/markdown"}
-dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools.packages.find]
 where = ["efficient_apriori"]
@@ -45,6 +47,6 @@ log_cli = true
 log_cli_level = "INFO"
 log_format = "%(asctime)s %(levelname)s %(message)s"
 log_date_format = "%Y-%m-%d %H:%M:%S"
-minversion = "3.6"
+minversion = "3.7"
 filterwarnings = "ignore"
 norecursedirs = "docs"
