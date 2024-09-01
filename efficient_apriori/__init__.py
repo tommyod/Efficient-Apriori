@@ -5,7 +5,6 @@ Implementation of the Apriori algorithm.
 """
 
 import importlib.metadata
-import sys
 from efficient_apriori.apriori import apriori
 from efficient_apriori.itemsets import itemsets_from_transactions
 from efficient_apriori.rules import Rule, generate_rules_apriori
