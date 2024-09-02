@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "efficient_apriori"
-version = "2.0.4"
+version = "2.0.5"
 dynamic = ["readme"]
-description = " An efficient Python implementation of the Apriori algorithm."
+description = "An efficient Python implementation of the Apriori algorithm."
 license = {file = "LICENSE"}
 authors = [
     {name = "tommyod", email = "tommy.odland@gmail.com"},
@@ -28,13 +28,11 @@ Homepage = "https://github.com/tommyod/Efficient-Apriori"
 Documentation = "https://github.com/tommyod/Efficient-Apriori#readme"
 Repository = "https://github.com/tommyod/Efficient-Apriori.git"
 
+[tool.setuptools]
+packages = ["efficient_apriori"]
+
 [tool.setuptools.dynamic]
 readme = { file = "README.md", content-type = "text/markdown"}
-
-[tool.setuptools.packages.find]
-where = ["efficient_apriori"]
-exclude = ["contrib", "docs", "tests"]
-namespaces = false
 
 [tool.pytest.ini_options]
 testpaths = ["efficient_apriori/tests"]
@@ -43,6 +41,6 @@ log_cli = true
 log_cli_level = "INFO"
 log_format = "%(asctime)s %(levelname)s %(message)s"
 log_date_format = "%Y-%m-%d %H:%M:%S"
-minversion = "3.7"
+minversion = "3.8"
 filterwarnings = "ignore"
 norecursedirs = "docs"
