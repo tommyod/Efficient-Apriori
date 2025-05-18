@@ -13,7 +13,7 @@ jobs:
       fail-fast: false # Allow one of the matrix builds to fail without failing others
       matrix:
         # https://www.python.org/downloads/
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
         
     # The job
     name: Python ${{ matrix.python-version }}
