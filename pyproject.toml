@@ -34,11 +34,6 @@ packages = ["efficient_apriori"]
 [tool.setuptools.dynamic]
 readme = { file = "README.md", content-type = "text/markdown"}
 
-[tool.setuptools.packages.find]
-where = ["efficient_apriori"]
-exclude = ["contrib", "docs", "tests"]
-namespaces = false
-
 [tool.pytest.ini_options]
 testpaths = ["efficient_apriori/tests"]
 addopts = "-v -ra -q"
