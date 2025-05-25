@@ -38,14 +38,11 @@ packages = ["efficient_apriori"]
 [tool.setuptools.dynamic]
 readme = { file = "README.md", content-type = "text/markdown"}
 
-<<<<<<< HEAD
 [tool.setuptools.packages.find]
 where = ["efficient_apriori"]
 exclude = ["contrib", "docs", "tests"]
 namespaces = false
 
-=======
->>>>>>> 9077f6cca77d0705f6f11d956a75e06aa345af15
 [tool.pytest.ini_options]
 testpaths = ["efficient_apriori/tests"]
 addopts = "-v -ra -q"
@@ -53,10 +50,6 @@ log_cli = true
 log_cli_level = "INFO"
 log_format = "%(asctime)s %(levelname)s %(message)s"
 log_date_format = "%Y-%m-%d %H:%M:%S"
-<<<<<<< HEAD
-minversion = "3.7"
-=======
 minversion = "3.9"
->>>>>>> 9077f6cca77d0705f6f11d956a75e06aa345af15
 filterwarnings = "ignore"
 norecursedirs = "docs"
